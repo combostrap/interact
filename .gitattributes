@@ -1,0 +1,4 @@
+# all files LF
+*.cmd text eol=crlf
+*.bat text eol=crlf
+* text eol=lf
