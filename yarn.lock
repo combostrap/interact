@@ -209,6 +209,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@combostrap/interact-rsc@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "@combostrap/interact-rsc@workspace:."
+  dependencies:
+    "@mdx-js/rollup": "npm:^3.1.1"
+    "@types/node": "npm:^25.3.0"
+    "@types/react": "npm:^19.2.14"
+    "@types/react-dom": "npm:^19.2.3"
+    "@vitejs/plugin-react": "npm:latest"
+    "@vitejs/plugin-rsc": "npm:latest"
+    react: "npm:^19.2.4"
+    react-dom: "npm:^19.2.4"
+    rsc-html-stream: "npm:^0.0.7"
+    typescript: "npm:^5.9.3"
+    vite: "npm:^7.3.1"
+  languageName: unknown
+  linkType: soft
+
 "@esbuild/aix-ppc64@npm:0.27.3":
   version: 0.27.3
   resolution: "@esbuild/aix-ppc64@npm:0.27.3"
@@ -888,23 +906,6 @@ __metadata:
   checksum: 10/6f3f802600fadb980735ecfa3c7ce286d4736dd10bb3740b7799371dd8e7b2dc4d3831273b3be5181d199095d5407ac592bdb029dfe4e3b35eb79158cf60c3f2
   languageName: node
   linkType: hard
-
-"@vitejs/plugin-rsc-examples-ssg@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "@vitejs/plugin-rsc-examples-ssg@workspace:."
-  dependencies:
-    "@mdx-js/rollup": "npm:^3.1.1"
-    "@types/node": "npm:^25.3.0"
-    "@types/react": "npm:^19.2.14"
-    "@types/react-dom": "npm:^19.2.3"
-    "@vitejs/plugin-react": "npm:latest"
-    "@vitejs/plugin-rsc": "npm:latest"
-    react: "npm:^19.2.4"
-    react-dom: "npm:^19.2.4"
-    rsc-html-stream: "npm:^0.0.7"
-    vite: "npm:^7.3.1"
-  languageName: unknown
-  linkType: soft
 
 "@vitejs/plugin-rsc@npm:latest":
   version: 0.5.20
@@ -2812,6 +2813,26 @@ __metadata:
   version: 3.1.0
   resolution: "turbo-stream@npm:3.1.0"
   checksum: 10/90baca92f3bd8a90795cbae65caeae1fc8c6948c1d4483d1d82cfe1f48957375d12f178314699c4b584df842c61f14f6370437b0dc0854bd969c9a76eb1fd2a6
+  languageName: node
+  linkType: hard
+
+"typescript@npm:^5.9.3":
+  version: 5.9.3
+  resolution: "typescript@npm:5.9.3"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 10/c089d9d3da2729fd4ac517f9b0e0485914c4b3c26f80dc0cffcb5de1719a17951e92425d55db59515c1a7ddab65808466debb864d0d56dcf43f27007d0709594
+  languageName: node
+  linkType: hard
+
+"typescript@patch:typescript@npm%3A^5.9.3#optional!builtin<compat/typescript>":
+  version: 5.9.3
+  resolution: "typescript@patch:typescript@npm%3A5.9.3#optional!builtin<compat/typescript>::version=5.9.3&hash=5786d5"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 10/696e1b017bc2635f4e0c94eb4435357701008e2f272f553d06e35b494b8ddc60aa221145e286c28ace0c89ee32827a28c2040e3a69bdc108b1a5dc8fb40b72e3
   languageName: node
   linkType: hard
 
