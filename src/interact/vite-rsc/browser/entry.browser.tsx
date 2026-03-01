@@ -98,6 +98,8 @@ async function main() {
 
 // a little helper to setup events interception for client side navigation
 function listenNavigation(onNavigation: () => void) {
+
+  // When the user clicks the back button, navigate with RSC.
   window.addEventListener('popstate', onNavigation)
 
   const oldPushState = window.history.pushState

@@ -3,7 +3,9 @@
  * https://react.dev/reference/react-dom/server/renderToReadableStream
  */
 import {
-    createTemporaryReferenceSet, decodeAction, decodeFormState,
+    createTemporaryReferenceSet,
+    decodeAction,
+    decodeFormState,
     decodeReply,
     loadServerAction,
     renderToReadableStream
@@ -11,15 +13,11 @@ import {
 import {parseRenderRequest} from '../shared/request'
 import type {RscPayload} from '../shared/types'
 import type {ReactFormState} from 'react-dom/client'
-import {compileSync as mdxCompile} from '@mdx-js/mdx'
-import path from "node:path";
 /**
  * To import module with glob, the path parameter should be static
  * We shoud use a bootstrap script to generate the Main/App file then
  */
 import {App, getStaticPaths} from '../../../../apps/app/.interact/App'
-import fs, {writeFileSync} from "node:fs";
-import {fileURLToPath, pathToFileURL} from "node:url";
 
 /**
  * We export so that they are in the build bundle
@@ -88,16 +86,8 @@ export default async function handler(request: Request): Promise<Response> {
      * The root component should return the entire document including the root <html> tag.
      * See https://react.dev/reference/react-dom/server/renderToReadableStream#usage
      */
-    let pathWithoutName = 'apps/app/pages/counter';
-    let pathMdx = pathWithoutName + '.mdx';
-    const counterVFile = mdxCompile(fs.readFileSync(pathMdx))
-    const modulePath = path.resolve('dist/typescript/'+pathWithoutName+'.mjs');
-    writeFileSync(modulePath, String(counterVFile));
-    const { default: CounterMdxComponent } = await import(pathToFileURL(modulePath).href)
-
-
     const rscPayload: RscPayload = {
-        root: <CounterMdxComponent/>,
+        root: <App url={new URL(request.url)}/>,
         formState,
         returnValue,
     }

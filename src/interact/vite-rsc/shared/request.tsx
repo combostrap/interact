@@ -41,24 +41,16 @@ export function createRscRenderRequest(
     })
 }
 
-
+/**
+ * Returns if the request is an SRC request or a classic request
+ * @param request
+ */
 export function parseRenderRequest(request: Request): RenderRequest {
     const url = new URL(request.url)
     const isAction = request.method === 'POST'
-    if (url.pathname.endsWith(URL_POSTFIX)) {
-        url.pathname = url.pathname.slice(0, -URL_POSTFIX.length)
-        const actionId = request.headers.get(HEADER_ACTION_ID) || undefined
-        if (request.method === 'POST' && !actionId) {
-            throw new Error('Missing action id header for RSC action request')
-        }
-        return {
-            isRsc: true,
-            isAction,
-            actionId,
-            request: new Request(url, request),
-            url,
-        }
-    } else {
+
+    // Classic Static Rendering Request
+    if (!url.pathname.endsWith(URL_POSTFIX)) {
         return {
             isRsc: false,
             isAction,
@@ -66,4 +58,20 @@ export function parseRenderRequest(request: Request): RenderRequest {
             url,
         }
     }
+
+    // Rsc Request
+    url.pathname = url.pathname.slice(0, -URL_POSTFIX.length)
+    const actionId = request.headers.get(HEADER_ACTION_ID) || undefined
+    if (request.method === 'POST' && !actionId) {
+        throw new Error('Missing action id header for RSC action request')
+    }
+    return {
+        isRsc: true,
+        isAction,
+        actionId,
+        request: new Request(url, request),
+        url,
+    }
+
+
 }
