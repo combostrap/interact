@@ -1,31 +1,88 @@
 {
-  "name": "@combostrap/interact-rsc",
-  "version": "0.0.0",
-  "private": true,
-  "license": "MIT",
+  "name": "@combostrap/interact",
+  "version": "0.1.0-next",
+  "license": "FSL-1.1-ALv2",
   "type": "module",
+  "description": "A React publication framework to create documentation where users can log in and interact with it",
+  "bin": "src/interact/cli/run.js",
+  "repository": "https://github.com/combostrap/interact",
   "scripts": {
-    "start": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "start": "src/interact/cli/dev.js start --confPath=apps/site",
+    "site": "src/interact/cli/dev.js start --confPath=../../gerardnico/com-gerardnico",
+    "ssg": "src/interact/cli/dev.js build --confPath=apps/site",
+    "preview": "src/interact/cli/dev.js preview --confPath=apps/site"
   },
   "files": [
-    "src/*"
+    "dist/interact/cli/**/*.js",
+    "dist/interact/cli/**/*.js.map",
+    "dist/interact/cli/**/*.d.ts",
+    "src/**/*"
   ],
+  "exports": {
+    "./types": "./src/interact/types/index.d.ts",
+    "./components/*": "./src/interact/components/*/index.js",
+    "./markdown": "./src/interact/markdown/processing/interactMarkdownProcessor.js"
+  },
   "dependencies": {
-    "react": "^19.2.4",
-    "react-dom": "^19.2.4"
+    "@mdx-js/rollup": "3.1.1",
+    "@oclif/core": "4.8.2",
+    "@realfavicongenerator/generate-favicon": "0.6.3",
+    "@realfavicongenerator/image-adapter-node": "0.6.3",
+    "@stefanprobst/rehype-extract-toc": "^3.0.0",
+    "@svgr/core": "8.1.0",
+    "@svgr/plugin-jsx": "8.1.0",
+    "@svgr/plugin-svgo": "8.1.0",
+    "@vitejs/plugin-react": "5.1.4",
+    "@vitejs/plugin-rsc": "0.5.20",
+    "clsx": "2.1.1",
+    "etag": "1.8.1",
+    "glob": "13.0.6",
+    "hastscript": "9.0.1",
+    "mrmime": "2.0.1",
+    "picocolors": "*",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "rehype-autolink-headings": "7.1.0",
+    "rehype-react": "8.0.0",
+    "rehype-slug": "6.0.0",
+    "remark-frontmatter": "5.0.0",
+    "remark-gfm": "4.0.1",
+    "remark-mdx-frontmatter": "5.2.0",
+    "rollup": "*",
+    "rsc-html-stream": "0.0.7",
+    "sharp": "0.34.5",
+    "svgo": "4.0.1",
+    "ts-node": "10.9.2",
+    "vite": "7.3.1",
+    "vite-plugin-svgr": "4.5.0",
+    "zod": "4.3.6"
   },
   "devDependencies": {
-    "@mdx-js/rollup": "^3.1.1",
-    "@types/node": "^25.3.0",
-    "@types/react": "^19.2.14",
-    "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "latest",
-    "@vitejs/plugin-rsc": "latest",
-    "rsc-html-stream": "^0.0.7",
-    "typescript": "^5.9.3",
-    "vite": "^7.3.1"
+    "@types/etag": "1",
+    "@types/hast": "3.0.4",
+    "@types/mdast": "4.0.4",
+    "@types/mdx": "2.0.13",
+    "@types/node": "25.3.0",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "typescript": "5.9.3",
+    "vitest": "4.0.18"
   },
-  "packageManager": "yarn@4.12.0"
+  "packageManager": "yarn@4.12.0",
+  "oclif": {
+    "description": "Interact Cli",
+    "version": "0.1.0",
+    "bin": "interact",
+    "dirname": "interact",
+    "commands": "dist/interact/cli/commands",
+    "topicSeparator": " "
+  },
+  "resolutions": {
+    "sharp": "0.34.5",
+    "@types/react": "19.2.14",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
+  }
 }

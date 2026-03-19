@@ -1,0 +1,139 @@
+import fs from "fs";
+import path from "path";
+
+import Holy from "@combostrap/interact/components/Holy";
+
+import getPageModule from 'interact:page-modules';
+import {interactConfig} from "interact:config";
+import {getLayoutComponent, NotFound} from "interact:components";
+import createMiddlewarePipeline from "../middlewareEngine/middlewareHandlerPipeline.js";
+import {middlewares} from "interact:middleware-registry"
+import type {MiddlewarePageResponse, ReactNodeResponse} from "../middlewareEngine/interactMiddleware.js";
+
+
+export interface PageFile {
+    path: string;
+    name: string;
+}
+
+const pageProviderPipeline = createMiddlewarePipeline();
+middlewares.forEach(middleware => pageProviderPipeline.use(middleware))
+
+export function getPagesRecursively(dir: string, startDir: string = dir): Record<string, PageFile> {
+    const results: Record<string, PageFile> = {};
+
+    function walk(currentDir: string): void {
+        const entries = fs.readdirSync(currentDir, {withFileTypes: true});
+
+        for (const entry of entries) {
+            const fullPath = path.join(currentDir, entry.name);
+
+            if (entry.isDirectory()) {
+                walk(fullPath);
+                continue
+            }
+            const ext = path.extname(entry.name);
+            const withoutExt = ext ? fullPath.slice(0, -ext.length) : fullPath;
+            const relativePath = path.relative(startDir, withoutExt);
+            let keyPath = "/" + relativePath;
+            results[keyPath] = {
+                name: path.basename(relativePath),
+                path: keyPath,
+            };
+        }
+    }
+
+    walk(dir);
+    return results;
+}
+
+
+/**
+ * The root component should return the entire document including the root <html> tag.
+ * See https://react.dev/reference/react-dom/server/renderToReadableStream#usage
+ * @param normalizedRequest - the request with the URL without the rsc suffix
+ */
+export async function getRootResponse(normalizedRequest: Request): Promise<ReactNodeResponse | Response> {
+
+    let url = new URL(normalizedRequest.url)
+
+    let pageResponse: MiddlewarePageResponse | null = null;
+
+    /**
+     * Get a page module (jsx, tsx, ts, js, mdx)
+     */
+    let page = getPageModule({path: url.pathname});
+    if (page != null) {
+        pageResponse = {
+            page: page
+        }
+    }
+
+
+    if (pageResponse == null) {
+        /**
+         * Object Page Provider Module?
+         */
+        let middlewareResponse = await pageProviderPipeline.run(normalizedRequest);
+        if (middlewareResponse != null) {
+            if (middlewareResponse instanceof Response) {
+                return middlewareResponse;
+            }
+            pageResponse = middlewareResponse
+        }
+    }
+
+    if (pageResponse == null) {
+        pageResponse = {
+            status: 404,
+            page: NotFound
+        };
+    }
+
+    /**
+     * Layout
+     */
+    let layout = "holy"
+    let frontMatterLayout = pageResponse.page?.frontmatter?.layout;
+    if (frontMatterLayout) {
+        layout = frontMatterLayout
+    }
+    const normalizedLayout = layout.toLowerCase().replace("-", "")
+
+    /**
+     * No layout at all, the page returns the HTML root tag
+     */
+    if (layout === "none") {
+        const InteractPageComponent = pageResponse.page.default
+        return {
+            status: pageResponse.status,
+            headers: pageResponse.headers,
+            root: <InteractPageComponent request={normalizedRequest}/>
+        }
+    }
+
+    let Layout = getLayoutComponent(normalizedLayout);
+    if (Layout == null) {
+        Layout = Holy;
+        console.error(`Frontmatter layout ${layout} not found, holy layout was used instead`)
+    }
+    return {
+        status: pageResponse.status,
+        headers: pageResponse.headers,
+        root: <Layout page={pageResponse.page} request={normalizedRequest}/>
+    }
+
+}
+
+/**
+ * We export it so that static rendering (SSG)
+ * can use it to render each page
+ */
+export function getStaticPaths() {
+    return Object.keys(getPagesRecursively(interactConfig.paths.pagesDirectory))
+}
+
+
+export function getPages() {
+    return getPagesRecursively(interactConfig.paths.pagesDirectory)
+}

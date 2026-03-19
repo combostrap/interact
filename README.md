@@ -1,10 +1,31 @@
-# Interact React Rsc Implementation
+# Interact - Where documentation becomes an app
 
-This is an interact publication framework implementation
-based on [Vite React Rsc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-rsc/README.md)
+We create documentation where users can log in and interact with it.
 
-## Note
+## Features
 
-* The main entry that receive a HTTP request is the `handler` function
-  at [entry.rsc](src/interact/vite-rsc/entry.rsc.tsx)
-* The static build is done with [vite-rsc-ssg](src/interact/vite-rsc-ssg)
+* Full React: A page is a React component
+* Fully Composable: Bring or overwrite your own components (from layouts to content)
+* Server first: Built on top of React Server Component
+* Island ready: Thanks to RSC client directive
+* Img processing included
+* Svg optimization included
+* Declarative: Support frontmatter in Markdown but also in programmatic page (jsx, tsx)
+* Full Markdown support:
+  * Mdx: Markdown with Jsx
+  * Mdr: Markdown with React Element
+  * Md: Markdown with HTML
+* Middleware and CMS support to bring remote pages
+* Deploy everywhere:
+  * on the edge everywhere with Server Rendering
+  * or statically with Static Server Rendering
+
+## The plus
+
+* First class Layout. 
+  * Every page gets a layout or `none`
+  * Every layout component is a overwritable React component
+* First support IDE: Don't use an internet path in your link, use the path to your file
+* No router: Your page path is your URL path
+
+

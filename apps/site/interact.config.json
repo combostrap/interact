@@ -1,0 +1,24 @@
+{
+  "$schema": ".interact/interact.schema.json",
+  "components": {
+    "Counter": {
+      "importPath": "./components/Counter.js",
+      "type": "content"
+    },
+    "Planet": {
+      "importPath": "./components/Planet.js",
+      "type": "content"
+    }
+  },
+  "pages": {
+    "providers": [
+      {
+        "importPath": "./cms/remote-markdown.js",
+        "props": {
+          "basePath": "https://raw.githubusercontent.com",
+          "prefix": "/github"
+        }
+      }
+    ]
+  }
+}
