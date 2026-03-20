@@ -107,7 +107,7 @@ async function toImageServiceUri(src: string, serviceProperties: Partial<Record<
 
 
     const pathWithoutExtension = src.slice(0, src.indexOf(".")); // 'path/file'
-    const extension = src.slice(src.indexOf("."));  // '.txt'
+    const extension = src.slice(src.indexOf(".") + 1);  // 'txt'
     let buildUri = `/img/${pathWithoutExtension}-${hash}.${extension}`;
 
     let viteOutDir = process.env[imageViteOutDirEnvName];
