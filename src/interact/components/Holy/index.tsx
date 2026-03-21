@@ -1,7 +1,7 @@
 import Head from "@combostrap/interact/components/Head";
 import type {TemplateProps} from "@combostrap/interact/types";
 import styles from "./Holy.module.css"
-import {PAGE_CONTAINER} from "../classNames.js";
+import {PAGE_CONTAINER_CLASS_NAME} from "../classNames.js";
 
 import clsx from "clsx";
 import {Aside} from "../Aside/Aside.js";
@@ -23,7 +23,7 @@ export default async function Holy(layoutProps: TemplateProps) {
         <NavBar {...layoutProps} />
         <div id="page-core" className={
             clsx(styles['pageCore'],
-                PAGE_CONTAINER,
+                PAGE_CONTAINER_CLASS_NAME,
                 getInteractConfig().style.container.containerClass,
                 "position-relative mt-3"
             )}>

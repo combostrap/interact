@@ -1,4 +1,4 @@
-import {PAGE_CONTAINER} from "../classNames.js";
+import {PAGE_CONTAINER_CLASS_NAME} from "../classNames.js";
 import {getInteractConfig} from "@combostrap/interact/config";
 import Image from "../Image/index.js"
 import type {TemplateProps} from "@combostrap/interact/types";
@@ -48,7 +48,7 @@ export default function NavBar(props: TemplateProps) {
         <header id="page-header" className="d-print-none">
             <nav className="navbar navbar-expand-md navbar-light" data-type="fixed-top"
                  style={{backgroundColor: "var(--bs-light)"}}>
-                <div className={PAGE_CONTAINER + " " + containerClass}>
+                <div className={PAGE_CONTAINER_CLASS_NAME + " " + containerClass}>
                     <a className="link-primary"
                        href={homeUrl} title={interactConfig.site.title}
                        accessKey="h" style={{fontWeight: 700}}>

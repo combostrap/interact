@@ -1,8 +1,8 @@
 import type {TemplateProps} from "../../types/index.js";
-import {PAGE_CONTAINER} from "../classNames.js";
-import type {FaviconSetSchemaType} from "../../config/configSchema.js";
+import {PAGE_CONTAINER_CLASS_NAME} from "../classNames.js";
 import {getInteractConfig} from "@combostrap/interact/config";
 import React from "react";
+import HeadBootstrap from "../Bootstrap/index.js";
 
 export type HeadProps = React.HTMLAttributes<HTMLHeadElement> & TemplateProps;
 
@@ -22,30 +22,15 @@ export default function Head({page, request, ...props}: HeadProps) {
         lastModified = new Date(frontmatter.lastModified);
     }
     const interactConfig = getInteractConfig();
-    const primary = interactConfig.site.colorPrimary
 
-    const hexToRgb = (hex: string) => {
-        // @ts-ignore
-        return hex
-            .replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i, (_m, r, g, b) => '#' + r + r + g + g + b + b)
-            .substring(1)
-            .match(/.{2}/g)
-            .map(x => parseInt(x, 16))
-    }
-
-    const primaryRgb = hexToRgb(primary);
-    let style = `
-:root {
-    --bs-primary: ${primary};
-    --bs-primary-rgb: ${primaryRgb};
-    --bs-link-color: ${primary};
-    --bs-link-color-rgb: ${primaryRgb};
-    --bs-body-font-family: "Times New Roman", Times, serif";
-}`
+    /**
+     * Layout
+     */
     let containerMaxWidth = interactConfig.style.container.containerMaxWidth;
+    let layoutStyle;
     if (containerMaxWidth != undefined) {
-        style += `
-.${PAGE_CONTAINER} {
+        layoutStyle = `
+.${PAGE_CONTAINER_CLASS_NAME} {
    max-width: ${containerMaxWidth}
 }
 `
@@ -98,7 +83,7 @@ export default function Head({page, request, ...props}: HeadProps) {
             {/* Base */}
             <base href={baseHeadURL}/>
             {description && <meta name="description" content={description}/>}
-            {interactConfig.site.favicons && Object.entries(interactConfig.site.favicons as FaviconSetSchemaType).map(([faviconPath, faviconProperties], index) => {
+            {interactConfig.site.favicons && Object.entries(interactConfig.site.favicons).map(([faviconPath, faviconProperties], index) => {
                 if (!faviconProperties) {
                     return;
                 }
@@ -115,13 +100,8 @@ export default function Head({page, request, ...props}: HeadProps) {
                 <meta name="theme-color" content={interactConfig.site.colorPrimary}/>}
             <meta name="robots" content={robots ? robots : "index,follow"}/>
             {keyWords && <meta name="keywords" content={keyWords}/>}
-            <link
-                href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
-                integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
-                crossOrigin="anonymous"/>
-            <link rel="stylesheet"
-                  href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"/>
-            <style dangerouslySetInnerHTML={{__html: style}}/>
+            {layoutStyle && (<style dangerouslySetInnerHTML={{__html: layoutStyle}}/>)}
+            <HeadBootstrap/>
         </head>
     )
 }
