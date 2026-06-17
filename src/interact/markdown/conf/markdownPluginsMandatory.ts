@@ -8,6 +8,7 @@ import rehypeHrefRewrite from "../plugins/rehype-href-rewrite.js";
 import type {InteractConfig} from "../../config/interactConfig.js";
 import path from "node:path";
 import remarkLocalLinkChecker from "../plugins/remark-local-link-checker.js";
+import recmaPluginInjectisMDXComponent from 'recma-mdx-is-mdx-component'
 
 export type MandatoryUnifiedPlugins = {
     markdown: {
@@ -17,6 +18,7 @@ export type MandatoryUnifiedPlugins = {
     mdx: {
         remarkPlugins: PluggableList,
         rehypePlugins: PluggableList
+        recmaPlugins: PluggableList
     }
 }
 
@@ -60,6 +62,9 @@ export function getMandatoryUnifiedPlugins(interactConfig: InteractConfig): Mand
             remarkPlugins: [
                 remarkMdxFrontmatter, // exports frontmatter as `frontmatter`
             ] satisfies PluggableList,
+            recmaPlugins: [
+                recmaPluginInjectisMDXComponent // inject isMDXComponent const to a mdx module
+            ] satisfies PluggableList
         }
     }
 }

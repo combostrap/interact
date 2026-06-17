@@ -1,5 +1,9 @@
 {
   "compilerOptions": {
+    // needed by oclif dev command
+    "rootDir": "src",
+    // needed by oclif dev command
+    "outDir": "dist",
     "erasableSyntaxOnly": true,
     //"allowImportingTsExtensions": true,
     "strict": true,
@@ -10,14 +14,13 @@
     // no implicit any, the user needs to add any if it's intended
     "noImplicitAny": true,
     "noUnusedParameters": true,
-    // skipLibCheck = false to check our d.ts file
+    // Set skipLibCheck to `false` to check our d.ts file
     // such as import type {DoesNotExist} from "@combostrap/interact/types"
     "skipLibCheck": true,
-    "rootDir": "src",
     "verbatimModuleSyntax": true,
     //    "noEmit": true,
-    "moduleResolution": "NodeNext",
-    "module": "NodeNext",
+//    "moduleResolution": "NodeNext",
+//    "module": "NodeNext",
     "target": "ESNext",
     "sourceMap": true,
     // create the js.map files
@@ -31,15 +34,13 @@
       "DOM.Iterable"
     ],
     "types": [
-      "@vitejs/plugin-rsc/types"
+      "@vitejs/plugin-rsc/types",
+      "mdx"
     ],
-    "jsx": "react-jsx",
-    // or "react-jsx" for React 17+
-    "outDir": "./dist/",
     "esModuleInterop": true
   },
   "include": [
-    "src/**/*"
+    "release-it.config.ts"
   ],
   // Options for file/directory watching
   // https://www.typescriptlang.org/docs/handbook/configuring-watch.html

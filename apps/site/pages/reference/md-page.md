@@ -8,17 +8,17 @@ This page is about [pages](page.md) created with the [Markdown](markdown.md) ext
 ## Format
 
 The content of a `md` file may be configured to be one of the 3 options below.
-By default, we use the `mdr` format.
+By default, we use the `mdc` format.
 
-| Format | Description    | [Accepts Content component ?](content-component.md) | HTML format           | Javascript                 |
-|--------|----------------|-----------------------------------------------------|-----------------------|----------------------------|
-| `md`   | Markdown       | No                                                  | HTML                  | No                         |
-| `mdr`  | Markdown React | Yes                                                 | [XHTML](#xhtml-rules) | No                         |
-| `mdx`  | Mardown Jsx    | Yes                                                 | [Mdx](#mdx-rules)     | Yes, without import/export |
+| Format | Description        | [Accepts Content component ?](markdown-component.md) | HTML format           | Javascript                 |
+|--------|--------------------|------------------------------------------------------|-----------------------|----------------------------|
+| `md`   | Markdown           | No                                                   | HTML                  | No                         |
+| `mdc`  | Markdown Component | Yes                                                  | [XHTML](#xhtml-rules) | No                         |
+| `mdx`  | Mardown Jsx        | Yes                                                  | [Mdx](#mdx-rules)     | Yes, without import/export |
 
-### Mdr Rules
+### Mdc Rules
 
-For the support of [content component](content-component.md) like `<Foo />`, the following rules applies:
+For the support of [markdown component](markdown-component.md) like `<Foo />`, the following rules applies:
 
 * All elements should be closed. `<br>` is not valid `<br/>` is
 * The standard URL bracket syntax `<http://www.example.com>` is not valid
@@ -60,12 +60,37 @@ You need to write the tag in its own line. The correct way is:
 
 ### Mdx Rules
 
-`Mdx` follows the [mdr rules](#xhtml-rules) and the `style` prop expects a object of style properties, not a string.
+`Mdx` follows the [mdc rules](#mdc-rules) and the `style` prop expects a object of style properties, not a string.
 
 For example:
 
 * this is not correct `style="margin-right=2em;"`
 * this is correct: `style={{marginRight: '2em'}}`
+
+## Transform programmatically Markdown to React
+
+We export 2 functions so that you can use as server Markdown processing programmatically:
+
+| Name                      | Usage                                                                         | 
+|---------------------------|-------------------------------------------------------------------------------|
+| `markdownToPageSync`      | Transform a markdown Vfile (string or path) to a [page](../reference/page.md) |
+| `markdownToComponentSync` | Transform a markdown Vfile (string or path) to a react component              |
+
+Example:
+
+```javascript
+import {markdownToPageSync, markdownToComponentSync} from "@combostrap/interact/markdown";
+
+let component = markdownToComponentSync("**Hello World**", {rootTagName: "span"});
+let page = markdownToPageSync("## Hello World", {format: 'md'})
+```
+
+For a real examples, check the following [middlewares](middleware.md) source code:
+
+* `local-markdown-pages.tsx` - local fetch
+* `github-markdown.tsx` - remote fetch
+
+These 2 transformations functions includes all [registered unifed plugins (remark and rehype)](remark-rehype-unified.md)
 
 ## Configuration
 

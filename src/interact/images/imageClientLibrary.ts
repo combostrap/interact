@@ -13,9 +13,13 @@ import {
 import {ImageError, ImageErrors} from "./imageErrorsDictionary.js";
 import fsPromises from "fs/promises";
 import crypto from "crypto";
-import {getInteractConfig} from "@combostrap/interact/config";
+import {getInteractConfig} from "../config/interactConfig.js";
 import {imageEndPointEnvName, imageViteOutDirEnvName} from "./imageMiddlewareHandler.js";
+import fs from "fs";
+import debug from 'debug'
 
+let moduleName = 'interact:image';
+const debugLog = debug(moduleName);
 
 export type HtmlImageAttributes = {
     src: string,
@@ -94,20 +98,26 @@ async function toImageServiceUri(src: string, serviceProperties: Partial<Record<
     /**
      * In static generation mode
      */
-    const imageBuffer = await processImageWithSharp({
-        sharpPipeline,
-        targetWidth: Number(serviceProperties.width),
-        targetHeight: Number(serviceProperties.height),
-        requestedFit: serviceProperties.fit as keyof FitEnum,
-        requestedFormat: 'webp',
-        requestedCompression: serviceProperties.compression as ImageCompressionType
-    })
+    let imageBuffer;
+    try {
+        imageBuffer = await processImageWithSharp({
+            sharpPipeline,
+            targetWidth: Number(serviceProperties.width),
+            targetHeight: Number(serviceProperties.height),
+            requestedFit: serviceProperties.fit as keyof FitEnum,
+            requestedFormat: 'webp',
+            requestedCompression: serviceProperties.compression as ImageCompressionType
+        })
+    } catch (e) {
+        debugLog(`Error while processing the image ${src} with sharp with the following properties ${JSON.stringify(serviceProperties)}`)
+        throw e
+    }
     const normalizedProperties = JSON.stringify(serviceProperties, Object.keys(serviceProperties).sort());
     const hash = crypto.createHash('sha256').update(normalizedProperties).digest('hex').slice(0, 16);
 
 
     const pathWithoutExtension = src.slice(0, src.indexOf(".")); // 'path/file'
-    const extension = src.slice(src.indexOf("."));  // '.txt'
+    const extension = src.slice(src.indexOf(".") + 1);  // 'txt'
     let buildUri = `/img/${pathWithoutExtension}-${hash}.${extension}`;
 
     let viteOutDir = process.env[imageViteOutDirEnvName];
@@ -121,6 +131,13 @@ async function toImageServiceUri(src: string, serviceProperties: Partial<Record<
     await fsPromises.mkdir(path.dirname(buildTargetFile), {recursive: true});
     await fsPromises.writeFile(buildTargetFile, imageBuffer);
 
+    /**
+     * base
+     */
+    let base = interactConfig.site.base;
+    if (base != "/") {
+        return `${base}${buildUri}`;
+    }
     return buildUri
 
 }
@@ -157,6 +174,12 @@ export async function getHtmlImageAttributes(props: ImageRequestProps): Promise<
     }
 
     const sourceFile = path.resolve(interactConfig.paths.imagesDirectory, props.src);
+    if (!fs.existsSync(sourceFile)) {
+        throw new ImageError({
+            ...ImageErrors.NOT_FOUND,
+            message: `The image file ${props.src} was not found at ${sourceFile}`,
+        })
+    }
     let intrinsicWidth, intrinsicHeight;
     let sharpPipeline;
     try {
@@ -166,8 +189,11 @@ export async function getHtmlImageAttributes(props: ImageRequestProps): Promise<
         intrinsicWidth = metadata.width;
     } catch (err) {
         throw new ImageError({
-            ...ImageErrors.NOT_FOUND,
-            message: `Error while reading the file ${props.src}: ${String(err)}`
+            ...ImageErrors.SHARP_ERROR,
+            message: `Sharp error while reading the image file ${props.src} (${sourceFile})`,
+            options: {
+                cause: err
+            }
         })
     }
 
@@ -179,6 +205,15 @@ export async function getHtmlImageAttributes(props: ImageRequestProps): Promise<
         intrinsicHeight
     });
     let {targetWidth, targetHeight} = originalRequestDimensionHelper.getTargetDimensions()
+
+    const isSsg = import.meta.env.MODE === 'production'
+    if (isSsg) {
+        // in ssg, the dimension are mandatory
+        // ie we may have width or height and ratio but
+        // for the image generation, sharp will throw an error if width or height is missing
+        serviceProperties.width = String(targetWidth);
+        serviceProperties.height = String(targetHeight);
+    }
 
     if (props.compression != null && props.compression != "none") {
         serviceProperties.compression = props.compression
@@ -223,6 +258,18 @@ export async function getHtmlImageAttributes(props: ImageRequestProps): Promise<
             || isAspectRatioRequest
         ) {
             serviceProperties.width = String(breakpointWidthWithoutMargin)
+            if (isSsg) {
+                // in ssg, the dimensions are mandatory
+                // for the image generation, sharp will throw an error if width or height is missing
+                let breakpointHeightDimensionHelper = new ImageDimensionHelper({
+                    requestedWidth: castWidthToNumber(serviceProperties.width),
+                    requestedHeight: null,
+                    requestedRatio: originalRequestDimensionHelper.getTargetRatio(),
+                    intrinsicWidth,
+                    intrinsicHeight
+                });
+                serviceProperties.height = String(breakpointHeightDimensionHelper.getTargetDimensions().targetHeight);
+            }
         }
 
         /**
@@ -235,6 +282,18 @@ export async function getHtmlImageAttributes(props: ImageRequestProps): Promise<
         ) {
             breakpointHeight = ImageDimensionHelper.round((breakpointWidthWithoutMargin) / originalRequestDimensionHelper.getTargetRatio())
             serviceProperties.height = String(breakpointHeight)
+            if (isSsg) {
+                // in ssg, the dimensions are mandatory
+                // for the image generation, sharp will throw an error if width or height is missing
+                let breakpointHeightDimensionHelper = new ImageDimensionHelper({
+                    requestedWidth: null,
+                    requestedHeight: breakpointHeight,
+                    requestedRatio: originalRequestDimensionHelper.getTargetRatio(),
+                    intrinsicWidth,
+                    intrinsicHeight
+                });
+                serviceProperties.width = String(breakpointHeightDimensionHelper.getTargetDimensions().targetWidth);
+            }
         }
 
         srcSet.push(await toImageServiceUri(props.src, serviceProperties, sharpPipeline) + ` ${breakpointWidthWithoutMargin}w`);

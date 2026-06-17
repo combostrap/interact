@@ -1,28 +1,33 @@
-import {Args, Flags} from '@oclif/core'
 import * as path from "path";
 import * as fs from "fs";
 
 import {
-    type FaviconSettings,
-    type MasterIcon,
     generateFaviconFiles,
     IconTransformationType
 } from '@realfavicongenerator/generate-favicon';
+import type {
+    FaviconSettings,
+    MasterIcon
+} from '@realfavicongenerator/generate-favicon';
 import {getNodeImageAdapter, loadAndConvertToSvg} from "@realfavicongenerator/image-adapter-node";
-import {BaseCommand} from "../baseCommand.js";
 import type {InteractConfig} from "@combostrap/interact/types";
 // interactConfig should be relative path and not the package.json export as this is used by the client
-import {createInteractConfig} from "../../config/interactConfig.js";
+import {createInteractConfig} from "../../config/interactConfigHandler.js";
+
+export interface FaviconActionOptions {
+    confPath?: string;
+    filePath?: string;
+    dryRun?: boolean;
+    outputDirectory?: string;
+}
 
 async function generateImage({masterFilePath, dryRun, outputDirectory, interactConfig: config}: {
-    masterFilePath?: string,
+    masterFilePath: string,
     dryRun: boolean,
     outputDirectory: string
     interactConfig: InteractConfig
 }) {
-    if (masterFilePath == null) {
-        masterFilePath = config.site.faviconMaster
-    }
+
     console.log(`Generating Favicons and Manifest with the master file: ${masterFilePath}`)
 
     const imageAdapter = await getNodeImageAdapter();
@@ -71,6 +76,8 @@ async function generateImage({masterFilePath, dryRun, outputDirectory, interactC
             }
         },
         imageDirectory: "/",
+        path: config.site.base
+
     };
 
 
@@ -112,39 +119,14 @@ async function generateImage({masterFilePath, dryRun, outputDirectory, interactC
     }
 }
 
-
-export default class Favicon extends BaseCommand<typeof Favicon> {
-    static description = 'Generate the favicons and app manifest from a master icon file'
-
-    static examples = [
-        '<%= config.bin %> <%= command.id %> path/to/master-icon.svg',
-    ]
-    static flags = {
-        dryRun: Flags.boolean({
-            aliases: ["dr"],
-            description: "Don't create the files",
-            default: false
-        }),
-        outputDirectory: Flags.string({
-            aliases: ["o"],
-            description: "The output directory (default to the public directory)",
-            default: "public"
-        }),
-    }
-    static args = {
-        filePath: Args.string({
-            name: 'masterSvgFilePath',
-            description: 'Path to the master svg file',
-        })
-    }
-
-    async run(): Promise<void> {
-        const {args, flags} = await this.parse(Favicon)
-
-        const interactConfigTyped = createInteractConfig(flags.confPath);
-        const filePath = args.filePath
-        const dryRun = flags.dryRun
-        const outputDirectory = flags.outputDirectory
-        await generateImage({interactConfig: interactConfigTyped, masterFilePath: filePath, dryRun, outputDirectory})
-    }
+export async function favicon({confPath, filePath, dryRun = false, outputDirectory}: FaviconActionOptions): Promise<void> {
+    const interactConfigTyped = createInteractConfig(confPath);
+    const masterFilePath = filePath || path.resolve(interactConfigTyped.paths.imagesDirectory, interactConfigTyped.site.favicon);
+    const resolvedOutputDirectory = outputDirectory || interactConfigTyped.paths.publicDirectory
+    await generateImage({
+        interactConfig: interactConfigTyped,
+        masterFilePath,
+        dryRun,
+        outputDirectory: resolvedOutputDirectory
+    })
 }

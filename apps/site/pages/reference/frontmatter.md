@@ -35,3 +35,4 @@ export const frontmatter = {
 * `title`: The page title
 * `description`: The page description
 * `layout`: The [layout](layout.md) applied (default to `holy`)
+* `prose`: Add the [prose class](styling.md#prose-content) if true or undefined

@@ -16,12 +16,24 @@ function removeMarkdownExtensionAndIndex(url: string) {
     const search = searchIndex !== -1 ? url.slice(searchIndex) : '';
     const pathname = searchIndex !== -1 ? url.slice(0, searchIndex) : url;
 
-    // Remove .md extension from pathname
-    let cleanPathname = pathname.replace(/(\.mdx?|\/index\.mdx?)$/, "");
+    // Remove .md(x), .ts(x), .js(x) extension from pathname
+    let cleanPathname = pathname.replace(/(\.(mdx?|tsx?|jsx?))$/, "");
+
+    // Remove index name
+    cleanPathname = cleanPathname.replace(/(\/index)$/, "/");
 
     return `${cleanPathname}${search}${hash}`;
 
 }
+
+/**
+ * Don't navigate when the link is for a PDF, doc file
+ * By default, we don't navigate if there is a download link
+ */
+const urlHasExtension = (href: string) => {
+    const {pathname} = new URL(href, "http://x");
+    return /\.[^/]+$/.test(pathname);
+};
 
 /**
  * Path does not have the md or mdx extension but the link checker (editor or cli) needs them
@@ -30,8 +42,8 @@ function removeMarkdownExtensionAndIndex(url: string) {
  * Example:
  * * /docs/getting-started.md → /docs/getting-started
  * * /docs/getting-started.mdx → /docs/getting-started
- * * /docs/index.md → /docs
- * * /docs/index.mdx → /docs
+ * * /docs/index.md → /docs/
+ * * /docs/index.mdx → /docs/
  * * Leaves external links untouched
  *
  * Remove also the public
@@ -104,6 +116,15 @@ export default function rehypeHrefRewrite({publicDirName = 'public', base = ''}:
                     publicDirName: publicDirName,
                     absolute: false,
                 })
+
+                /**
+                 * If the URL has still an extension,
+                 * it's a file to download, we add the download property
+                 * Without it, a navigation will occur in Rsc browser
+                 */
+                if (urlHasExtension(node.properties.href)) {
+                    node.properties.download = true
+                }
             }
         });
     };

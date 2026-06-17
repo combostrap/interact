@@ -1,0 +1,75 @@
+---
+title: Icon
+---
+
+This page shows you how you can add icons to your [pages](page.md)
+
+## List
+
+### Markdown
+
+You can add a raw svg file in the [image directory](directory-layout.md) and use it
+in a [markdown](markdown.md) page with the [Icon](../components/icon.md) element.
+
+Example:
+
+```markdown
+<Icon src="favicon.svg" size="24"/>
+```
+
+Output:
+
+<Icon src="favicon.svg" size="24"/>
+
+### Programmatic Page
+
+#### Import
+
+In a [programmatic page (jsx, mdx)](page-module.md), you can import:
+
+* from a raw svg file
+
+```javascript
+import Envelope from "../img/bi-envelope-fill.svg"
+```
+
+* from a icon library
+
+```javascript
+// that delivers raw svg file
+import OpenAiIcon from "bootstrap-icons/icons/openai.svg"
+// or React component
+import {ChevronDownIcon} from "lucide-react";
+
+export default function myIcon() {
+    // The interact icon tailwind utility class made it an inline block, baseline aligned  
+    return <OpenAiIcon className="icon"/>
+} 
+```
+
+On [svg file import](svg.md), the file is [optimized with Svg](../reference/svg.md#optimization) and
+[transformed as React component]()
+
+### CSS font
+
+You can also use a icon stylesheet font.
+
+Example with [Bootstrap Icons](https://icons.getbootstrap.com/)
+
+* Add the [stylesheet](head.md#hoisting)
+
+```html
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+```
+
+Usage:
+
+```jsx
+<i className="bi bi-linkedin text-primary"></i>
+```
+
+### Styling
+
+We also add the `icon` [tailwind utility](../reference/tailwind.md)
+to style an imported svg as icon

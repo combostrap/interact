@@ -1,27 +1,25 @@
 import {createLogger, preview} from 'vite'
 import pc from "picocolors"
 import {resolveViteConfig} from "../shared/vite.config.js";
-import {BaseCommand} from "../baseCommand.js";
+import type {LogLevel} from "../shared/vite.config.js";
 
-export default class Preview extends BaseCommand<typeof Preview> {
-    static description = 'Preview the static build'
+export interface PreviewActionOptions {
+    confPath?: string;
+    logLevel?: LogLevel;
+}
 
-
-    async run(): Promise<void> {
-        const {flags} = await this.parse(Preview)
-
-        try {
-            const server = await preview(await resolveViteConfig({
-                confPath: flags.confPath,
-                logLevel: flags.logLevel,
-                command: "preview"
-            }));
-            server.printUrls();
-            server.bindCLIShortcuts({print: true});
-        } catch (e) {
-            let error = e as Error;
-            createLogger('error').error(pc.red(`error when starting preview server:\n${error.stack}`), {error: error});
-            process.exit(1);
-        }
+export async function previewCommand({confPath, logLevel}: PreviewActionOptions): Promise<void> {
+    try {
+        const server = await preview(await resolveViteConfig({
+            confPath,
+            logLevel,
+            command: "preview"
+        }));
+        server.printUrls();
+        server.bindCLIShortcuts({print: true});
+    } catch (e) {
+        let error = e as Error;
+        createLogger('error').error(pc.red(`error when starting preview server:\n${error.stack}`), {error: error});
+        process.exit(1);
     }
 }

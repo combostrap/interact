@@ -1,0 +1,162 @@
+
+/**
+ * Bootstrap grid system
+ * https://getbootstrap.com/docs/5.3/layout/grid/
+ */
+@layer components {
+
+    .cells {
+        --cells-gutter-x: 1.5rem;
+        --cells-gutter-y: 0;
+        display: flex;
+        flex-wrap: wrap;
+        margin-top: calc(-1 * var(--cells-gutter-y));
+        margin-right: calc(-.5 * var(--cells-gutter-x));
+        margin-left: calc(-.5 * var(--cells-gutter-x));
+    }
+
+    .cells > * {
+        box-sizing: border-box;
+        flex-shrink: 0;
+        width: 100%;
+        max-width: 100%;
+        padding-right: calc(var(--cells-gutter-x) * .5);
+        padding-left: calc(var(--cells-gutter-x) * .5);
+        margin-top: var(--cells-gutter-y);
+    }
+
+    .cell {
+        flex: 1 0 0;
+    }
+
+}
+
+
+@utility cell-auto {
+    flex: 0 0 auto;
+    width: auto;
+}
+
+/* Tailwind @utility css output ignores the source order, so we need to put important */
+/* Example even if cell is first and cells-row1 is last in the output: */
+/* cells-row-1 comes first at line 616 */
+/* cell comes last at line 646 (wins) */
+
+@utility cell-1 {
+    flex: 0 0 auto !important;
+    width: 8.33333333%;
+}
+@utility cell-2 {
+    flex: 0 0 auto !important;
+    width: 16.66666667%;
+}
+@utility cell-3 {
+    flex: 0 0 auto !important;
+    width: 25%;
+}
+@utility cell-4 {
+    flex: 0 0 auto !important;
+    width: 33.33333333%;
+}
+@utility cell-5 {
+    flex: 0 0 auto !important;
+    width: 41.66666667%;
+}
+@utility cell-6 {
+    flex: 0 0 auto !important;
+    width: 50%;
+}
+@utility cell-7 {
+    flex: 0 0 auto !important;
+    width: 58.33333333%;
+}
+@utility cell-8 {
+    flex: 0 0 auto !important;
+    width: 66.66666667%;
+}
+@utility cell-9 {
+    flex: 0 0 auto !important;
+    width: 75%;
+}
+@utility cell-10 {
+    flex: 0 0 auto !important;
+    width: 83.33333333%;
+}
+@utility cell-11 {
+    flex: 0 0 auto !important;
+    width: 91.66666667%;
+}
+@utility cell-12 {
+    flex: 0 0 auto !important;
+    width: 100%;
+}
+
+/** The number of cells by row */
+/* & is the class itself */
+@utility cells-row-auto {
+    & > * {
+        flex: 0 0 auto !important;
+        width: auto;
+    }
+}
+@utility cells-row-1 {
+    & > * {
+        flex: 0 0 auto !important;
+        width: 100%;
+    }
+}
+@utility cells-row-2 {
+    & > * {
+        flex: 0 0 auto !important;
+        width: 50%;
+    }
+}
+@utility cells-row-3 {
+    & > * {
+        flex: 0 0 auto !important;
+        width: 33.33333333%;
+    }
+}
+@utility cells-row-4 {
+    & > * {
+        flex: 0 0 auto !important;
+        width: 25%;
+    }
+}
+@utility cells-row-5 {
+    & > * {
+        flex: 0 0 auto !important;
+        width: 20%;
+    }
+}
+@utility cells-row-6 {
+    & > * {
+        flex: 0 0 auto !important;
+        width: 16.66666667%;
+    }
+}
+
+
+@utility cells-gap-0 {
+    --cells-gutter-x: 0;
+    --cells-gutter-y: 0;
+}
+@utility cells-gap-x-0 {
+    --cells-gutter-x: 0;
+}
+@utility cells-gap-y-0 {
+    --cells-gutter-y: 0;
+}
+
+@utility cells-gap-x-* {
+    --cells-gutter-x: calc(var(--spacing) * --value(integer));
+}
+
+@utility cells-gap-y-* {
+    --cells-gutter-y: calc(var(--spacing) * --value(integer));
+}
+
+@utility cells-gap-* {
+    --cells-gutter-x: calc(var(--spacing) * --value(integer));
+    --cells-gutter-y: calc(var(--spacing) * --value(integer));
+}

@@ -2,9 +2,10 @@
  * Type for a module that represents a page
  */
 
-import type {ComponentType} from "react";
+import type {ComponentType, ReactElement, ReactNode} from "react";
+import type {ContextProps} from "../componentsProvider/contextProps.js";
 
-export type PageComponent = ComponentType<{ request: Request }>
+export type PageComponent = ComponentType<ContextProps>
 
 export interface TocNode {
     value: string;
@@ -17,27 +18,57 @@ export interface TocNode {
 export type Frontmatter = {
     name?: string;
     title?: string;
+    lead?: string;
+    // do we show a hero (a string boolean value - true, false)
+    hero?: string;
     description?: string;
     layout?: string;
+    // keywords for search
     keyWords?: string;
     robots?: string;
     // order in a list
     order?: number;
     // group in a list
     group?: string;
-    // iso string
-    lastModified?: string;
     // 2 letters lang
     lang?: string;
-} & Record<string, string | undefined>
+    // add the prose class. Ie supports for styling when the content is not controlled (ie Markdown file, cms).
+    // Layouts should add a prose class to the container
+    prose?: boolean
+} & Record<string, any | undefined>
+
 
 /**
- * A page module exports optionally a frontmatter and a toc
- * Frontmatter is generic
+ * The page meta
  */
-type Page<F = unknown> = {
+export type PageMeta<F = unknown, D = unknow> = {
+    // For Programmatic page, the frontmatter may be absent
     frontmatter?: F & Frontmatter;
     toc?: TocNode[];
+};
+
+/**
+ * A page module that the middleware should return
+ * It exports optionally a frontmatter and a toc
+ * Frontmatter is generic
+ */
+export type Page<F = unknown, D = unknow> = PageMeta<F, D> & {
     default: PageComponent;
 };
+
+/**
+ * After receiving the page component, we split the content and head elements
+ * for head hoisting
+ */
+export type PageElements = {
+    /** The original tree with meta/script elements removed */
+    contentElement: ReactNode;
+    /** Collected meta and script elements to place in <head> */
+    headElements: ReactElement[];
+}
+
+/**
+ * The page pass to the layout
+ */
+type FinalPage<F = unknown, D = unknow> = PageMeta<F, D> & PageElements
 

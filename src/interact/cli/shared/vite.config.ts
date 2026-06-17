@@ -1,31 +1,48 @@
+/**
+ * The vite config.
+ * For debugging purpose, a user should be able to make this config again in a standalone vite config file.
+ * So make sure that the vite plugin are in vite
+ */
 import path from "node:path";
-import mdx from "@mdx-js/rollup";
+
 import react from "@vitejs/plugin-react";
 import rsc from "@vitejs/plugin-rsc";
-import pageModulesPlugin from "../../pages/viteVirtualPagesModules.js";
-import viteReloadOnConfChange from "../../config/viteReloadOnConfChange.js";
-import viteImageService from "../../images/imageViteDevMiddleware.js";
+import pagesProvider from "../../vite/pagesProvider.js";
+import confWatcher from "../../vite/confWatcher.js";
+import imageMiddleware from "../../vite/imageMiddleware.js";
 import type {InlineConfig} from "vite";
-import viteSsgPlugin from "../../rsc/static-generation/vite-ssg-plugin.js";
-
-import {imageEndPointEnvName, imageSecretEnvName, imageViteOutDirEnvName} from "../../images/imageMiddlewareHandler.js";
-import viteComponentProvider from "../../componentsProvider/viteVirtualComponentProviders.js";
+import ssg from "../../vite/ssg.js";
+import mdxComponentProvider from "../../vite/mdxComponentProvider.js";
 import svgReactPlugin from "vite-plugin-svgr";
-import viteOutlineNumberingStylesPlugin from "../../styling/viteOutlineNumberingStyleProvider.js";
-import {viteMiddlewareRegistry} from "../../middlewareEngine/viteMiddlewareRegistry.js";
-import {createMarkdownConfig, setMarkdownConfigGlobally} from "../../markdown/conf/markdownConfig.js";
-// interactConfig should be a relative path and not the package.json export as this is used by the client
-import {createInteractConfig, setInteractConfigGlobally} from "../../config/interactConfig.js";
+import Inspect from 'vite-plugin-inspect'
+import outlineNumberingStyleSheet from "../../vite/outlineNumberingStylesheet.js";
+import middlewareProvider from "../../vite/middlewareProvider.js";
+import layoutProvider from "../../vite/layoutProvider.js";
+import headProvider from "../../vite/headProvider.js";
+import tailwindcss from "@tailwindcss/vite"
+import globalStylesheet from "../../vite/globalStylesheet.js";
+import {setGlobalsConf} from "../../vite/globalConf.js";
+import mdxRollup from "../../vite/mdxRollup.js";
+import confResolved from "../../vite/confResolved.js";
+import {crawlFrameworkPkgs} from "vitefu";
+import {atAliasResolution} from "../../vite/atAliasResolution.js";
+import type {OutputOptions} from "rollup";
+import viteContextClientComponentsProvider from "../../vite/contextClientProvider.js";
+import viteCheckEnvExpansion from "../../vite/viteCheckEnvExpansion.js";
+import {publicHandler} from "../../vite/publicHandler.js";
+import viteContextServerComponentsProvider from "../../vite/contextServerProvider.js";
 
 
 export type InteractCommand = 'start' | 'build' | 'preview';
-type LogLevel = 'info' | 'warn' | 'error' | 'silent';
+// same log level as vite
+export type LogLevel = 'info' | 'warn' | 'error' | 'silent';
 type InteractConfig = {
-    confPath: string,
+    confPath?: string,
     command?: InteractCommand;
     port?: number,
     outDir?: string;
     logLevel?: LogLevel;
+    inspect?: boolean;
 };
 
 
@@ -34,99 +51,171 @@ export async function resolveViteConfig(
         confPath,
         port,
         command,
-        outDir = "dist"
+        logLevel,
+        inspect,
     }: InteractConfig): Promise<InlineConfig> {
 
+    /**
+     * Set the globals config
+     */
+    let interactConfigTyped = await setGlobalsConf(confPath)
 
-    const interactConfigTyped = createInteractConfig(confPath);
-    setInteractConfigGlobally(interactConfigTyped);
+    /**
+     * In case, we get a config from the user
+     */
+    let viteUserConfig = {};
+    /**
+     * All react library that may use rsc directive (use client) needs to be processed by Vite
+     * (ie needs to be in noExternal)
+     * We scan the package to do that. By default, rsc vite plugin checks only that react is in peerDependencies
+     * to add it
+     * By default, Dependencies are "externalized" from Vite's SSR transform module system when running SSR.
+     * If a dependency needs to be transformed by Vite's pipeline, they need to be added to ssr.noExternal.
+     *
+     * Module that should be processed by Vite: ie
+     * * all react module because the RSC bundler needs to find any potential "use client" and "use server".
+     * * CSS that need to be processed
+     * ...
+     * See why here: https://github.com/vitejs/vite-plugin-react/issues/894
+     * otherwise you get: Invalid hook call due to 2 react instances
+     * Adapted from https://github.com/vitejs/vite-plugin-react/issues/894#issuecomment-3368037728
+     */
+    let INTERACT_PKG_NAME = "@combostrap/interact";
+    const reactPkgsConfig = await crawlFrameworkPkgs({
+        root: interactConfigTyped.paths.rootDirectory,
+        isBuild: command === 'build',
+        viteUserConfig: viteUserConfig,
+        /**
+         * Called first, then isFrameworkPkgByJson is called if undefined is returned
+         */
+        isFrameworkPkgByName(pkgName) {
+            if (pkgName == INTERACT_PKG_NAME) {
+                return true;
+            }
+            return undefined;
+        },
+        isFrameworkPkgByJson(pkgJson) {
+            let pkgName = pkgJson['name'];
+            if (['@vitejs/plugin-rsc', 'react-dom'].includes(pkgName)) {
+                return
+            }
+            let dependencies = pkgJson['dependencies'] || [];
+            let peerDependencies = pkgJson['peerDependencies'] || [];
+            let reactPackage = 'react' in peerDependencies || 'react' in dependencies;
+            let interactPackage = INTERACT_PKG_NAME in peerDependencies || INTERACT_PKG_NAME in dependencies;
+            return peerDependencies && (reactPackage || interactPackage)
+        }
+    });
 
-    // https://vite.dev/guide/build#public-base-path
-    let publicBasePath = interactConfigTyped.site.base;
+    let dedupe = [
+        "react",
+        "react-dom",
+        "server-only",
+        "client-only",
+        "@vitejs/plugin-rsc",
+        ...reactPkgsConfig.ssr.noExternal
+    ]
 
-    let cachePath = path.resolve(interactConfigTyped.paths.cacheDirectory, "cache")
-
-
-    // Note: You can merge also
-    // https://vite.dev/guide/api-javascript#mergeconfig
-    let outDistDir;
-    if (!outDir.startsWith("/")) {
-        outDistDir = path.resolve(interactConfigTyped.paths.rootDirectory, outDir);
-    } else {
-        outDistDir = outDir;
+    // Hack because oclif dev.js set it
+    // and need it to allow debug
+    if (command === "build") {
+        process.env["NODE_ENV"] = "production"
     }
 
     /**
-     * Use to generate image into the static build
+     * Deadlock due to bad react import in a svgr bundle
+     * We found the case where react was bundled in index.js,
+     * and we then got a deadlock in a svgr module caused by
+     * import { r as react_reactServerExports } from "../index.js";
+     * To get the good import:
+     * import { a as react_reactServerExports } from "./react.react-server-CTq-PDh9.js";
+     * We have set a manual chunk to get react out of the index file
      */
-    process.env[imageViteOutDirEnvName] = outDistDir
-    /**
-     * Used to generate the URL in dev
-     * The endpoint of the local service endpoint ("/_images")
-     */
-    let imageMiddlewareEndPoint = "/_images";
-    process.env[imageEndPointEnvName] = imageMiddlewareEndPoint
+    let rollupOption: OutputOptions = {
+        manualChunks(id) {
+            if (id.includes('node_modules/react')) {
+                return 'react.react-server'; // or whatever name fits
+            }
+            // // Could also be one chunk per npm package ?
+            // // becomes per-library cache instead of per-app-revision.
+            // if (id.includes("node_modules")) {
+            //     const pkg = id.match(/node_modules\/([^/]+)/)?.[1];
+            //     if (pkg) return `vendor-${pkg}`;
+            // }
+        },
+    }
+
+    const envInteractPrefix = 'INTERACT_'
 
     /**
-     * The components provider name
-     * (for mdx and layout)
+     * The vite config
      */
-    const componentsProviderModuleName = "interact:components"
-
-    /**
-     * Markdown Config with a
-     */
-    const markdownConfig = await createMarkdownConfig({
-        componentsProviderModuleName: componentsProviderModuleName,
-        interactConfig: interactConfigTyped
-    })
-    setMarkdownConfigGlobally(markdownConfig)
-
     return {
+
         mode: command == "build" ? "production" : "development",
-        logLevel: 'info', // or 'warn' — try 'info' first
-        root: confPath,
-        base: publicBasePath,
+        logLevel: logLevel, // or 'warn' — try 'info' first
+        root: interactConfigTyped.paths.rootDirectory,
+        // https://vite.dev/guide/build#public-base-path
+        base: interactConfigTyped.site.base,
         server: {
             port: port,
+            // for debugging: local network with host or remote with ngrok
+            // host: true, // same as --host, exposes on 0.0.0.0
+            allowedHosts: [".ngrok-free.app"]
         },
+        // if inspect is enabled
+        devtools: inspect,
         resolve: {
+            /**
+             * Order of precedence
+             * By default, tsc compilation writes the js file next to the ts file
+             * Works only without extension in the import
+             */
+            extensions: ['.ts', '.tsx', '.mts', '.jsx', '.js', '.mjs'],
             // https://vite.dev/config/shared-options#resolve-alias
             // When aliasing to file system paths, always use absolute paths.
-            alias: {}
+            alias: {},
+            // Trying to avoid React hooks fatal error on client that uses the yarn portal protocol in dependencies
+            // https://github.com/vitejs/vite/blob/f09299ce13b55d51456985b96d4c3b3a1f131acb/packages/plugin-react/src/index.ts#L339
+            // And it works until now
+            dedupe: dedupe
         },
         // https://vite.dev/config/shared-options#publicdir
-        publicDir: interactConfigTyped.paths.publicDirectory,
+        // We implement our own
+        publicDir: false,
         // https://vite.dev/config/shared-options#cachedir
-        cacheDir: path.resolve(interactConfigTyped.paths.cacheDirectory, ".vite"),
+        cacheDir: path.resolve(interactConfigTyped.paths.runtimeDirectory, ".vite"),
         build: {
-            // https://rollupjs.org/configuration-options/
-            rollupOptions: {
-                external: [
-                    // Ensure image service dependency (present in our vite-image-service.ts file)
-                    // such as sharp, mime and etag is excluded from bundling
-                    // https://sharp.pixelplumbing.com/install/#vite
-                    "sharp",
-                    "mime",
-                    "etag"
-                ]
-            },
+            // for debugging ? // disables all minification including name mangling
+            minify: command == "build",
             // https://vite.dev/config/build-options#build-outdir
-            outDir: outDistDir
+            outDir: interactConfigTyped.paths.buildDirectory,
+            sourcemap: command == "build",
         },
+        // not import.meta.env.VITE_POSTHOG_API_HOST but import.meta.env.INTERACT_POSTHOG_API_HOST
+        envPrefix: envInteractPrefix,
         // specify entry point for each environment.
         environments: {
             // `rsc` environment loads modules with `react-server` condition.
-            // this environment is responsible for:
+            // This environment is responsible for:
             // - RSC stream serialization (React VDOM -> RSC stream)
             // - server functions handling
             rsc: {
+                resolve: {
+                    noExternal: reactPkgsConfig.ssr.noExternal,
+                },
                 build: {
                     rollupOptions: {
+                        // @ts-ignore - vite vendor it, there is a path error
+                        output: rollupOption,
+                        // Main entry: https://rollupjs.org/configuration-options/#input
                         input: {
-                            index: path.resolve(interactConfigTyped.paths.srcDirectory, 'rsc/server/entry.rsc.js'),
+                            // generated as index.js
+                            index: path.resolve(interactConfigTyped.paths.interactResourcesDirectory, 'rsc/server/entry.rsc.tsx'),
                         },
                     },
+                    outDir: path.resolve(interactConfigTyped.paths.buildDirectory, "rsc"),
+                    emptyOutDir: true
                 },
             },
 
@@ -135,12 +224,21 @@ export async function resolveViteConfig(
             // - RSC stream deserialization (RSC stream -> React VDOM)
             // - traditional SSR (React VDOM -> HTML string/stream)
             ssr: {
+                resolve: {
+                    noExternal: reactPkgsConfig.ssr.noExternal,
+                },
                 build: {
                     rollupOptions: {
+                        // @ts-ignore - vite vendor it, there is a path error
+                        output: rollupOption,
+                        // Main entry: https://rollupjs.org/configuration-options/#input
                         input: {
-                            index: path.resolve(interactConfigTyped.paths.srcDirectory, 'rsc/server/entry.ssr.js'),
+                            // generated as index.js
+                            index: path.resolve(interactConfigTyped.paths.interactResourcesDirectory, 'rsc/server/entry.ssr.tsx'),
                         },
                     },
+                    outDir: path.resolve(interactConfigTyped.paths.buildDirectory, "ssr"),
+                    emptyOutDir: true
                 },
             },
 
@@ -153,59 +251,94 @@ export async function resolveViteConfig(
             client: {
                 build: {
                     rollupOptions: {
+                        // @ts-ignore - vite vendor it, there is a path error
+                        output: rollupOption,
+                        // Main entry: https://rollupjs.org/configuration-options/#input
                         input: {
-                            index: path.resolve(interactConfigTyped.paths.srcDirectory, 'rsc/browser/entry.browser.js'),
+                            // generated as index.js
+                            index: path.resolve(interactConfigTyped.paths.interactResourcesDirectory, 'rsc/browser/entry.browser.tsx'),
                         },
+                        // https://rollupjs.org/configuration-options/
+                        external: [
+                            // Ensure image service dependency (present in our vite-image-service.ts file)
+                            // such as sharp, mime and etag is excluded from bundling
+                            // https://sharp.pixelplumbing.com/install/#vite
+                            "sharp",
+                            "mime",
+                            "etag",
+                            // Don't bundle node
+                            /^node:/,
+                            // Peer dependencies We don't have one for now
+                            // import packageJson  from '../../../../package.json' with { type: 'json' };
+                            // const { peerDependencies } = packageJson;
+                        ]
                     },
+                    outDir: path.resolve(interactConfigTyped.paths.buildDirectory, "client"),
+                    emptyOutDir: true
+                },
+                // don't bundle sharp in the client
+                optimizeDeps: {
+                    exclude: ['sharp'],
+                    include: [
+                        // Solution for error:
+                        // use-sync-external-store/shim/index.js does not provide an export named useSyncExternalStore
+                        // that is created by the response: http://localhost:5173/node_modules/@base-ui/utils/esm/store/useStore.js?v=076b4f9e
+                        // it seems that vite will transform it to not be a cjs
+                        // in the browser, you can see that the error comes from PageMenuButton that imports "@base-ui/react/menu"
+                        "@base-ui/react/menu",
+                    ]
                 },
             },
         },
+        // Order does not matter
+        // The first request made (ie to rsc entry) will start to load the module graph
         plugins: [
-            pageModulesPlugin(interactConfigTyped.paths.pagesDirectory, ['mdx', 'tsx', 'jsx']),
-            viteImageService({
-                baseDir: interactConfigTyped.paths.imagesDirectory,
-                cacheDir: command === 'start' ? undefined : path.resolve(cachePath, "img"),
-                secret: process.env[imageSecretEnvName],
-                endPoint: imageMiddlewareEndPoint
-            }),
-            viteReloadOnConfChange(interactConfigTyped),
-            // used by mdx
-            viteComponentProvider({moduleName: componentsProviderModuleName, interactConfig: interactConfigTyped}),
-            // https://mdxjs.com/packages/mdx/#processoroptions
-            mdx(markdownConfig.getMdxRollupConfig(command)),
-            react(),
+            // Resolve the @/ in a cascading way
+            {
+                enforce: "pre", // should be first
+                ...atAliasResolution(),
+            },
+            // Tailwind (it's an array of plugin)
+            tailwindcss(),
+            globalStylesheet(),
+            outlineNumberingStyleSheet(),
+            imageMiddleware({command: command}),
             // https://www.npmjs.com/package/vite-plugin-svgr
             svgReactPlugin({
+                // If the content needs to be imported as string add the `?raw` property
                 include: '**/*.svg',
                 svgrOptions: {
                     plugins: ['@svgr/plugin-svgo', '@svgr/plugin-jsx'],
-                    svgoConfig: {
-                        plugins: ['preset-default', 'removeTitle', 'removeDesc', 'removeDoctype', 'cleanupIds'],
-                    },
+                    svgoConfig: interactConfigTyped.svg.svgo
                 },
             }),
-            viteOutlineNumberingStylesPlugin(interactConfigTyped),
+            react(),
+            confWatcher(),
+            mdxRollup({command}),
+            // Component provider (provide the MdxComponent for mdx)
+            mdxComponentProvider(),
+            // Context provider (provide the App wrapper (ie React ContextProvider))
+            viteContextClientComponentsProvider(),
+            viteContextServerComponentsProvider(),
+            // Head provider (provide the HTML head dynamically)
+            headProvider(),
+            // Layout provider (provide the layouts dynamically)
+            layoutProvider(),
+            // Pages (after layout)
+            pagesProvider(['mdx', 'tsx', 'jsx']),
             {
                 enforce: "post", // runs after as we depend on the component plugin
-                ...viteMiddlewareRegistry(
-                    interactConfigTyped,
-                    [
-                        ...interactConfigTyped.pages.providers || [],
-                        {
-                            importPath: path.resolve(interactConfigTyped.paths.srcDirectory, 'middleware/localPagesMiddleware.js'),
-                            props: {
-                                pagesDirectory: interactConfigTyped.paths.pagesDirectory
-                            }
-                        }]
-                )
+                ...middlewareProvider()
             },
-            // Rsc
-            // At the end because the client import the outline numbering css virtual vite module
-            // Note: you can use vite-plugin-inspect (https://github.com/antfu-collective/vite-plugin-inspect)
-            // to understand how "use client" and "use server" directives are transformed internally.
-            // import("vite-plugin-inspect").then(m => m.default()),
             rsc(),
-            viteSsgPlugin(),
+            ssg(),
+            viteCheckEnvExpansion(),
+            // The vite-plugin-inspect (https://github.com/antfu-collective/vite-plugin-inspect)
+            // to understand how "use client" and "use server" directives are transformed internally.
+            inspect && Inspect(),
+            logLevel == 'info' && confResolved(),
+            // resources handling
+            publicHandler({sourceDir: interactConfigTyped.paths.publicDirectory})
         ],
     }
 }

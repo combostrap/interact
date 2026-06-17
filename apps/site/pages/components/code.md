@@ -28,10 +28,10 @@ let counter = 1 + 1
 
 ### Programmatic Page
 
-You can also use it directly in a [programmatic page](../reference/page-module.md)
+You can also [install it](../reference/registry.md) or use it directly in a [programmatic page](../reference/page-module.md)
 
 ```jsx
-import Code from "interact:components";
+import Code from "@combostrap/interact/component/Code";
 
 export default function myPage() {
     return (
@@ -51,6 +51,6 @@ yield:
 
 ## Registration
 
-The code component is [registered](../howto/add-a-content-component.md#register-it) to the `pre` html element.
+The code component is [registered](../howto/add-a-markdown-component.md#register-it) to the `pre` html element.
 
 Therefore, it will pretty print the code enclosed by `<pre>` element and [Markdown fence](#markdown).

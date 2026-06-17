@@ -1,7 +1,8 @@
 node_modules
 .idea
-.cache
+.cache/*
 
+apps/nico
 #https://yarnpkg.com/getting-started/qa#which-files-should-be-gitignored
 # not a zero install, we don't want the cache files
 .yarn/*

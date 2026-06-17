@@ -1,0 +1,13 @@
+version: '3'
+
+tasks:
+  release:
+    cmds:
+      # release-it is a bash wrapper that injects the env
+      # and run yarn release-it
+      - |
+        yarn check && release-it
+  deploy:
+    cmds:
+      - |
+        yarn check && git tag -f early-access && git push -f origin early-access

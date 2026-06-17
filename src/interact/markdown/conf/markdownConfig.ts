@@ -1,14 +1,28 @@
+/**
+ * To be able to use Markdown on the client
+ * we should be able to bundle this file
+ * (ie the node path import should be deleted (ie we need to use a virtual module to distribute the config)
+ */
 import path from "node:path";
 import {getMandatoryUnifiedPlugins} from "./markdownPluginsMandatory.js";
-import type {InteractCommand} from "../../cli/shared/vite.config.js";
+import {type InteractCommand} from "../../cli/shared/vite.config.js";
 import type {Options} from "@mdx-js/rollup";
 
 type MarkdownConfig = Awaited<ReturnType<typeof createMarkdownConfig>>
 
+/**
+ * The components provider name
+ * (for mdx)
+ */
+export const componentsProviderModuleName = "interact:mdx-components"
+
 const GLOBAL_KEY = "__interactMarkdownProcessor"
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
 import type {PluggableList} from "unified";
-import type {InteractConfig} from "../../config/interactConfig.js";
+import {getInteractConfig} from "../../config/interactConfig.js";
+import {fileURLToPath} from "node:url";
+import {dirname} from "path";
 
 /**
  * User config type
@@ -18,11 +32,13 @@ export type InteractMarkdownConfig = {
     rehypePlugins?: PluggableList
 }
 
-export function setMarkdownConfigGlobally(processor: MarkdownConfig) {
+export function setMarkdownConfigGlobally(processor: MarkdownConfig, force: boolean = false): void {
     const g = globalThis as any
 
     if (g[GLOBAL_KEY]) {
-        throw new Error("Markdown processor already initialized")
+        if (!force) {
+            throw new Error("Markdown processor already initialized")
+        }
     }
 
     g[GLOBAL_KEY] = processor
@@ -38,24 +54,27 @@ export function getMarkdownConfig(): MarkdownConfig {
     return g[GLOBAL_KEY]
 }
 
-export type InteractMarkdownInit = {
-    componentsProviderModuleName: string
-    interactConfig: InteractConfig
-};
 
-export async function createMarkdownConfig(props: InteractMarkdownInit) {
+export async function createMarkdownConfig() {
 
+    let interactConfig = getInteractConfig()
 
-    let initDefaultFormat = props.interactConfig.markdown.defaultMarkdownFormat
+    let initDefaultFormat = interactConfig.markdown.defaultMarkdownFormat
 
     /**
      * Markdown Configuration file
+     * Should be in a virtual module/or a direct import
+     * otherwise we get a Not Exist error when running the production bundle because it's not bundled
      */
-    let markdownConfigImportPath = path.resolve(props.interactConfig.paths.srcDirectory, "markdown/conf/markdownPluginsUserDefault.js");
-    let configImportPath = props.interactConfig.markdown.configImportPath;
+    let extension = "ts"
+    if (__dirname.includes("dist")) {
+        extension = "js"
+    }
+    let markdownConfigImportPath = path.resolve(__dirname, `markdownPluginsUserDefault.${extension}`);
+    let configImportPath = interactConfig.markdown.configImportPath;
     if (configImportPath != null) {
         if (configImportPath.startsWith(".")) {
-            markdownConfigImportPath = path.resolve(props.interactConfig.paths.rootDirectory, configImportPath);
+            markdownConfigImportPath = path.resolve(interactConfig.paths.rootDirectory, configImportPath);
         }
     }
 
@@ -76,9 +95,13 @@ export async function createMarkdownConfig(props: InteractMarkdownInit) {
         throw new Error(`The markdown configuration module (${markdownConfigImportPath}) has no ${markdownConfig} export`)
     }
     let initMarkdownUserConfig = markdownConfModule.markdownConfig
-    let initMandatoryUnifiedPlugins = getMandatoryUnifiedPlugins(props.interactConfig)
+    let initMandatoryUnifiedPlugins = getMandatoryUnifiedPlugins(interactConfig)
 
     return {
+        /**
+         * Config for the Rollup Mdx Plugins Options
+         * @param command
+         */
         getMdxRollupConfig: function (command?: InteractCommand): Options {
             return {
                 development: command == "start",
@@ -88,6 +111,7 @@ export async function createMarkdownConfig(props: InteractMarkdownInit) {
                 providerImportSource: this.getProviderImportSource(),
                 remarkPlugins: this.getMdxConfig().remarkPlugins,
                 rehypePlugins: this.getMdxConfig().rehypePlugins,
+                recmaPlugins: this.getMdxConfig().recmaPlugins,
             }
         },
         getMdxConfig: function () {
@@ -99,7 +123,11 @@ export async function createMarkdownConfig(props: InteractMarkdownInit) {
                 rehypePlugins: [
                     ...(this.getMdConfig().rehypePlugins || {}),
                     ...initMandatoryUnifiedPlugins.mdx.rehypePlugins,
+                ],
+                recmaPlugins: [
+                    ...initMandatoryUnifiedPlugins.mdx.recmaPlugins,
                 ]
+
             }
         },
         getMdConfig: function () {
@@ -118,7 +146,7 @@ export async function createMarkdownConfig(props: InteractMarkdownInit) {
             return initDefaultFormat
         },
         getProviderImportSource: function () {
-            return props.componentsProviderModuleName;
+            return componentsProviderModuleName;
         }
     }
 }
