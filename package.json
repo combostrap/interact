@@ -16,6 +16,7 @@
     "check:resources": "tsc -p src/resources/tsconfig.json",
     "watch": "tsc --watch",
     "start": "ninteract start --confPath=apps/site",
+    "favicon": "ninteract favicon --confPath=apps/site",
     "site": "cd ../../gerardnico/com-gerardnico && ninteract start",
     "ssg": "ninteract build --confPath=apps/site",
     "preview": "ninteract preview --confPath=apps/site",

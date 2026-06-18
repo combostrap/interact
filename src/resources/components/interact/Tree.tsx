@@ -219,7 +219,7 @@ export default function Tree({data}: { data: PageNode[] }) {
     ])
 
     return (
-        <div className="w-72 border-r h-screen p-2">
+        <div className="w-72 border-r p-2">
             <FileTree
                 nodes={data}
                 expanded={expanded}

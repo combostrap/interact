@@ -68,12 +68,16 @@ jobs:
       - name: Build the interact cli
         run: yarn build
 
-      - name: Build the registry and website
+      - name: Build the registry
         run: |
           yarn registry
 
-      - name: Build the website
+      - name: Build the Favicon
         run: |
+          yarn interact favicon --confPath=apps/site
+
+      - name: Build the website
+        run: | 
           yarn interact build --confPath=${{ env.APP_DIR }}
 
       # actions/deploy-pages expect a zip
