@@ -58,7 +58,7 @@ type UseUrlStateOptions<T> = {
     /** The URL search param key */
     key: string;
     /** Default value when the param is absent */
-    defaultValue?: T;
+    defaultValue?: T | null;
     /** How to convert between T and a URL string */
     serializer?: Serializer<T>;
 };
@@ -83,13 +83,13 @@ export function useUrlState<T>({
                                    key,
                                    defaultValue = null,
                                    serializer = stringSerializer as unknown as Serializer<T>
-                               }: UseUrlStateOptions<T>): [T, (value: T | null) => void] {
+                               }: UseUrlStateOptions<T>): [T | null, (value: T | null) => void] {
 
 
-    const [state, setState] = useState<T>(defaultValue);
+    const [state, setState] = useState<T | null>(defaultValue);
 
     // Read initial value from URL
-    const readFromUrl = useCallback((): T => {
+    const readFromUrl = useCallback((): T | null => {
         const url = new URL(window.location.href);
         const raw = url.searchParams.get(key);
         if (raw === null) return defaultValue;
@@ -100,7 +100,7 @@ export function useUrlState<T>({
         }
     }, [key, defaultValue, serializer]);
 
-    const writeToUrl = useCallback((state:T) => {
+    const writeToUrl = useCallback((state: T | null) => {
         const url = new URL(window.location.href);
 
         const isEmpty =

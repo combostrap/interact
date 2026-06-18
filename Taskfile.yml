@@ -6,7 +6,7 @@ tasks:
       # release-it is a bash wrapper that injects the env
       # and run yarn release-it
       - |
-        yarn check && release-it
+        yarn check && release
   deploy:
     cmds:
       - |
