@@ -33,7 +33,11 @@ export default function Aside({page, context, ...props}: AsideProps) {
     let interactConfig = getInteractConfig();
     let data = getPagesTree(interactConfig.paths.pagesDirectory).children ?? []
 
-    return <Tree data={data} {...props} />
+    return (
+        <aside {...props}>
+            <Tree data={data} {...props} />
+        </aside>
+    )
 
 
 }

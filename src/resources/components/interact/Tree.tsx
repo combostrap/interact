@@ -10,6 +10,7 @@ export type Props = {
     nodes: PageNode[]
     expanded: string[]
     onExpandedChange: (expanded: string[]) => void
+    className?: string
 }
 
 function cn(...classes: (string | undefined | false)[]) {
@@ -42,6 +43,7 @@ function FileTree({
                       nodes,
                       expanded,
                       onExpandedChange,
+                      className,
                   }: Props) {
     const expandedSet = React.useMemo(() => new Set(expanded), [expanded])
 
@@ -143,7 +145,7 @@ function FileTree({
 
     return (
         <div
-            className="w-full text-sm select-none"
+            className={cn("text-sm select-none", className)}
             role="tree"
             tabIndex={0}
             onKeyDown={handleKeyDown}
@@ -193,7 +195,7 @@ function FileTree({
                             )}
                             <span className="truncate">
                                 {!isFolder ? (
-                                    <Anchor href={node.path} className={cn("truncate capitalize",focusClass)}>
+                                    <Anchor href={node.path} className={cn("truncate capitalize", focusClass)}>
                                         {node.name}
                                     </Anchor>
                                 ) : (
@@ -219,13 +221,13 @@ export default function Tree({data}: { data: PageNode[] }) {
     ])
 
     return (
-        <div className="w-72 border-r p-2">
-            <FileTree
-                nodes={data}
-                expanded={expanded}
-                onExpandedChange={setExpanded}
-            />
 
-        </div>
+        <FileTree
+            nodes={data}
+            expanded={expanded}
+            onExpandedChange={setExpanded}
+            className="p-2"
+        />
+
     )
 }
