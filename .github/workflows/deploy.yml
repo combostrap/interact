@@ -68,10 +68,13 @@ jobs:
       - name: Build the interact cli
         run: yarn build
 
-      - name: Build the components registry and website
+      - name: Build the registry and website
         run: |
           yarn registry
-          ./node_modules/.bin/interact build --confPath=${{ env.APP_DIR }}
+
+      - name: Build the website
+        run: |
+          yarn interact build --confPath=${{ env.APP_DIR }}
 
       # actions/deploy-pages expect a zip
       - name: Upload Pages artifact
