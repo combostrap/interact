@@ -1,5 +1,5 @@
 .pageMain > *, .pageCore {
-    min-width: 0; /** not auto */
+    /*min-width: 0; !** not auto *!*/
 }
 
 
@@ -60,6 +60,8 @@
 
     .mainContent {
         grid-column: main;
+        /* otherwise it's collapsing for a table, strange */
+        min-width: 100%;
     }
 
     .mainFooter {

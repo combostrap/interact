@@ -18,6 +18,7 @@ import type {ContextProps, LayoutProps} from "../interact/componentsProvider/con
 import {type InteractConfig} from "../interact/config/interactConfig.js"
 
 import type {InteractCommand} from "../cli/shared/vite.config.js";
+import type {PageNode} from "../resources/rsc/server/handler.tsx";
 
 export {
     InteractConfig,
@@ -30,7 +31,8 @@ export {
     ContextProps,
     LayoutProps,
     Frontmatter,
-    TocNode
+    TocNode,
+    PageNode
 }
 
 

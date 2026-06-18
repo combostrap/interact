@@ -1,22 +1,14 @@
 "use client"
 
 import * as React from "react"
-import { ChevronRight, ChevronDown, Folder, File } from "lucide-react"
-
-export type TreeNode = {
-    name: string
-    path: string
-    type: "file" | "folder"
-    children?: TreeNode[]
-}
+import {ChevronRight, ChevronDown} from "lucide-react"
+import type {PageNode} from "@/rsc/server/handler.tsx";
+import Anchor from "@combostrap/interact/components/Anchor";
+import {useEffect} from "react";
 
 export type Props = {
-    nodes: TreeNode[]
-
-    selected: string | null
+    nodes: PageNode[]
     expanded: string[]
-
-    onSelect: (path: string) => void
     onExpandedChange: (expanded: string[]) => void
 }
 
@@ -25,14 +17,14 @@ function cn(...classes: (string | undefined | false)[]) {
 }
 
 function flattenVisibleNodes(
-    nodes: TreeNode[],
+    nodes: PageNode[],
     expandedSet: Set<string>,
     depth = 0
-): Array<{ node: TreeNode; depth: number }> {
-    const result: Array<{ node: TreeNode; depth: number }> = []
+): Array<{ node: PageNode; depth: number }> {
+    const result: Array<{ node: PageNode; depth: number }> = []
 
     for (const node of nodes) {
-        result.push({ node, depth })
+        result.push({node, depth})
 
         if (node.type === "folder" && expandedSet.has(node.path)) {
             if (node.children?.length) {
@@ -47,20 +39,31 @@ function flattenVisibleNodes(
 }
 
 function FileTree({
-                             nodes,
-                             selected,
-                             expanded,
-                             onSelect,
-                             onExpandedChange,
-                         }: Props) {
+                      nodes,
+                      expanded,
+                      onExpandedChange,
+                  }: Props) {
     const expandedSet = React.useMemo(() => new Set(expanded), [expanded])
 
     const [focusedPath, setFocusedPath] = React.useState<string | undefined>(undefined)
+    const [actualPath, setActual] = React.useState<string | undefined>(undefined)
 
     const flat = React.useMemo(
         () => flattenVisibleNodes(nodes, expandedSet),
         [nodes, expandedSet]
     )
+
+    /**
+     * Listen to navigation
+     * pushstate is registered in the entry.browser.tsx
+     */
+    useEffect(() => {
+        const handlePathChange = () => setActual(window.location.pathname);
+        window.addEventListener('pushstate', handlePathChange);
+        return () => {
+            window.removeEventListener('pushstate', handlePathChange);
+        };
+    }, []);
 
     const visiblePaths = flat.map((n) => n.node.path)
 
@@ -132,8 +135,6 @@ function FileTree({
 
                 if (node.type === "folder") {
                     setExpanded(node.path)
-                } else {
-                    onSelect(node.path)
                 }
                 break
             }
@@ -153,55 +154,55 @@ function FileTree({
             }}
         >
             <ul className="space-y-0.5">
-                {flat.map(({ node, depth }) => {
+                {flat.map(({node, depth}) => {
                     const isFolder = node.type === "folder"
                     const isExpanded = expandedSet.has(node.path)
-                    const isSelected = selected === node.path
                     const isFocused = focusedPath === node.path
 
+                    let focusClass = "text-primary";
+                    if (actualPath !== node.path) {
+                        focusClass = "text-black"
+                    }
                     return (
                         <li
                             key={node.path}
                             role="treeitem"
                             aria-expanded={isFolder ? isExpanded : undefined}
-                            aria-selected={isSelected}
                             tabIndex={-1}
                             className={cn(
                                 "flex items-center gap-1 rounded px-2 py-1 cursor-pointer",
                                 isFocused && "bg-accent",
-                                isSelected && "font-medium"
                             )}
-                            style={{ paddingLeft: depth * 16 }}
+                            style={{paddingLeft: depth * 16}}
                             onClick={() => {
                                 setFocusedPath(node.path)
-
                                 if (isFolder) {
                                     setExpanded(node.path)
-                                } else {
-                                    onSelect(node.path)
                                 }
                             }}
                             onMouseMove={() => setFocusedPath(node.path)}
                         >
-              <span className="flex items-center gap-1">
-                {isFolder ? (
-                    isExpanded ? (
-                        <ChevronDown className="h-4 w-4" />
-                    ) : (
-                        <ChevronRight className="h-4 w-4" />
-                    )
-                ) : (
-                    <span className="w-4" />
-                )}
-
-                  {isFolder ? (
-                      <Folder className="h-4 w-4 text-muted-foreground" />
-                  ) : (
-                      <File className="h-4 w-4 text-muted-foreground" />
-                  )}
-              </span>
-
-                            <span className="truncate">{node.name}</span>
+                            {isFolder && (
+                                <span className="flex items-center gap-1">
+                                {isExpanded ? (
+                                    <ChevronDown className="h-4 w-4"/>
+                                ) : (
+                                    <ChevronRight className="h-4 w-4"/>
+                                )}
+                                </span>
+                            )}
+                            <span className="truncate">
+                                {!isFolder ? (
+                                    <Anchor href={node.path} className={cn("truncate capitalize",focusClass)}>
+                                        {node.name}
+                                    </Anchor>
+                                ) : (
+                                    <span className="truncate capitalize">
+                                    {node.name}
+                                    </span>
+                                )
+                                }
+                            </span>
                         </li>
                     )
                 })}
@@ -210,8 +211,7 @@ function FileTree({
     )
 }
 
-export default function Tree({data}: { data: TreeNode[] }) {
-    const [selected, setSelected] = React.useState<string | null>(null)
+export default function Tree({data}: { data: PageNode[] }) {
 
     const [expanded, setExpanded] = React.useState<string[]>([
         "/src",
@@ -222,18 +222,10 @@ export default function Tree({data}: { data: TreeNode[] }) {
         <div className="w-72 border-r h-screen p-2">
             <FileTree
                 nodes={data}
-                selected={selected}
                 expanded={expanded}
-                onSelect={(path) => {
-                    setSelected(path)
-                    console.log("Selected file:", path)
-                }}
                 onExpandedChange={setExpanded}
             />
 
-            <div className="mt-4 text-xs text-muted-foreground">
-                Selected: {selected ?? "none"}
-            </div>
         </div>
     )
 }

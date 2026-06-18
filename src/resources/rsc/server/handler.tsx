@@ -15,16 +15,88 @@ import {hoistHeadElements} from "@/rsc/server/headElementHoisting";
 import * as NotFound from "@/components/pages/NotFound";
 import InteractApp from "@/rsc/server/InteractApp";
 
-export interface PageFile {
-    path: string;
-    name: string;
+
+export type PageNode = {
+    name: string
+    path: string
+    type: "file" | "folder"
+    children?: PageNode[]
 }
 
 const middlewarePipeline = createMiddlewarePipeline();
 middlewares.forEach(middleware => middlewarePipeline.use(middleware))
 
-export function getPagesRecursively(dir: string, startDir: string = dir): Record<string, PageFile> {
-    const results: Record<string, PageFile> = {};
+export function getPagesTree(dir: string, startDir: string = dir): PageNode {
+
+    function getBaseFileProps(absoluteFilePath: string, absoluteStartDir: string) {
+        if (absoluteFilePath == absoluteStartDir) {
+            return {
+                name: "/",
+                path: "/"
+            }
+        }
+        const ext = path.extname(absoluteFilePath);
+        const withoutExt = ext ? absoluteFilePath.slice(0, -ext.length) : absoluteFilePath;
+        const relativePath = path.relative(absoluteStartDir, withoutExt);
+        let name = path.basename(relativePath);
+        if (name === "index") {
+            name = "Home"
+        }
+        return {
+            name: name,
+            path: `/${relativePath}`
+        };
+    }
+
+    const root: PageNode = {
+        ...getBaseFileProps(dir, dir),
+        type: "folder",
+        children: []
+    };
+
+    function walk(currentDir: string, parentPageNode: PageNode): void {
+        const entries = fs.readdirSync(currentDir, {withFileTypes: true});
+        // pages should be first
+        const pages: PageNode[] = [];
+
+        for (const entry of entries) {
+            const fullPath = path.join(currentDir, entry.name);
+
+            if (entry.isDirectory()) {
+                let childDir: PageNode = {
+                    ...getBaseFileProps(fullPath, startDir),
+                    type: "folder",
+                    children: []
+                };
+                parentPageNode.children?.push(childDir);
+                walk(fullPath, childDir);
+                continue
+            }
+            let pageProps = {...getBaseFileProps(fullPath, startDir)};
+            // no 404
+            if (getInteractConfig().middleware.notFoundPath == pageProps.path) {
+                continue;
+            }
+            pages.push({
+                ...pageProps,
+                type: "file",
+            });
+        }
+
+        // pages should be first
+        parentPageNode.children = [
+            ...pages,
+            ...(parentPageNode.children != null ? parentPageNode.children : [])
+        ]
+
+    }
+
+    walk(dir, root);
+    return root;
+}
+
+export function getPagesRecursively(dir: string, startDir: string = dir): Record<string, PageNode> {
+    const results: Record<string, PageNode> = {};
 
     function walk(currentDir: string): void {
         const entries = fs.readdirSync(currentDir, {withFileTypes: true});
@@ -43,6 +115,7 @@ export function getPagesRecursively(dir: string, startDir: string = dir): Record
             results[keyPath] = {
                 name: path.basename(relativePath),
                 path: keyPath,
+                type: "file",
             };
         }
     }

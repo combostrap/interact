@@ -3,7 +3,6 @@ title: Interactive documentation
 description: Create documentation that interacts with your reader
 layout: holy
 ---
-import {getPages} from "../../../src/resources/rsc/server/handler.tsx";
 
 
 
@@ -14,21 +13,24 @@ import {getPages} from "../../../src/resources/rsc/server/handler.tsx";
        fit={"contain"}
 />
 
+**Get Started**
 
-## Pages
+```bash
+# globally
+npm install -g @combostrap/interact
+# in a project
+npm install @combostrap/interact
+```
 
-<p>Number of Pages: {Object.keys(getPages()).length - 1}</p>
-<ul>
-    {Object.entries(getPages()).map(([key, page]) => {
-        if (key.startsWith("/index")) {
-            return;
-        }
-        return (
-            <li key={key}>
-                <a href={page.path} style={{textTransform: 'capitalize'}}>
-                    {page.name}
-                </a>
-            </li>
-        )
-    })}
-</ul>
+**Create a page**
+
+```bash
+mkdir -p src/pages
+echo -e "# Hallo\nWorld" > src/pages/index.md
+```
+
+**Then**
+
+```bash
+interact start
+```

@@ -12,7 +12,8 @@ the [GitHub Syntax](https://github.github.com/gfm/)
 
 ## List
 
-<table class="table" style="color: red">
+<div class="relative overflow-x-auto">
+<table class="table min-w-max" style="color: red">
     <thead>
   <tr>
     <th scope="col">
@@ -373,7 +374,7 @@ Two **asterisks** for strong.
     </tbody>
 
 </table>
-
+</div>
 
 
 ## Ref

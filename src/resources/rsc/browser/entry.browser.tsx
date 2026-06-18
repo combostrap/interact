@@ -159,6 +159,9 @@ function listenNavigation(fetchRsc: () => void) {
     const oldPushState = window.history.pushState
     window.history.pushState = function (...args) {
         oldPushState.apply(this, args)
+        // so that user can listen to
+        window.dispatchEvent(new Event('pushstate'));
+        // fetch
         fetchRsc()
     }
 
@@ -166,6 +169,8 @@ function listenNavigation(fetchRsc: () => void) {
     const oldReplaceState = window.history.replaceState
     window.history.replaceState = function (...args) {
         oldReplaceState.apply(this, args)
+        // so that user can listen to
+        window.dispatchEvent(new Event('replacestate'));
         // don't fetch, when the state is stored in the URL, you don't want to fetch
         // otherwise the whole page refresh, and you lost the URL
         // fetchRsc()
