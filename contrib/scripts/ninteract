@@ -3,7 +3,9 @@
 # Installed via envrc
 # It can't be in package.json as bin because it does not run with shebang
 
+set -Eeuo pipefail
+
 SCRIPT_DIR="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")")" && pwd)"
 PROJECT_DIR=$(realpath "$SCRIPT_DIR/../..")
 # TSX_TSCONFIG_PATH="$PROJECT_DIR/tsconfig.json"
-"$PROJECT_DIR/src/interact/cli/cli.ts" "$@"
+node --import tsx "$PROJECT_DIR/src/interact/cli/cli.ts" "$@"

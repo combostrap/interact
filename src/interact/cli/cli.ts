@@ -1,4 +1,4 @@
-#!/usr/bin/env -S node --import tsx
+#!/usr/bin/env node
 import {cac} from 'cac'
 import {build} from './commands/build.js'
 import {start} from './commands/start.js'

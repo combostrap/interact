@@ -2,6 +2,21 @@
 
 We create documentation where users can log in and interact with it.
 
+## Installation
+
+```bash
+# globally
+npm install -g @combostrap/interact
+# in a project
+npm install @combostrap/interact
+```
+
+Then
+
+```bash
+interact start
+```
+
 ## Features
 
 * Full React: A page is a React component
@@ -22,7 +37,7 @@ We create documentation where users can log in and interact with it.
 
 ## The plus
 
-* First class Layout. 
+* First class Layout.
   * Every page gets a layout or `none`
   * Every layout component is a overwritable React component
 * First support IDE: Don't use an internet path in your link, use the path to your file

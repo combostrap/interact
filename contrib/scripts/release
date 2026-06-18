@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# A npm wrapper to be logged in in npm (ie release)
+# release that injects the env
+# and run yarn release-it
+
+set -Eeuo pipefail
+skip_check=false
+
+for arg in "$@"; do
+    if [[ "$arg" == "--no-check" ]]; then
+        skip_check=true
+    fi
+done
+
+if [[ "$skip_check" == false ]]; then
+    echo "Running check..."
+    task release-check
+else
+    echo "Skipping check (--no-check passed)"
+fi
+
+
+# The repo should have a file called .npmrc and have this conf:
+# //registry.npmjs.org/:_authToken=${NPM_TOKEN}
+export NPM_TOKEN
+NPM_TOKEN=$(pass npm/release-token)
+
+export GITHUB_TOKEN
+GITHUB_TOKEN=$(pass github/gh-token)
+
+yarn release-it "$@"

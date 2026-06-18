@@ -3,10 +3,21 @@ version: '3'
 tasks:
   release:
     cmds:
-      # release-it is a bash wrapper that injects the env
-      # and run yarn release-it
       - |
-        yarn check && release
+        release
+  release-check:
+    cmds:
+      # prepare/check before a release
+      - |
+        # check typescript
+        echo "Check typescript"
+        yarn check
+        # check peer-dependencies rules
+        echo "Check peer"
+        npx check-peer-dependencies no
+        # https://yarnpkg.com/migration/pnp#calling-the-doctor
+        echo "Check undeclared dependency"
+        yarn dlx @yarnpkg/doctor
   deploy:
     cmds:
       - |
