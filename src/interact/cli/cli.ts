@@ -7,6 +7,7 @@ import {config} from './commands/config.js'
 import {favicon} from './commands/favicon.js'
 import {schema} from './commands/schema.js'
 import type {LogLevel} from './shared/vite.config.js'
+import {version} from '../../../package.json';
 
 const cli = cac('interact')
 
@@ -97,7 +98,7 @@ cli
     })
 
 cli.help()
-cli.version('0.1.0')
+cli.version(version)
 
 export async function run(argv: string[] = process.argv): Promise<void> {
     try {

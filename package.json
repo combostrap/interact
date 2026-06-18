@@ -1,6 +1,6 @@
 {
   "name": "@combostrap/interact",
-  "version": "0.1.1",
+  "version": "0.1.1-next",
   "license": "FSL-1.1-ALv2",
   "type": "module",
   "description": "A React publication framework to create documentation where users can log in and interact with it",
