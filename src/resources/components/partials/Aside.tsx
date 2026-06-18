@@ -1,5 +1,6 @@
 import type {Frontmatter, Page, LayoutProps} from "@combostrap/interact/types";
 import React from "react";
+import Tree, {type TreeNode} from "@/components/interact/Tree.tsx";
 
 const pages = import.meta.glob<Page<Frontmatter>>(
     "./pages/**/*.ts",
@@ -26,7 +27,45 @@ export type AsideProps = React.HTMLAttributes<HTMLElement> & LayoutProps
 
 // @ts-ignore -- exported
 export default function Aside({page, context, ...props}: AsideProps) {
-    return (
-        <div {...props}></div>
-    )
+
+    const data: TreeNode[] = [
+        {
+            name: "src",
+            path: "/src",
+            type: "folder",
+            children: [
+                {
+                    name: "components",
+                    path: "/src/components",
+                    type: "folder",
+                    children: [
+                        {
+                            name: "Button.tsx",
+                            path: "/src/components/Button.tsx",
+                            type: "file",
+                        },
+                        {
+                            name: "Sidebar.tsx",
+                            path: "/src/components/Sidebar.tsx",
+                            type: "file",
+                        },
+                    ],
+                },
+                {
+                    name: "app.tsx",
+                    path: "/src/app.tsx",
+                    type: "file",
+                },
+            ],
+        },
+        {
+            name: "package.json",
+            path: "/package.json",
+            type: "file",
+        },
+    ]
+
+    return <Tree data={data} {...props} />
+
+
 }
