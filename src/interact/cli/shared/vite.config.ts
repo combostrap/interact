@@ -31,6 +31,11 @@ import viteContextClientComponentsProvider from "../../vite/contextClientProvide
 import viteCheckEnvExpansion from "../../vite/viteCheckEnvExpansion.js";
 import {publicHandler} from "../../vite/publicHandler.js";
 import viteContextServerComponentsProvider from "../../vite/contextServerProvider.js";
+import {debuglog} from "node:util";
+import {join} from "path";
+import {existsSync} from "fs";
+import {getPackageJsonDir} from "../../config/packageJsonUtil.js";
+import {fileURLToPath} from "node:url";
 
 
 export type InteractCommand = 'start' | 'build' | 'preview';
@@ -61,6 +66,29 @@ export async function resolveViteConfig(
     let interactConfigTyped = await setGlobalsConf(confPath)
 
     /**
+     * Global Cli App run support
+     * (ie project without package.json)
+     * Check the use of the boolean to see the configuration change
+     */
+    let nodeModuleRoot = interactConfigTyped.paths.rootDirectory
+    let packageJson = join(nodeModuleRoot, "package.json");
+    const isCliOnlyProject = !existsSync(packageJson);
+    if (isCliOnlyProject) {
+        let startDir = fileURLToPath(import.meta.url);
+        const foundNodeModuleRoot = getPackageJsonDir({
+            startDir: startDir,
+            firstAncestor: false
+        })
+        if (foundNodeModuleRoot == null) {
+            throw new Error(`Internal error, no package.json found from ${startDir}`);
+        }
+        nodeModuleRoot = foundNodeModuleRoot
+        console.log(`Project Type: Cli Only (node_modules: ${nodeModuleRoot})`)
+    } else {
+        console.log(`Project Type: Javascript Project (node_modules: ${nodeModuleRoot})`)
+    }
+
+    /**
      * In case, we get a config from the user
      */
     let viteUserConfig = {};
@@ -82,7 +110,7 @@ export async function resolveViteConfig(
      */
     let INTERACT_PKG_NAME = "@combostrap/interact";
     const reactPkgsConfig = await crawlFrameworkPkgs({
-        root: interactConfigTyped.paths.rootDirectory,
+        root: nodeModuleRoot,
         isBuild: command === 'build',
         viteUserConfig: viteUserConfig,
         /**
@@ -107,6 +135,7 @@ export async function resolveViteConfig(
         }
     });
 
+
     let dedupe = [
         "react",
         "react-dom",
@@ -115,6 +144,7 @@ export async function resolveViteConfig(
         "@vitejs/plugin-rsc",
         ...reactPkgsConfig.ssr.noExternal
     ]
+    debuglog(`No external ${JSON.stringify(reactPkgsConfig.ssr.noExternal)}`)
 
     // Hack because oclif dev.js set it
     // and need it to allow debug
@@ -147,6 +177,9 @@ export async function resolveViteConfig(
 
     const envInteractPrefix = 'INTERACT_'
 
+    // Force re-bundling on server start
+    const forcePreBundling = command == "start";
+
     /**
      * The vite config
      */
@@ -154,14 +187,20 @@ export async function resolveViteConfig(
 
         mode: command == "build" ? "production" : "development",
         logLevel: logLevel, // or 'warn' — try 'info' first
-        root: interactConfigTyped.paths.rootDirectory,
+        // Why isCliOnlyProject check for root
+        // Module resolution at optimization/pre-bundling phase starts always from the root
+        // (We try to change that with a rolldown plugin unsuccessfully as they are used later)
+        // Therefore, in a cli only project, we need to set it to the cli directory
+        // To avoid: Failed to resolve dependency: @vitejs/plugin-rsc/vendor/react-server-dom/client.browser, present in client 'optimizeDeps.include'
+        // Other possible solutions: create a symlink in the global cli app directory to the project, not tested
+        root: isCliOnlyProject ? nodeModuleRoot : interactConfigTyped.paths.rootDirectory,
         // https://vite.dev/guide/build#public-base-path
         base: interactConfigTyped.site.base,
         server: {
             port: port,
             // for debugging: local network with host or remote with ngrok
             // host: true, // same as --host, exposes on 0.0.0.0
-            allowedHosts: [".ngrok-free.app"]
+            allowedHosts: [".ngrok-free.app"],
         },
         // if inspect is enabled
         devtools: inspect,
@@ -174,11 +213,14 @@ export async function resolveViteConfig(
             extensions: ['.ts', '.tsx', '.mts', '.jsx', '.js', '.mjs'],
             // https://vite.dev/config/shared-options#resolve-alias
             // When aliasing to file system paths, always use absolute paths.
-            alias: {},
+            alias: {
+                // "react": "/home/admin/code/combostrap/interact/node_modules/react",
+                // "react-dom": "/home/admin/code/combostrap/interact/node_modules/react-dom",
+            },
             // Trying to avoid React hooks fatal error on client that uses the yarn portal protocol in dependencies
             // https://github.com/vitejs/vite/blob/f09299ce13b55d51456985b96d4c3b3a1f131acb/packages/plugin-react/src/index.ts#L339
             // And it works until now
-            dedupe: dedupe
+            dedupe: dedupe,
         },
         // https://vite.dev/config/shared-options#publicdir
         // We implement our own
@@ -202,7 +244,8 @@ export async function resolveViteConfig(
             // - server functions handling
             rsc: {
                 resolve: {
-                    noExternal: reactPkgsConfig.ssr.noExternal,
+                    // in the bundle
+                    noExternal: [/^remark-/, /^unified/, /^mdast-/, ...reactPkgsConfig.ssr.noExternal],
                 },
                 build: {
                     rollupOptions: {
@@ -217,6 +260,9 @@ export async function resolveViteConfig(
                     outDir: path.resolve(interactConfigTyped.paths.buildDirectory, "rsc"),
                     emptyOutDir: true
                 },
+                optimizeDeps: {
+                    force: forcePreBundling,
+                }
             },
 
             // `ssr` environment loads modules without `react-server` condition.
@@ -240,6 +286,9 @@ export async function resolveViteConfig(
                     outDir: path.resolve(interactConfigTyped.paths.buildDirectory, "ssr"),
                     emptyOutDir: true
                 },
+                optimizeDeps: {
+                    force: forcePreBundling,
+                }
             },
 
             // client environment is used for hydration and client-side rendering
@@ -276,9 +325,11 @@ export async function resolveViteConfig(
                     outDir: path.resolve(interactConfigTyped.paths.buildDirectory, "client"),
                     emptyOutDir: true
                 },
-                // don't bundle sharp in the client
+                // pre-bundling
                 optimizeDeps: {
+                    force: forcePreBundling,
                     exclude: ['sharp'],
+                    // List of dependency not discoverable through the normal scan.
                     include: [
                         // Solution for error:
                         // use-sync-external-store/shim/index.js does not provide an export named useSyncExternalStore

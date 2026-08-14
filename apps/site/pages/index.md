@@ -13,9 +13,10 @@ layout: holy
 **Install**
 
 ```bash
-# globally
+# app only (without package.json)
 npm install -g @combostrap/interact
 # in a project
+npm init -y
 npm install @combostrap/interact
 ```
 
@@ -29,5 +30,8 @@ echo -e "# Hallo\nWorld" > src/pages/index.md
 **Start the server**
 
 ```bash
+# app only (without package.json)
 interact start
+# in a project
+npx interact start
 ```
