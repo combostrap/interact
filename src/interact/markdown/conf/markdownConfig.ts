@@ -73,9 +73,8 @@ export async function createMarkdownConfig() {
     let markdownConfigImportPath = path.resolve(__dirname, `markdownPluginsUserDefault.${extension}`);
     let configImportPath = interactConfig.markdown.configImportPath;
     if (configImportPath != null) {
-        if (configImportPath.startsWith(".")) {
-            markdownConfigImportPath = path.resolve(interactConfig.paths.rootDirectory, configImportPath);
-        }
+        // user configuration file was found
+        markdownConfigImportPath = configImportPath;
     }
 
     let markdownConfModule;

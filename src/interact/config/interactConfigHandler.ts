@@ -10,6 +10,8 @@ import {fileURLToPath} from "node:url";
 import type {InteractConfig} from "./interactConfig.js";
 import {atAliasCharacter} from "../vite/atAliasResolution.js";
 import deepMerge from "../lib/deep-merge.js";
+import {join} from "path";
+import {getPackageJsonDir} from "./packageJsonUtil.js";
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -140,8 +142,6 @@ function updateManifest({manifestFileName, publicDirectory}: {
 const configFileName = 'interact.config.json'
 
 
-
-
 export function createInteractConfig(confPath?: string) {
     return new InteractConfigHandler(confPath).getConfig();
 }
@@ -178,9 +178,33 @@ class InteractConfigHandler {
             rootDirectory = finalConfigData.paths.rootDirectory;
         }
 
+        /**
+         * Global Cli App run support
+         * (ie project without package.json)
+         * Check the use of the boolean to see the configuration change
+         */
+        let nodeModuleRootDirectory = rootDirectory
+        let packageJson = join(nodeModuleRootDirectory, "package.json");
+        const isStandaloneProject = !existsSync(packageJson);
+        if (isStandaloneProject) {
+            let startDir = fileURLToPath(import.meta.url);
+            const foundNodeModuleRoot = getPackageJsonDir({
+                startDir: startDir,
+                firstAncestor: false
+            })
+            if (foundNodeModuleRoot == null) {
+                throw new Error(`Internal error, no package.json found from ${startDir}`);
+            }
+            nodeModuleRootDirectory = foundNodeModuleRoot
+            console.log(`Project Type: Standalone`)
+        } else {
+            console.log(`Project Type: Node Project (package.json)`)
+        }
+
         finalConfigData.paths = {
             configFile: this.configFile,
             rootDirectory: rootDirectory,
+            nodeDirectory: nodeModuleRootDirectory,
             pagesDirectory: this.#qualifiedDirectoryPath(rootDirectory, finalConfigData.paths.pagesDirectory),
             publicDirectory: this.#qualifiedDirectoryPath(rootDirectory, finalConfigData.paths.publicDirectory),
             imagesDirectory: this.#qualifiedDirectoryPath(rootDirectory, finalConfigData.paths.imagesDirectory),
@@ -316,14 +340,26 @@ class InteractConfigHandler {
         /**
          * Default Markdown
          */
-        if (finalConfigData.markdown.configImportPath == null) {
-            const extensions = [".ts", ".ts"]
+        let markdownConfigImportPath = finalConfigData.markdown.configImportPath;
+        if (markdownConfigImportPath == null) {
+            const extensions = [".js", ".ts"]
             for (const extension of extensions) {
-                const markdownConfig = path.resolve(rootDirectory, `markdown.config${extension}`);
+                const markdownConfig = path.resolve(finalConfigData.paths.configDirectory, `markdown.config${extension}`);
                 if (fs.existsSync(markdownConfig)) {
                     finalConfigData.markdown.configImportPath = markdownConfig
                     break;
                 }
+            }
+        } else {
+            // Value in the interact.config.file
+            if (markdownConfigImportPath.startsWith(".")) {
+                // Relative file from the root
+                finalConfigData.markdown.configImportPath = path.resolve(finalConfigData.paths.rootDirectory, markdownConfigImportPath);
+            } else {
+                finalConfigData.markdown.configImportPath = markdownConfigImportPath;
+            }
+            if (!fs.existsSync(finalConfigData.markdown.configImportPath)) {
+                throw new Error(`Defined markdown configuration file (${finalConfigData.markdown.configImportPath}) does not exist.`)
             }
         }
 

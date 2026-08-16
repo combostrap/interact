@@ -32,7 +32,7 @@ import type {Frontmatter} from "../../interact/pages/interactPage";
 // Markdown processing to react component via rehypeReact
 // Why?
 // because Mdx use rehypeRecma as compiler (ie the hast goes to the JavaScript Tree and not to a React tree)
-function markdownReactProcessing(vFileCompatible: Compatible, options?: markdownOptions) {
+async function markdownReactProcessing(vFileCompatible: Compatible, options?: markdownOptions) {
 
     let strictYamlParsing = false
     if (process.env['NODE_ENV'] !== "production") {
@@ -53,7 +53,7 @@ function markdownReactProcessing(vFileCompatible: Compatible, options?: markdown
 
     let vFile: VFileType
     // noinspection JSUnusedGlobalSymbols - some property such as jsxs or createEvaluater are needed
-    vFile = unified()
+    vFile = await unified()
         .use(remarkParse)  // Parse markdown into mdast
         .use(function () {
             /**
@@ -166,7 +166,10 @@ function markdownReactProcessing(vFileCompatible: Compatible, options?: markdown
             Fragment: Fragment,
             components: components,
         })
-        .processSync(vFileCompatible);
+        // not .processSync(vFileCompatible)
+        // as some plugin are async only (example https://github.com/timlrx/rehype-citation)
+        .process(vFileCompatible);
+
 
     return {
         frontmatter: frontmatter,
@@ -218,11 +221,11 @@ function mdxProcessing(vFileCompatible: Readonly<Compatible>, {format = 'mdx', r
  * @param options.rootTagName - the tag name of the root (by default p if the markdown string does not start with a tag, you may set span for instance)
  */
 // noinspection JSUnusedGlobalSymbols - exported in package.json
-export function markdownToComponentSync(vFileCompatible: Compatible, options?: {
+export async function markdownToComponentSync(vFileCompatible: Compatible, options?: {
     format?: markdownFormat,
     rehypePlugins?: PluggableList,
     rootTagName?: string
-}): ComponentType {
+}): Promise<ComponentType> {
     if (options == null) {
         options = {
             rehypePlugins: [],
@@ -232,10 +235,10 @@ export function markdownToComponentSync(vFileCompatible: Compatible, options?: {
     if (options.rootTagName) {
         rehypePlugins = [...rehypePlugins, [rehypeUpdateRootTagName, {rootTagName: options.rootTagName}]]
     }
-    return markdownToPageSync(vFileCompatible, {
+    return (await markdownToPageSync(vFileCompatible, {
         format: options.format,
         rehypePlugins: rehypePlugins,
-    }).default as ComponentType;
+    })).default as ComponentType;
 }
 
 // Sync because this is on the server
@@ -245,13 +248,13 @@ export type markdownOptions = {
 };
 
 // See https://github.com/mdx-js/mdx/blob/af23c2d18b58467db567b7afe78d7492bb4ea4bc/packages/mdx/lib/core.js#L161
-export function markdownToPageSync(vFileCompatible: Compatible, options?: markdownOptions): Page {
+export async function markdownToPageSync(vFileCompatible: Compatible, options?: markdownOptions): Promise<Page> {
     const format: markdownFormat = options?.format || getMarkdownConfig().getDefaultMarkdownFormat();
     try {
         if (format == 'mdx' || format == 'md') {
             return mdxProcessing(vFileCompatible, {format: format, rehypePlugins: options?.rehypePlugins});
         }
-        return markdownReactProcessing(vFileCompatible, options);
+        return await markdownReactProcessing(vFileCompatible, options);
     } catch (e) {
         return {
             default: () => {
@@ -282,7 +285,12 @@ export function markdownToPageSync(vFileCompatible: Compatible, options?: markdo
                                 <pre dangerouslySetInnerHTML={{__html: vFileCompatible.value}}></pre>
                             </>
                         )}
-
+                        {(e instanceof Error) && (
+                            <>
+                                <p>Error Stack: </p>
+                                <pre dangerouslySetInnerHTML={{__html: e.stack ?? "No stack found"}}></pre>
+                            </>
+                        )}
                     </>
                 )
             }

@@ -32,10 +32,6 @@ import viteCheckEnvExpansion from "../../vite/viteCheckEnvExpansion.js";
 import {publicHandler} from "../../vite/publicHandler.js";
 import viteContextServerComponentsProvider from "../../vite/contextServerProvider.js";
 import {debuglog} from "node:util";
-import {join} from "path";
-import {existsSync} from "fs";
-import {getPackageJsonDir} from "../../config/packageJsonUtil.js";
-import {fileURLToPath} from "node:url";
 
 
 export type InteractCommand = 'start' | 'build' | 'preview';
@@ -65,28 +61,6 @@ export async function resolveViteConfig(
      */
     let interactConfigTyped = await setGlobalsConf(confPath)
 
-    /**
-     * Global Cli App run support
-     * (ie project without package.json)
-     * Check the use of the boolean to see the configuration change
-     */
-    let nodeModuleRoot = interactConfigTyped.paths.rootDirectory
-    let packageJson = join(nodeModuleRoot, "package.json");
-    const isCliOnlyProject = !existsSync(packageJson);
-    if (isCliOnlyProject) {
-        let startDir = fileURLToPath(import.meta.url);
-        const foundNodeModuleRoot = getPackageJsonDir({
-            startDir: startDir,
-            firstAncestor: false
-        })
-        if (foundNodeModuleRoot == null) {
-            throw new Error(`Internal error, no package.json found from ${startDir}`);
-        }
-        nodeModuleRoot = foundNodeModuleRoot
-        console.log(`Project Type: Cli Only (node_modules: ${nodeModuleRoot})`)
-    } else {
-        console.log(`Project Type: Javascript Project (node_modules: ${nodeModuleRoot})`)
-    }
 
     /**
      * In case, we get a config from the user
@@ -110,7 +84,7 @@ export async function resolveViteConfig(
      */
     let INTERACT_PKG_NAME = "@combostrap/interact";
     const reactPkgsConfig = await crawlFrameworkPkgs({
-        root: nodeModuleRoot,
+        root: interactConfigTyped.paths.nodeDirectory,
         isBuild: command === 'build',
         viteUserConfig: viteUserConfig,
         /**
@@ -158,7 +132,9 @@ export async function resolveViteConfig(
      * and we then got a deadlock in a svgr module caused by
      * import { r as react_reactServerExports } from "../index.js";
      * To get the good import:
+     * <code>
      * import { a as react_reactServerExports } from "./react.react-server-CTq-PDh9.js";
+     * </code>
      * We have set a manual chunk to get react out of the index file
      */
     let rollupOption: OutputOptions = {
@@ -187,13 +163,12 @@ export async function resolveViteConfig(
 
         mode: command == "build" ? "production" : "development",
         logLevel: logLevel, // or 'warn' — try 'info' first
-        // Why isCliOnlyProject check for root
-        // Module resolution at optimization/pre-bundling phase starts always from the root
-        // (We try to change that with a rolldown plugin unsuccessfully as they are used later)
-        // Therefore, in a cli only project, we need to set it to the cli directory
-        // To avoid: Failed to resolve dependency: @vitejs/plugin-rsc/vendor/react-server-dom/client.browser, present in client 'optimizeDeps.include'
-        // Other possible solutions: create a symlink in the global cli app directory to the project, not tested
-        root: isCliOnlyProject ? nodeModuleRoot : interactConfigTyped.paths.rootDirectory,
+        // In vite, module resolution at optimization/pre-bundling phase starts always from the vite root.
+        // Root is then more the module resolution start path of vite.
+        // Therefore, in a global cli only/standalone project, that has no node_modules directory, we need to set it to the global cli directory.
+        // We then avoid: Failed to resolve dependency: @vitejs/plugin-rsc/vendor/react-server-dom/client.browser, present in client 'optimizeDeps.include'
+        // (We try to change that with a rolldown plugin unsuccessfully as they are used later after the optimization/pre-bundling phase).
+        root: interactConfigTyped.paths.nodeDirectory,
         // https://vite.dev/guide/build#public-base-path
         base: interactConfigTyped.site.base,
         server: {
@@ -201,6 +176,14 @@ export async function resolveViteConfig(
             // for debugging: local network with host or remote with ngrok
             // host: true, // same as --host, exposes on 0.0.0.0
             allowedHosts: [".ngrok-free.app"],
+
+            fs: {
+                allow: [
+                    interactConfigTyped.paths.nodeDirectory,
+                    interactConfigTyped.paths.rootDirectory
+                ]
+            }
+
         },
         // if inspect is enabled
         devtools: inspect,

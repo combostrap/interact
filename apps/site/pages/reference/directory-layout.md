@@ -7,7 +7,7 @@ A typical interact project is composed of the following paths:
 | Name                                         | Default Value             | Description                                                                                                  |
 |----------------------------------------------|---------------------------|--------------------------------------------------------------------------------------------------------------|
 | [@ alias](at-alias.md)                       | `src`                     | A directory that is mapped to the [@ alias](at-alias.md)                                                     |
-| `config`                                     | `config`                  | a directory that contains extra configuration such as the [markdown config](remark-rehype-unified.md#config) |
+| `config`                                     | `config`                  | A directory that contains extra configuration such as the [markdown config](remark-rehype-unified.md#config) |
 | [runtime](runtime-directory.md)              | `.interact`               | A directory that contains temporary runtime information such as cache, schema                                |
 | [build](build.md)                            | `dist`                    | A directory where the [build result](build.md) is stored (static website and handler)                        |
 | [config file](conf.md)                       | `interact.config.json`    | the [configuration file](conf.md)                                                                            |

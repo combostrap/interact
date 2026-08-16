@@ -10,7 +10,7 @@ import debug from "debug";
  * we wanted to resolve the dependencies from the global installation
  *
  */
-export default function ExternalNodeModuleDependencyResolver(nodeModuleDir: string): Plugin {
+export default function externalNodeModuleDependencyResolver(nodeModuleDir: string): Plugin {
 
 
     const debugLog = debug("interact:external-node-module-dependency-resolver");

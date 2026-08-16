@@ -23,7 +23,10 @@ export type InteractConfig = {
     markdown: markdownConfigType,
     aliases: aliasesConfigType,
     paths: pathsConfigType & {
-        rootDirectory: string, // making it not null for TypeScript
+        // making it not null for TypeScript
+        rootDirectory: string,
+        // The directory of package.json (where the node_modules dir is located)
+        nodeDirectory: string,
         configFile: string
         // The runtime/tmp directory, image cache, ...
         // output dir such as dist does not work as it will be cleaned up
