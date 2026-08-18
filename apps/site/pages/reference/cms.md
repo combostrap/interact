@@ -54,5 +54,5 @@ export async function handler(props): Promise<MiddlewareHandler> {
 
 * You can take a look to the `local markdown middleware` file, it's a CMS plugin that returns
   local [Markdown file as page](md-page.md).
-* The [remote Markdown example](https://github.com/combostrap/interact/blob/main/apps/site/cms/remote-markdown.tsx) page
+* The [remote GitHub Markdown example](https://github.com/combostrap/interact/blob/main/apps/site/middlewares/github-markdown.tsx) page
   provider that returns Markdown page from GitHub.

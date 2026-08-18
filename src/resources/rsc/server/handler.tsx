@@ -95,6 +95,12 @@ export function getPagesTree(dir: string, startDir: string = dir): PageNode {
     return root;
 }
 
+/**
+ * Recursive function
+ * @param dir - the actual pages directory scanned
+ * @param startDir - the root pages directory
+ * return an absolute path as key and a page object
+ */
 export function getPagesRecursively(dir: string, startDir: string = dir): Record<string, PageNode> {
     const results: Record<string, PageNode> = {};
 

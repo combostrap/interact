@@ -1,6 +1,3 @@
-
-
-
 ## IDE Debugger
 
 Next to the log, you can start a debug session for a local project

@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Markdown processing is now async as not all plugins supports sync processing (
   Example: [rehype-citation](https://github.com/timlrx/rehype-citation))
 * Support for standalone execution (ie without a `package.json` file)
+* Added pagefind support
 
 ## [0.1.1] - 2026-06-18
 

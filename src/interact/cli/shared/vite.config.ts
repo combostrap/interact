@@ -32,6 +32,7 @@ import viteCheckEnvExpansion from "../../vite/viteCheckEnvExpansion.js";
 import {publicHandler} from "../../vite/publicHandler.js";
 import viteContextServerComponentsProvider from "../../vite/contextServerProvider.js";
 import {debuglog} from "node:util";
+import vitePluginPagefind from "../../vite/vite-plugin-pagefind.js";
 
 
 export type InteractCommand = 'start' | 'build' | 'preview';
@@ -372,7 +373,9 @@ export async function resolveViteConfig(
             inspect && Inspect(),
             logLevel == 'info' && confResolved(),
             // resources handling
-            publicHandler({sourceDir: interactConfigTyped.paths.publicDirectory})
+            publicHandler({sourceDir: interactConfigTyped.paths.publicDirectory}),
+            // site indexing
+            vitePluginPagefind({})
         ],
     }
 }
