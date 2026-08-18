@@ -1,6 +1,7 @@
 import {createServer} from 'vite'
 import {resolveViteConfig} from "../shared/vite.config.js";
 import type {LogLevel} from "../shared/vite.config.js";
+import {isMainThread, threadId} from "node:worker_threads";
 
 export interface StartActionOptions {
     confPath?: string;
@@ -21,7 +22,7 @@ export async function start({confPath, outDir, logLevel, port}: StartActionOptio
     await server.listen()
     // port may change
     // ie Port 5173 is in use, trying another one...
-    console.log(`Starting Interact Dev server`)
+    console.log(`Starting Interact Dev server`, {pid: process.pid, isMainThread, threadId})
     server.printUrls()
 
     // keep process alive + graceful shutdown

@@ -2,7 +2,7 @@
 import "./config-init"
 import htmlToMarkdown from "@/markdown/htmlToMarkdown";
 
-console.log("Entry rsc loaded")
+console.log("[entry.rsc] Module entry.rsc loaded")
 
 /**
  * Implement renderToReadableStream

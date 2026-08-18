@@ -161,12 +161,27 @@ export default function vitePluginPagefind(options: {
             /**
              * Capture the HTML to create a fake static website for indexing
              */
-            server.middlewares.use((_req, res, next) => {
+            server.middlewares.use((req, res, next) => {
+
+                const isDocumentRequest =
+                    req.headers['sec-fetch-dest'] === 'document' ||
+                    (!req.headers['sec-fetch-dest'] && req.headers.accept?.includes('text/html'));
+
+                if (!isDocumentRequest) {
+                    return next();
+                }
+
+                /**
+                 * Real page navigation, not a module/asset request
+                 */
                 const chunks: Buffer[] = []
 
                 const originalWrite = res.write.bind(res)
                 const originalEnd = res.end.bind(res)
 
+                /**
+                 * On each write, capture the chunks
+                 */
                 res.write = ((chunk: any, ...args: any[]) => {
                     if (chunk) {
                         chunks.push(
@@ -179,6 +194,9 @@ export default function vitePluginPagefind(options: {
                     return originalWrite(chunk, ...args)
                 }) as typeof res.write
 
+                /**
+                 * At the end, capture the HTML
+                 */
                 res.end = ((chunk?: any, ...args: any[]) => {
                     if (chunk) {
                         chunks.push(
@@ -190,26 +208,16 @@ export default function vitePluginPagefind(options: {
 
                     const contentType = res.getHeader('content-type')
 
-                    if (
-                        typeof contentType === 'string' &&
-                        contentType.includes('text/html')
-                    ) {
-                        const html = Buffer.concat(chunks).toString('utf8')
-                        debugger
-                        console.log("Html server:" + html.substring(0, 10))
+                    if (typeof contentType === 'string') {
+                        if (contentType.includes('text/html')) {
+                            const html = Buffer.concat(chunks).toString('utf8')
+                            debugger
+                            console.log("[pagefind] Html server: " + html.substring(0, 10))
+                        } else if (contentType.includes("text/x-component")) {
+                            debugger
+                            console.log("[pagefind] Rsc request");
+                        }
                     }
-                    const getHtmlFromRsc = async () => {
-                        // @ts-ignore
-                        const ssr = await import.meta.viteRsc.loadModule<typeof import('../../resources/rsc/server/entry.ssr.tsx')>('ssr', 'index')
-                        const rscStream = Buffer.concat(chunks)
-                        const ssrResult = await ssr.renderHtml(rscStream)
-                        return await new Response(ssrResult.stream).text();
-                    }
-                    if (typeof contentType === 'string' && contentType.includes("text/x-component")) {
-                        console.log("Html from rsc" );
-                        getHtmlFromRsc().then((html) => console.log("Html from rsc:" + html.substring(0, 10)))
-                    }
-
                     return originalEnd(chunk, ...args)
                 }) as typeof res.end
 
@@ -288,6 +296,9 @@ function runPageFind(opts: {
         : ["--site", site, ...extraArgs];
 
     return new Promise((resolve, reject) => {
+
+        // In debug mode, it will output a `Debugger listening`
+        // as it's inherited
         const child = spawn(command, args, {
             stdio: logStdioOutput ? "inherit" : "ignore",
             shell: process.platform === "win32", // npx.cmd needs a shell on Windows
