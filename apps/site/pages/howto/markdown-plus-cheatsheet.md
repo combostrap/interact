@@ -382,19 +382,19 @@ This line is only separated by a single newline, so it's a separate line in the 
 They can't be added directly, but you can add an image with a link to the video like this:
 
 ```html
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=YOUTUBE_VIDEO_ID_HERE
-" target="_blank"><img src="http://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg" 
+<a href="https://www.youtube.com/watch?feature=player_embedded&v=YOUTUBE_VIDEO_ID_HERE
+" target="_blank"><img src="https://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg" 
 alt="IMAGE ALT TEXT HERE" width="240" height="180"/></a>
 ```
 
 Or, in pure Markdown, but losing the image sizing and border:
 
 ```markdown
-[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg)](http://www.youtube.com/watch?v=YOUTUBE_VIDEO_ID_HERE)
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg)](https://www.youtube.com/watch?v=YOUTUBE_VIDEO_ID_HERE)
 ```
 
 
 ## License
 
 Original creation of [adam-p](https://raw.githubusercontent.com/wiki/adam-p/markdown-here/Markdown-Cheatsheet.md)
-License: [CC-BY](https://creativecommons.org/licenses/by/3.0/)
+Licence: [CC-BY](https://creativecommons.org/licenses/by/3.0/)

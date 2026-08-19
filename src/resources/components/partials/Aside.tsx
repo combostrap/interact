@@ -3,6 +3,7 @@ import React from "react";
 import Tree from "@/components/interact/Tree.tsx";
 import {getInteractConfig} from "../../../interact/config/interactConfig.ts";
 import {getPagesTree} from "../../rsc/server/handler.tsx";
+import {SearchBox} from "@/components/interact/SearchBox.tsx";
 
 const pages = import.meta.glob<Page<Frontmatter>>(
     "./pages/**/*.ts",
@@ -35,6 +36,7 @@ export default function Aside({page, context, ...props}: AsideProps) {
 
     return (
         <aside {...props}>
+            <SearchBox/>
             <Tree data={data} {...props} />
         </aside>
     )

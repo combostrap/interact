@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import {getInteractConfig} from "../../../interact/config/interactConfig.ts";
+import {getInteractConfig} from "@combostrap/interact/config";
 
 function getHtmlCachePaths(sourcePath: string) {
     let interactConfig = getInteractConfig();

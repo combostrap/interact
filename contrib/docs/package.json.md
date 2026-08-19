@@ -89,3 +89,8 @@ The shebang of [cli.ts](../../src/interact/cli/cli.ts) is a good example.
 `recma-mdx-is-mdx-component`: So that we can detect that the content comes from Markdown and set
 the [prose class](../../apps/site/pages/reference/styling.md#prose-content) to true
 https://github.com/remcohaszing/recma-mdx-is-mdx-component
+
+## cmdk
+
+Used by shadcn for the command https://ui.shadcn.com/docs/components/base/command
+https://github.com/dip/cmdk
