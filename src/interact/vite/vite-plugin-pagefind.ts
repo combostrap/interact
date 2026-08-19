@@ -1,9 +1,10 @@
 import path from 'node:path';
 import type {Plugin} from "vite";
 import fs from "fs";
-import {spawn} from "node:child_process";
 import sirv from "sirv";
 import {getInteractConfig} from "../config/interactConfig.js";
+import * as pagefind from "pagefind";
+import type {PagefindServiceConfig} from "pagefind";
 
 /**
  * Integrate pagefind in prod and dev mode
@@ -101,6 +102,7 @@ export default function vitePluginPagefind(options: {
                 throw new Error(clientEnvDoesNotExist);
             }
             prodClientBuildOutDir = clientEnv.build.outDir
+
         },
 
 
@@ -277,43 +279,45 @@ function getPagesRecursively(dir: string, startDir: string = dir): Record<string
 
 
 /**
- * Run page find to build the index and add the pagefind lib
- * @param opts
+ * Built the index with the Node API
+ * https://pagefind.app/docs/node-api/
+ * Why?
+ * * we get some statistics to show back to the user
+ * * we don't need to spawn a process with npx that will also inherit debug
+ * * pagefind is a dev dependencies after all, not in the bundle
  */
-function runPageFind(opts: {
-    site: string;
-    // extra page find cli args
-    extraArgs?: string[];
-    // external dependencies (ie npx pagefind is used)
-    useNpx?: boolean;
-    logStdioOutput?: boolean;
-}): Promise<void> {
-    const {site, extraArgs = [], useNpx = true, logStdioOutput = true} = opts;
+async function runPageFind({config, site}: {
+    config?: PagefindServiceConfig,
+    site: string
+}) {
 
-    const command = useNpx ? "npx" : "pagefind";
-    const args = useNpx
-        ? ["pagefind", "--site", site, ...extraArgs]
-        : ["--site", site, ...extraArgs];
+    // https://pagefind.app/docs/node-api/#pagefindcreateindex
+    const {index} = await pagefind.createIndex(config);
 
-    return new Promise((resolve, reject) => {
+    if (index == null) {
+        throw new Error("Pagefind Index should not be undefined");
+    }
 
-        // In debug mode, it will output a `Debugger listening`
-        // as it's inherited
-        const child = spawn(command, args, {
-            stdio: logStdioOutput ? "inherit" : "ignore",
-            shell: process.platform === "win32", // npx.cmd needs a shell on Windows
-        });
+    // https://pagefind.app/docs/node-api/#indexadddirectory
+    const {errors, page_count} = await index.addDirectory({path: site});
 
-        child.on("error", (err) => {
-            reject(new Error(`Failed to start pagefind: ${err.message}`));
-        });
+    if (errors && errors.length > 0) {
+        console.error("Indexing failed with errors:", errors);
+        await pagefind.close();
+        return;
+    }
 
-        child.on("exit", (code) => {
-            if (code === 0) {
-                resolve();
-            } else {
-                reject(new Error(`pagefind exited with code ${code}`));
-            }
-        });
+    // Write the generated bundle files to disk
+    await index.writeFiles({
+        outputPath: `${site}/pagefind`
     });
+
+    // Log/Return the page count
+    console.log(`Successfully indexed ${page_count} pages.`);
+
+    // https://pagefind.app/docs/node-api/#pagefindclose
+    await pagefind.close();
+
+    return page_count;
 }
+

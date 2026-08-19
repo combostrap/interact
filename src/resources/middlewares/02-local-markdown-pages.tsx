@@ -54,6 +54,7 @@ export async function handler(): Promise<MiddlewareHandler> {
 
         const stat = statSync(page);
         context.meta.lastModifiedPage = stat.mtime.toISOString()
+        context.meta.localSourcePagePath = page
 
         let pageModule = await markdownToPageSync(file);
         addProseIfNotDefined(pageModule, context);

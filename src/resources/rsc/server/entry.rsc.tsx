@@ -23,6 +23,8 @@ import {getRootResponse, getStaticPaths} from "./handler.js";
 import {getInteractConfig} from "../../../interact/config/interactConfig";
 import type {ContextProps} from "../../../interact/componentsProvider/contextProps";
 import {HEADER_ACTION_ID, URL_RSC_POSTFIX} from "../shared/shared-const";
+import fs from "fs";
+import path from "path";
 
 
 /**
@@ -55,7 +57,7 @@ export function parseRenderRequest(request: Request): ContextProps {
         url.pathname = pathname
     }
 
-    // Classic Static Rendering Request
+    // SSR Rendering Request
     if (!url.pathname.endsWith(URL_RSC_POSTFIX)) {
         return {
             meta: {
@@ -91,6 +93,77 @@ export function parseRenderRequest(request: Request): ContextProps {
     }
 
 
+}
+
+/**
+ * Reads from cache if valid; otherwise generates new data and overwrites the cache file.
+ *
+ * @param {string} sourcePath - Path to the original source file.
+ * @param {string} cachePath - Path to the cached file.
+ * @param {Function} generateDataFn - Async function to produce new data if cache is stale.
+ * @returns true if there is a cache hit
+ */
+async function processCache(sourcePath: string, cachePath: string, generateDataFn: Function): Promise<boolean> {
+
+    if (!fs.existsSync(sourcePath)) {
+        throw new Error(`Source file does not exist: ${sourcePath}`);
+    }
+    let isCacheValid = false;
+    if (fs.existsSync(cachePath)) {
+        const sourceStat = fs.statSync(sourcePath);
+        const cacheStat = fs.statSync(cachePath);
+        isCacheValid = cacheStat && cacheStat.mtimeMs >= sourceStat.mtimeMs;
+    } else {
+        // Ensure the cache file's directory exists before writing
+        const cacheDir = path.dirname(cachePath);
+        fs.mkdirSync(cacheDir, {recursive: true});
+    }
+
+    if (isCacheValid) {
+        return true;
+    }
+
+    // 3. Source is newer or cache is missing -> generate new data and overwrite cache
+    const newData = await generateDataFn();
+    fs.writeFileSync(cachePath, newData, 'utf8');
+    return false;
+
+}
+
+async function ssrRendering({rscStream, formState, contextProps}: {
+    rscStream: ReadableStream<Uint8Array>,
+    formState?: ReactFormState,
+    contextProps: ContextProps
+}) {
+    const ssr = await import.meta.viteRsc.loadModule<typeof import('./entry.ssr.tsx')>('ssr', 'index')
+    return await ssr.renderHtml(rscStream, {
+        formState,
+        // allow quick simulation of JavaScript disabled browser
+        debugNojs: contextProps.url.searchParams.has('__nojs'),
+    })
+}
+
+/**
+ * Create a static html cache website to be used by PageFind
+ */
+function populateCache(sourcePath: string, generateDataFn: Function) {
+
+    let interactConfig = getInteractConfig();
+    let relativeSourcePath = path.relative(interactConfig.paths.pagesDirectory, sourcePath);
+    let relativeTargetPath = relativeSourcePath.slice(0, relativeSourcePath.lastIndexOf(".")) + ".html";
+    let targetPath = path.join(interactConfig.paths.runtimeDirectory, "html-cache", relativeTargetPath);
+
+    processCache(
+        sourcePath,
+        targetPath,
+        generateDataFn,
+    ).then((cacheHit) => {
+        if (cacheHit) {
+            console.log(`Cache Hit ${relativeSourcePath}`)
+        } else {
+            console.log(`Cache Miss ${relativeSourcePath}`)
+        }
+    })
 }
 
 /**
@@ -169,7 +242,7 @@ export default async function handler(request: Request): Promise<Response> {
         formState,
         returnValue,
     }
-    const rscStream = renderToReadableStream<RscPayload>(rscPayload)
+    let rscStream = renderToReadableStream<RscPayload>(rscPayload)
 
     /**
      * This is a request made by our client (entry.browser.tsx)
@@ -177,6 +250,25 @@ export default async function handler(request: Request): Promise<Response> {
      * We send an RSC Payload: a compact binary representation of the rendered React Server Components tree.
      */
     if (contextProps.meta.isRscRequest) {
+
+        /**
+         * HTML Cache
+         */
+        let sourcePath = contextProps.meta.localSourcePagePath;
+        if (sourcePath != null) {
+            // A ReadableStream (and by extension a Response body) can only be read once.
+            // We create a copy
+            const [rscStream1, rscStream2] = rscStream.tee()
+            rscStream = rscStream2
+            populateCache(
+                sourcePath,
+                async () => {
+                    const ssrResult = await ssrRendering({rscStream: rscStream1, contextProps});
+                    return await new Response(ssrResult.stream).text()
+                }
+            )
+        }
+
         return new Response(rscStream, {
             status: actionStatus,
             headers: {
@@ -190,12 +282,7 @@ export default async function handler(request: Request): Promise<Response> {
      * This is not a request made by our client asking for an RSC stream
      * Rendering the stream as HTML
      */
-    const ssr = await import.meta.viteRsc.loadModule<typeof import('./entry.ssr.tsx')>('ssr', 'index')
-    const ssrResult = await ssr.renderHtml(rscStream, {
-        formState,
-        // allow quick simulation of JavaScript disabled browser
-        debugNojs: contextProps.url.searchParams.has('__nojs'),
-    })
+    const ssrResult = await ssrRendering({rscStream, formState, contextProps});
 
     /**
      * Status
@@ -208,8 +295,9 @@ export default async function handler(request: Request): Promise<Response> {
      * react-dom/server is not supported in React Server Components environment
      * We need to move that in entry.ssr.tsx SSR if we want to use react-dom/server
      */
+    let ssrStream = ssrResult.stream;
     if (contextProps.meta.isMarkdownRequest) {
-        const html = await new Response(ssrResult.stream).text();
+        const html = await new Response(ssrStream).text();
         const mdString = htmlToMarkdown(html)
         return new Response(mdString, {
             status: combinedStatus,
@@ -221,9 +309,26 @@ export default async function handler(request: Request): Promise<Response> {
     }
 
     /**
+     * HTML Cache
+     */
+    let sourcePath = contextProps.meta.localSourcePagePath;
+    if (sourcePath != null) {
+        // A ReadableStream (and by extension a Response body) can only be read once.
+        // We create a copy
+        const [ssrStream1, ssrStream2] = ssrStream.tee()
+        ssrStream = ssrStream2
+        populateCache(
+            sourcePath,
+            async () => {
+                return await new Response(ssrStream1).text()
+            }
+        )
+    }
+
+    /**
      * Return
      */
-    return new Response(ssrResult.stream, {
+    return new Response(ssrStream, {
         status: combinedStatus,
         headers: {
             'content-type': 'text/html;charset=utf-8',

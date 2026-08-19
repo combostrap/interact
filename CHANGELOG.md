@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Example: [rehype-citation](https://github.com/timlrx/rehype-citation))
 * Support for standalone execution (ie without a `package.json` file)
 * Added pagefind support
+* Added HTML cache while browsing to support pagefind indexing
 
 ## [0.1.1] - 2026-06-18
 

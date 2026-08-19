@@ -3,21 +3,30 @@ import {glob} from 'glob';
 import path from 'path';
 import {getInteractConfig} from "../config/interactConfig.js";
 
+/**
+ * The symbol unique identifier of a module page
+ */
+function getPageIdentifier(i: number) {
+    return `Page${i}`;
+}
+
 export function generatePageModulesCode(pagesDir: string, files: string[]): string {
 
     const imports = files
-        .map((file, i) =>
-            `import * as Page${i} from ${JSON.stringify(path.join(pagesDir, file))};`
+        .map((file, i) => {
+                return `import * as ${getPageIdentifier(i)} from ${JSON.stringify(path.join(pagesDir, file))};`;
+            }
         )
         .join('\n');
 
     const entries = files
         .flatMap((file, i) => {
             // delete the extensions
-            const base = file.slice(0, file.indexOf("."));
+            const base = file.slice(0, file.lastIndexOf("."));
             const route = base === 'index' ? '/' : `/${base}`;
-            const entries = [`  ${JSON.stringify(route)}: Page${i}`];
-            if (base === 'index') entries.push(`  "/index": Page${i}`);
+            const pageModule = `{ module: ${getPageIdentifier(i)}, path: "${path.join(pagesDir, file)}" }`
+            const entries = [`  ${JSON.stringify(route)}: ${pageModule}`];
+            if (base === 'index') entries.push(`  "/index": ${pageModule}`);
             return entries;
         })
         .join(',\n');

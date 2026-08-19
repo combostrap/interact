@@ -20,6 +20,7 @@ export type ContextProps = {
         rscActionId?: string // server action ID from x-rsc-action header
         isMarkdownRequest: boolean // true if this is a Markdown request
         lastModifiedPage?: string; // last modified time of the page (iso string)
+        localSourcePagePath?: string; // the absolute local path of the file used to generate the page
         isProsePage?: boolean // treats the page has prose content and add a prose class
     } & Record<string, string | boolean | undefined>
     response: {

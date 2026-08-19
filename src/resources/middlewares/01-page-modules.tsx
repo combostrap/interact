@@ -22,14 +22,16 @@ export async function handler(): Promise<MiddlewareHandler> {
 
     return async function (context: ContextProps): Promise<Page | undefined> {
 
-        let module = getModuleFromPageProvider({path: context.url.pathname});
-        if (module == undefined) {
-            return module;
+        let pageModule = getModuleFromPageProvider({path: context.url.pathname});
+        if (pageModule == undefined) {
+            return pageModule;
         }
-        if (isMdxModule(module)) {
-            addProseIfNotDefined(module, context);
+        if (isMdxModule(pageModule.module)) {
+            addProseIfNotDefined(pageModule.module, context);
         }
-        return module
+        context.meta.localSourcePagePath = pageModule.path;
+
+        return pageModule.module
 
     }
 }

@@ -6,6 +6,7 @@ import type {ComponentTypeType} from "../config/configSchema.js";
  * This function was created to print without any quote
  * so that an object can be added to JavaScript virtual module
  * It works for object but also for any other basic type
+ * (ie a string is seen as an identifier, not as a string)
  */
 export function toJsString(value: any, indent = 0): any {
     const pad = ' '.repeat(indent + 2);
@@ -42,7 +43,7 @@ export function toJsString(value: any, indent = 0): any {
 }
 
 
-export function getComponentsAndImportArray(interactConfig: InteractConfig, type: ComponentTypeType, filterFunction?: (key:string)=>boolean) {
+export function getComponentsAndImportArray(interactConfig: InteractConfig, type: ComponentTypeType, filterFunction?: (key: string) => boolean) {
     let imports = [];
     let components: Record<string, string> = {};
 
