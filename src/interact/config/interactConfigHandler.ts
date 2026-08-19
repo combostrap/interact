@@ -201,6 +201,7 @@ class InteractConfigHandler {
             console.log(`Project Type: Node Project (package.json)`)
         }
 
+        let runtimeDirectory = this.#qualifiedDirectoryPath(rootDirectory, ".interact");
         finalConfigData.paths = {
             configFile: this.configFile,
             rootDirectory: rootDirectory,
@@ -214,7 +215,8 @@ class InteractConfigHandler {
             mdComponentsDirectory: this.#qualifiedDirectoryPath(rootDirectory, finalConfigData.paths.mdComponentsDirectory),
             middlewaresDirectory: this.#qualifiedDirectoryPath(rootDirectory, finalConfigData.paths.middlewaresDirectory),
             configDirectory: this.#qualifiedDirectoryPath(rootDirectory, finalConfigData.paths.configDirectory),
-            runtimeDirectory: this.#qualifiedDirectoryPath(rootDirectory, ".interact"),
+            runtimeDirectory: runtimeDirectory,
+            htmlCacheDirectory: path.resolve(runtimeDirectory, "html-cache"),
             interactResourcesDirectory: path.resolve(interactRootDirectory, 'src/resources'),
             buildDirectory: this.#qualifiedDirectoryPath(rootDirectory, finalConfigData.paths.buildDirectory),
             cssFile: this.#qualifiedDirectoryPath(rootDirectory, finalConfigData.paths.cssFile),

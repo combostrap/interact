@@ -27,8 +27,10 @@ export type InteractConfig = {
         rootDirectory: string,
         // The directory of package.json (where the node_modules dir is located)
         nodeDirectory: string,
+        // The directory where static HTML pages are stored
+        htmlCacheDirectory: string,
         configFile: string
-        // The runtime/tmp directory, image cache, ...
+        // The runtime/tmp/cache directory, image cache, ...
         // output dir such as dist does not work as it will be cleaned up
         // For runtime, I see also: './node_modules/.xxx'
         // Example with vite

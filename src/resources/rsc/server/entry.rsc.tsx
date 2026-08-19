@@ -1,11 +1,8 @@
 // First so that the config is initialized first
 import "./config-init"
 import htmlToMarkdown from "@/markdown/htmlToMarkdown";
-
-console.log("[entry.rsc] Module entry.rsc loaded")
-
 /**
- * Implement renderToReadableStream
+ * Vite Rsc Implement renderToReadableStream
  * https://react.dev/reference/react-dom/server/renderToReadableStream
  */
 import {
@@ -23,8 +20,9 @@ import {getRootResponse, getStaticPaths} from "./handler.js";
 import {getInteractConfig} from "../../../interact/config/interactConfig";
 import type {ContextProps} from "../../../interact/componentsProvider/contextProps";
 import {HEADER_ACTION_ID, URL_RSC_POSTFIX} from "../shared/shared-const";
-import fs from "fs";
-import path from "path";
+import {populateHtmlCache} from "./htmlCache.ts";
+
+console.log("[entry.rsc] Module entry.rsc loaded")
 
 
 /**
@@ -95,40 +93,7 @@ export function parseRenderRequest(request: Request): ContextProps {
 
 }
 
-/**
- * Reads from cache if valid; otherwise generates new data and overwrites the cache file.
- *
- * @param {string} sourcePath - Path to the original source file.
- * @param {string} cachePath - Path to the cached file.
- * @param {Function} generateDataFn - Async function to produce new data if cache is stale.
- * @returns true if there is a cache hit
- */
-async function processCache(sourcePath: string, cachePath: string, generateDataFn: Function): Promise<boolean> {
 
-    if (!fs.existsSync(sourcePath)) {
-        throw new Error(`Source file does not exist: ${sourcePath}`);
-    }
-    let isCacheValid = false;
-    if (fs.existsSync(cachePath)) {
-        const sourceStat = fs.statSync(sourcePath);
-        const cacheStat = fs.statSync(cachePath);
-        isCacheValid = cacheStat && cacheStat.mtimeMs >= sourceStat.mtimeMs;
-    } else {
-        // Ensure the cache file's directory exists before writing
-        const cacheDir = path.dirname(cachePath);
-        fs.mkdirSync(cacheDir, {recursive: true});
-    }
-
-    if (isCacheValid) {
-        return true;
-    }
-
-    // 3. Source is newer or cache is missing -> generate new data and overwrite cache
-    const newData = await generateDataFn();
-    fs.writeFileSync(cachePath, newData, 'utf8');
-    return false;
-
-}
 
 async function ssrRendering({rscStream, formState, contextProps}: {
     rscStream: ReadableStream<Uint8Array>,
@@ -143,28 +108,7 @@ async function ssrRendering({rscStream, formState, contextProps}: {
     })
 }
 
-/**
- * Create a static html cache website to be used by PageFind
- */
-function populateCache(sourcePath: string, generateDataFn: Function) {
 
-    let interactConfig = getInteractConfig();
-    let relativeSourcePath = path.relative(interactConfig.paths.pagesDirectory, sourcePath);
-    let relativeTargetPath = relativeSourcePath.slice(0, relativeSourcePath.lastIndexOf(".")) + ".html";
-    let targetPath = path.join(interactConfig.paths.runtimeDirectory, "html-cache", relativeTargetPath);
-
-    processCache(
-        sourcePath,
-        targetPath,
-        generateDataFn,
-    ).then((cacheHit) => {
-        if (cacheHit) {
-            console.log(`Cache Hit ${relativeSourcePath}`)
-        } else {
-            console.log(`Cache Miss ${relativeSourcePath}`)
-        }
-    })
-}
 
 /**
  * Handle the HTTP request
@@ -260,7 +204,7 @@ export default async function handler(request: Request): Promise<Response> {
             // We create a copy
             const [rscStream1, rscStream2] = rscStream.tee()
             rscStream = rscStream2
-            populateCache(
+            populateHtmlCache(
                 sourcePath,
                 async () => {
                     const ssrResult = await ssrRendering({rscStream: rscStream1, contextProps});
@@ -317,7 +261,7 @@ export default async function handler(request: Request): Promise<Response> {
         // We create a copy
         const [ssrStream1, ssrStream2] = ssrStream.tee()
         ssrStream = ssrStream2
-        populateCache(
+        populateHtmlCache(
             sourcePath,
             async () => {
                 return await new Response(ssrStream1).text()

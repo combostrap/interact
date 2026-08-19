@@ -5,6 +5,7 @@ import sirv from "sirv";
 import {getInteractConfig} from "../config/interactConfig.js";
 import * as pagefind from "pagefind";
 import type {PagefindServiceConfig} from "pagefind";
+import {deleteHtmlCacheEntry} from "../../resources/rsc/server/htmlCache.js";
 
 /**
  * Integrate pagefind in prod and dev mode
@@ -23,27 +24,22 @@ export default function vitePluginPagefind(options: {
      */
     let interactConfig = getInteractConfig();
     let absolutePagesDir = interactConfig.paths.pagesDirectory
+
     const {
-        debounceMs = 1000,
+        debounceMs = 5000,
     } = options;
 
     /**
      * When a page changes, we rebuilt the index at interval
      */
     let rebuildTimer: NodeJS.Timeout | null = null;
-    /**
-     * The site to index at the end of a build
-     */
-    let prodClientBuildOutDir: string;
-    /**
-     * We create a directory called site with all html
-     * when the user or an agent is crawling the site.
-     * The directory is then given to pageFind
-     */
-    let devPageFindSitePath = `${interactConfig.paths.runtimeDirectory}/pagefind/site`
+
+
+    let devPagefindSite = interactConfig.paths.htmlCacheDirectory;
 
     /**
      * Do we crawl on start to create the index?
+     * False, not implemented yet
      */
     let crawlOnStart = false
 
@@ -74,50 +70,23 @@ export default function vitePluginPagefind(options: {
             );
         }
 
-        await runPageFind({site: devPageFindSitePath})
+
+        await runPageFind({site: devPagefindSite})
     }
 
     function scheduleRebuild() {
         if (rebuildTimer) clearTimeout(rebuildTimer);
         rebuildTimer = setTimeout(() => {
             rebuildTimer = null;
-            runPageFind({site: devPageFindSitePath}).catch((err) => {
+            runPageFind({site: devPagefindSite}).catch((err) => {
                 console.error('[pagefind] schedule run failed:', err);
             });
         }, debounceMs);
     }
 
     return {
+
         name: 'vite-plugin-pagefind',
-
-        configResolved(config) {
-
-            if (!path.isAbsolute(absolutePagesDir)) {
-                throw new Error(`pagesDir ${absolutePagesDir} is not absolute`);
-            }
-            let clientEnv = config.environments['client'];
-            if (!clientEnv) {
-                let clientEnvDoesNotExist = "The client env environment does not exist.";
-                console.error(`Note: ${clientEnvDoesNotExist}`);
-                throw new Error(clientEnvDoesNotExist);
-            }
-            prodClientBuildOutDir = clientEnv.build.outDir
-
-        },
-
-
-        /**
-         * Capture the HTML to create a fake static website for indexing
-         * https://vite.dev/guide/api-plugin#transformindexhtml
-         */
-        // transformIndexHtml: {
-        //     order: 'post', // run after Vite's own transforms to get the final HTML
-        //     handler(html, ctx) {
-        //         console.log(`--- HTML served for ${ctx.path} ---`)
-        //         debugger
-        //         return html // must return it unchanged (or modified) to keep serving it
-        //     },
-        // },
 
         configureServer(server) {
 
@@ -137,104 +106,56 @@ export default function vitePluginPagefind(options: {
             server.watcher.add(absolutePagesDir);
 
             /**
-             * Schedule rebuilt and
+             * * Schedule rebuilt
+             * * And delete cache entry if page is deleted
              */
             server.watcher.on('all', (event, changedPath) => {
                 const normalized = path.resolve(changedPath);
                 if (!normalized.startsWith(absolutePagesDir)) return;
-                if (!/\.mdx?$/i.test(normalized)) return;
+                if (!/\.(md|ts|js)x?$/i.test(normalized)) return;
                 if (event === 'add' || event === 'change' || event === 'unlink') {
                     console.log(`[pagefind] ${event}: ${normalized} -> re-indexing`);
                     scheduleRebuild();
                 }
                 if (event === 'unlink') {
-                    console.log(`[pagefind] ${event}: ${normalized} -> todo delete`);
+                    deleteHtmlCacheEntry(normalized)
+                    console.log(`[pagefind] ${event}: Deleted the HTML cache entry for the page (${normalized})`);
                 }
             });
 
             /**
              * Serve pagefind resources (library and index)
              */
-            const serve = sirv(`${devPageFindSitePath}/pagefind`, {dev: true, etag: true,})
+            const serve = sirv(`${devPagefindSite}/pagefind`, {dev: true, etag: true,})
             server.middlewares.use("/pagefind", (req, res, next) => {
                 serve(req, res, next)
             })
 
-            /**
-             * Capture the HTML to create a fake static website for indexing
-             */
-            server.middlewares.use((req, res, next) => {
-
-                const isDocumentRequest =
-                    req.headers['sec-fetch-dest'] === 'document' ||
-                    (!req.headers['sec-fetch-dest'] && req.headers.accept?.includes('text/html'));
-
-                if (!isDocumentRequest) {
-                    return next();
-                }
-
-                /**
-                 * Real page navigation, not a module/asset request
-                 */
-                const chunks: Buffer[] = []
-
-                const originalWrite = res.write.bind(res)
-                const originalEnd = res.end.bind(res)
-
-                /**
-                 * On each write, capture the chunks
-                 */
-                res.write = ((chunk: any, ...args: any[]) => {
-                    if (chunk) {
-                        chunks.push(
-                            Buffer.isBuffer(chunk)
-                                ? chunk
-                                : Buffer.from(chunk),
-                        )
-                    }
-
-                    return originalWrite(chunk, ...args)
-                }) as typeof res.write
-
-                /**
-                 * At the end, capture the HTML
-                 */
-                res.end = ((chunk?: any, ...args: any[]) => {
-                    if (chunk) {
-                        chunks.push(
-                            Buffer.isBuffer(chunk)
-                                ? chunk
-                                : Buffer.from(chunk),
-                        )
-                    }
-
-                    const contentType = res.getHeader('content-type')
-
-                    if (typeof contentType === 'string') {
-                        if (contentType.includes('text/html')) {
-                            const html = Buffer.concat(chunks).toString('utf8')
-                            debugger
-                            console.log("[pagefind] Html server: " + html.substring(0, 10))
-                        } else if (contentType.includes("text/x-component")) {
-                            debugger
-                            console.log("[pagefind] Rsc request");
-                        }
-                    }
-                    return originalEnd(chunk, ...args)
-                }) as typeof res.end
-
-                next()
-            })
         },
-
         /**
          * Run page find at the end of the build
          * against the real static build site
          */
-        async closeBundle() {
-            // should the final
-            await runPageFind({site: prodClientBuildOutDir})
-        },
+        buildApp: {
+            order: 'post',
+            async handler(builder) {
+                let clientEnv = builder.environments['client'];
+                if (!clientEnv) {
+                    let clientEnvDoesNotExist = "The client env environment does not exist.";
+                    console.error(`Note: ${clientEnvDoesNotExist}`);
+                    throw new Error(clientEnvDoesNotExist);
+                }
+                const prodClientBuildOutDir = clientEnv.config.build.outDir
+                try {
+                    console.log(`PageFind: Index generation started`);
+                    let pageCounts = await runPageFind({site: prodClientBuildOutDir})
+                    console.log(`PageFind: ${pageCounts} page added to the index`);
+                } catch (e) {
+                    console.error(`An error occurred on index generation: ${e}`, e)
+                    throw e
+                }
+            },
+        }
     };
 }
 
@@ -304,7 +225,7 @@ async function runPageFind({config, site}: {
     if (errors && errors.length > 0) {
         console.error("Indexing failed with errors:", errors);
         await pagefind.close();
-        return;
+        return 0;
     }
 
     // Write the generated bundle files to disk
@@ -313,7 +234,7 @@ async function runPageFind({config, site}: {
     });
 
     // Log/Return the page count
-    console.log(`Successfully indexed ${page_count} pages.`);
+    console.log(`[pagefind] - successfully indexed ${page_count} pages.`);
 
     // https://pagefind.app/docs/node-api/#pagefindclose
     await pagefind.close();
