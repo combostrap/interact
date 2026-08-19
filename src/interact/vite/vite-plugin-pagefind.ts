@@ -5,7 +5,7 @@ import sirv from "sirv";
 import {getInteractConfig} from "../config/interactConfig.js";
 import * as pagefind from "pagefind";
 import type {PagefindServiceConfig} from "pagefind";
-import {deleteHtmlCacheEntry} from "../../resources/rsc/server/htmlCache.js";
+import {deleteHtmlCacheEntry} from "../lib/htmlCache.js";
 
 /**
  * Integrate pagefind in prod and dev mode

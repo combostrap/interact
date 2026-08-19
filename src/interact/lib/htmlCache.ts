@@ -1,6 +1,12 @@
+/**
+ * Note: HTML cache is in the interact code directory and not in the resources directory
+ * because it's used by a Vite Plugin to delete an entry
+ * and the interactConfig import should be in js
+ * Creating a cli is fucking difficult in node
+ */
 import fs from "fs";
 import path from "path";
-import {getInteractConfig} from "@combostrap/interact/config";
+import {getInteractConfig} from "../config/interactConfig.js";
 
 function getHtmlCachePaths(sourcePath: string) {
     let interactConfig = getInteractConfig();

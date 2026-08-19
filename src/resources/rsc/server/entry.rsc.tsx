@@ -20,7 +20,7 @@ import {getRootResponse, getStaticPaths} from "./handler.js";
 import {getInteractConfig} from "../../../interact/config/interactConfig";
 import type {ContextProps} from "../../../interact/componentsProvider/contextProps";
 import {HEADER_ACTION_ID, URL_RSC_POSTFIX} from "../shared/shared-const";
-import {populateHtmlCache} from "./htmlCache.ts";
+import {populateHtmlCache} from "../../../interact/lib/htmlCache.ts";
 
 console.log("[entry.rsc] Module entry.rsc loaded")
 
