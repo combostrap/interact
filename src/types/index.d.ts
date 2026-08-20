@@ -1,21 +1,21 @@
 /// <reference types="./vite-env-override.d.ts" />
 /// <reference types="vite/client" />
 // Ambient virtual declare module file
-/// <reference types="../interact/vite/contextClientProviderModule.d.ts" />
-/// <reference types="../interact/vite/contextServerProviderModule.d.ts" />
-/// <reference types="../interact/vite/headProviderModule.d.ts" />
-/// <reference types="../interact/vite/mdxComponentProviderModule.d.ts" />
-/// <reference types="../interact/vite/layoutProviderModule.d.ts" />
-/// <reference types="../interact/vite/pagesProviderModule.d.ts" />
-/// <reference types="../interact/pages/interactPageModules.d.ts" />
-/// <reference types="../interact/vite/middlewareProviderModule.js" />
+/// <reference types="../node/vite/contextClientProviderModule.d.ts" />
+/// <reference types="../node/vite/contextServerProviderModule.d.ts" />
+/// <reference types="../node/vite/headProviderModule.d.ts" />
+/// <reference types="../node/vite/mdxComponentProviderModule.d.ts" />
+/// <reference types="../node/vite/layoutProviderModule.d.ts" />
+/// <reference types="../node/vite/pagesProviderModule.d.ts" />
+/// <reference types="../node/pages/interactPageModules.d.ts" />
+/// <reference types="../node/vite/middlewareProviderModule.js" />
 
 import type {InteractMarkdownConfig} from "./markdownConfig.js";
-import type {MiddlewareHandler, Middleware, ReactNodeResponse} from "../interact/middlewareEngine/interactMiddleware.d.ts"
-import type {Page, Frontmatter, TocNode} from "../interact/pages/interactPage.js";
-import type {ContextProps, LayoutProps} from "../interact/componentsProvider/contextProps.js";
+import type {MiddlewareHandler, Middleware, ReactNodeResponse} from "../node/middlewareEngine/interactMiddleware.d.ts"
+import type {Page, Frontmatter, TocNode} from "../node/pages/interactPage.js";
+import type {ContextProps, LayoutProps} from "../node/componentsProvider/contextProps.js";
 
-import {type InteractConfig} from "../interact/config/interactConfig.js"
+import {type InteractConfig} from "../node/config/interactConfig.js"
 
 import type {InteractCommand} from "../cli/shared/vite.config.js";
 import type {PageNode} from "../resources/rsc/server/handler.tsx";

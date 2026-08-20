@@ -1,5 +1,5 @@
 import React, {type ReactElement, type ReactNode} from "react";
-import type {PageElements} from "../../../interact/pages/interactPage";
+import type {PageElements} from "../../../node/pages/interactPage";
 
 
 function isReactElement(node: ReactNode): node is ReactElement {

@@ -1,13 +1,13 @@
 import path from "node:path";
 
-import type {MiddlewareHandler} from "../../interact/middlewareEngine/interactMiddleware";
+import type {MiddlewareHandler} from "../../node/middlewareEngine/interactMiddleware";
 import {VFile} from "vfile";
 import {markdownToPageSync} from "../markdown/interactMarkdownProcessor";
 
 import {readFile} from "fs/promises";
-import type {ContextProps} from "../../interact/componentsProvider/contextProps";
-import type {Page} from "../../interact/pages/interactPage";
-import {getInteractConfig} from "../../interact/config/interactConfig";
+import type {ContextProps} from "../../node/componentsProvider/contextProps";
+import type {Page} from "../../node/pages/interactPage";
+import {getInteractConfig} from "../../node/config/interactConfig";
 import {statSync} from "node:fs";
 import {addProseIfNotDefined} from "@/lib/page-utils";
 

@@ -103,6 +103,7 @@ export default function vitePluginPagefind(options: {
             /**
              * Watch the pages directory
              */
+            server.watcher.add(devPagefindSite);
             server.watcher.add(absolutePagesDir);
 
             /**
@@ -110,13 +111,26 @@ export default function vitePluginPagefind(options: {
              * * And delete cache entry if page is deleted
              */
             server.watcher.on('all', (event, changedPath) => {
+
+                /**
+                 * If the html cache directory changes, we reschedule
+                 */
                 const normalized = path.resolve(changedPath);
-                if (!normalized.startsWith(absolutePagesDir)) return;
-                if (!/\.(md|ts|js)x?$/i.test(normalized)) return;
-                if (event === 'add' || event === 'change' || event === 'unlink') {
-                    console.log(`[pagefind] ${event}: ${normalized} -> re-indexing`);
+                if (
+                    normalized.startsWith(devPagefindSite)
+                    && normalized.endsWith(".html")
+                    && (event === 'add' || event === 'change' || event === 'unlink')
+                ) {
+                    const relativeHtmlCachePath = path.relative(devPagefindSite,normalized);
+                    console.log(`[pagefind] scheduled re-indexing - file ${event}ed to the HTML cache (${relativeHtmlCachePath})`);
                     scheduleRebuild();
                 }
+
+                /**
+                 * Should be in a vite cache plugin
+                 */
+                if (!normalized.startsWith(absolutePagesDir)) return;
+                if (!/\.(md|ts|js)x?$/i.test(normalized)) return;
                 if (event === 'unlink') {
                     deleteHtmlCacheEntry(normalized)
                     console.log(`[pagefind] ${event}: Deleted the HTML cache entry for the page (${normalized})`);

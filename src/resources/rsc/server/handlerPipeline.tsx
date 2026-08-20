@@ -1,9 +1,9 @@
 import type {
     MiddlewareResult,
     Middleware
-} from "../../../interact/middlewareEngine/interactMiddleware";
-import type {ContextProps} from "../../../interact/componentsProvider/contextProps";
-import type {Page} from "../../../interact/pages/interactPage";
+} from "../../../node/middlewareEngine/interactMiddleware";
+import type {ContextProps} from "../../../node/componentsProvider/contextProps";
+import type {Page} from "../../../node/pages/interactPage";
 
 type middlewarePipelineType = {
     use: (middleWare: Middleware) => middlewarePipelineType

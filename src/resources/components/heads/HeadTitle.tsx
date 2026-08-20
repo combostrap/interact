@@ -1,4 +1,4 @@
-import {getInteractConfig} from "../../../interact/config/interactConfig";
+import {getInteractConfig} from "../../../node/config/interactConfig";
 import type {LayoutProps} from "@combostrap/interact/types";
 
 // noinspection JSUnusedGlobalSymbols - dynamically with the head provider

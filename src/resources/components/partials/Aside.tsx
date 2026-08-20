@@ -1,7 +1,7 @@
 import type {Frontmatter, LayoutProps, Page} from "@combostrap/interact/types";
 import React from "react";
 import Tree from "@/components/interact/Tree.tsx";
-import {getInteractConfig} from "../../../interact/config/interactConfig.ts";
+import {getInteractConfig} from "../../../node/config/interactConfig.ts";
 import {getPagesTree} from "../../rsc/server/handler.tsx";
 import {SearchBox} from "@/components/interact/SearchBox.tsx";
 

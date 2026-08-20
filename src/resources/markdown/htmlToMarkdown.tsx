@@ -3,8 +3,8 @@ import { unified } from 'unified'
 import rehypeParse from 'rehype-parse'
 import rehypeRemark from 'rehype-remark'
 import remarkStringify from 'remark-stringify'
-import rehypeRemoveNoPrint from "../../interact/markdown/plugins/rehype-remove-no-print";
-import {getMarkdownConfig} from "../../interact/markdown/conf/markdownConfig";
+import rehypeRemoveNoPrint from "../../node/markdown/plugins/rehype-remove-no-print";
+import {getMarkdownConfig} from "../../node/markdown/conf/markdownConfig";
 
 export default function htmlToMarkdown(html: string) {
 

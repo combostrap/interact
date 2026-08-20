@@ -14,7 +14,7 @@ export type SvgComponentProps = SVGProps<SVGSVGElement> & {
 
 function rawAttrToReact(attrString: string | undefined) {
 
-    const result: Record<string, any> = {};
+    const result: Record<string, string | undefined> = {};
     if (attrString == null) {
         return result;
     }

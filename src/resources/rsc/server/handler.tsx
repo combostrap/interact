@@ -6,11 +6,11 @@ import Holy from "@combostrap/interact/components/layouts/Holy";
 import {getInteractConfig} from "@combostrap/interact/config";
 import createMiddlewarePipeline from "./handlerPipeline";
 import {middlewares} from "interact:middlewares"
-import {InteractErrorData, InteractError} from "../../../interact/errors"
+import {InteractErrorData, InteractError} from "../../../node/errors"
 import {getLayoutComponent} from "interact:layouts";
-import type {ContextProps} from "../../../interact/componentsProvider/contextProps";
+import type {ContextProps} from "../../../node/componentsProvider/contextProps";
 import type {ReactNode} from "react";
-import type {FinalPage, Page} from "../../../interact/pages/interactPage";
+import type {FinalPage, Page} from "../../../node/pages/interactPage";
 import {hoistHeadElements} from "@/rsc/server/headElementHoisting";
 import * as NotFound from "@/components/pages/NotFound";
 import InteractApp from "@/rsc/server/InteractApp";

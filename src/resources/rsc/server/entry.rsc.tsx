@@ -17,10 +17,10 @@ import {
 import type {RscPayload} from '../shared/types.js'
 import type {ReactFormState} from 'react-dom/client'
 import {getRootResponse, getStaticPaths} from "./handler.js";
-import {getInteractConfig} from "../../../interact/config/interactConfig";
-import type {ContextProps} from "../../../interact/componentsProvider/contextProps";
+import {getInteractConfig} from "../../../node/config/interactConfig";
+import type {ContextProps} from "../../../node/componentsProvider/contextProps";
 import {HEADER_ACTION_ID, URL_RSC_POSTFIX} from "../shared/shared-const";
-import {populateHtmlCache} from "../../../interact/lib/htmlCache.ts";
+import {populateHtmlCache} from "../../../node/lib/htmlCache.ts";
 
 console.log("[entry.rsc] Module entry.rsc loaded")
 

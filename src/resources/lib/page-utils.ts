@@ -1,5 +1,5 @@
-import type {Page} from "../../interact/pages/interactPage";
-import type {ContextProps} from "../../interact/componentsProvider/contextProps.js";
+import type {Page} from "../../node/pages/interactPage";
+import type {ContextProps} from "../../node/componentsProvider/contextProps.js";
 
 /**
  * Set the isProsePage meta property

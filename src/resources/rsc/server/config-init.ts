@@ -1,6 +1,6 @@
 // Config
-import {setGlobalsConf} from "../../../interact/vite/globalConf.js";
-import {getInteractConfig} from "../../../interact/config/interactConfig";
+import {setGlobalsConf} from "../../../node/vite/globalConf.js";
+import {getInteractConfig} from "../../../node/config/interactConfig";
 try {
     getInteractConfig()
 } catch (e) {

@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Added pagefind support
 * Added HTML cache while browsing to support pagefind indexing
 * Added a SearchBox
+* Added eslint to check that the node directory does not import module via the `@combostrap` import syntax
 
 ## [0.1.1] - 2026-06-18
 

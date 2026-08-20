@@ -6,6 +6,5 @@
  */
 declare module '*.svg' {
     const content: React.FC<React.SVGProps<SVGElement>>
-    // @ts-ignore - does not worl as explained
     export default content
 }

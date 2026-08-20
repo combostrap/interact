@@ -412,7 +412,7 @@ export function PageMenuButton({children, variant = "default", query, render, ..
         }
         return (
             <PageButtonContext query={query}>
-                <PageMenuDropDown render={render as any} {...props}>
+                <PageMenuDropDown render={render} {...props}>
                     {children}
                 </PageMenuDropDown>
             </PageButtonContext>

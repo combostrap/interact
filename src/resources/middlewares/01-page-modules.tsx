@@ -1,6 +1,6 @@
-import type {MiddlewareHandler} from "../../interact/middlewareEngine/interactMiddleware";
-import type {ContextProps} from "../../interact/componentsProvider/contextProps";
-import type {Page} from "../../interact/pages/interactPage";
+import type {MiddlewareHandler} from "../../node/middlewareEngine/interactMiddleware";
+import type {ContextProps} from "../../node/componentsProvider/contextProps";
+import type {Page} from "../../node/pages/interactPage";
 import getModuleFromPageProvider from 'interact:page-modules';
 import {addProseIfNotDefined} from "@/lib/page-utils";
 

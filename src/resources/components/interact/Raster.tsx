@@ -1,13 +1,13 @@
 import React from "react";
 
 
-import type {ImageCompressionType} from "../../../interact/images/imageCompressionType";
-import type {ImageFitType, ImageType} from "../../../interact/config/configSchema";
+import type {ImageCompressionType} from "../../../node/images/imageCompressionType";
+import type {ImageFitType, ImageType} from "../../../node/config/configSchema";
 import clsx from "clsx";
-import {getHtmlImageAttributes, type HtmlImageAttributes} from "../../../interact/images/imageClientLibrary";
-import {ImageError, ImageErrors} from "../../../interact/images/imageErrorsDictionary";
+import {getHtmlImageAttributes, type HtmlImageAttributes} from "../../../node/images/imageClientLibrary";
+import {ImageError, ImageErrors} from "../../../node/images/imageErrorsDictionary";
 
-import {brokenImage} from "../../../interact/images/imageSharedCode";
+import {brokenImage} from "../../../node/images/imageSharedCode";
 import {getInteractConfig} from "@combostrap/interact/config";
 
 

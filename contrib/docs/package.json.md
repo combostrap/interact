@@ -75,7 +75,7 @@ Why not using tsx or node? Because:
 ## Typescript - tsx
 
 `tsx` is used to run `ts` file.
-The shebang of [cli.ts](../../src/interact/cli/cli.ts) is a good example.
+The shebang of [cli.ts](../../src/node/cli/cli.ts) is a good example.
 
 ## Styling, tailwind and Shadcn
 

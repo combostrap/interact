@@ -1,6 +1,6 @@
 // noinspection JSUnusedGlobalSymbols - imported dynamically
 
-import {getInteractConfig} from "../../../interact/config/interactConfig.js";
+import {getInteractConfig} from "../../../node/config/interactConfig.js";
 
 export const frontmatter = {
     "layout": "hamburger",

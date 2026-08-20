@@ -24,9 +24,9 @@ import type {Page, TocNode} from "@combostrap/interact/types";
 import {VFileMessage} from 'vfile-message'
 import {compileSync, runSync} from '@mdx-js/mdx'
 import * as jsxRuntime from 'react/jsx-runtime'
-import {getMarkdownConfig} from "../../interact/markdown/conf/markdownConfig";
-import type {markdownFormat} from "../../interact/config/configSchema";
-import type {Frontmatter} from "../../interact/pages/interactPage";
+import {getMarkdownConfig} from "../../node/markdown/conf/markdownConfig";
+import type {markdownFormat} from "../../node/config/configSchema";
+import type {Frontmatter} from "../../node/pages/interactPage";
 
 
 // Markdown processing to react component via rehypeReact
@@ -181,7 +181,7 @@ async function markdownReactProcessing(vFileCompatible: Compatible, options?: ma
 }
 
 import type {PluggableList} from "unified";
-import {rehypeUpdateRootTagName} from "../../interact/markdown/plugins/rehypeUpdateRootTagName";
+import {rehypeUpdateRootTagName} from "../../node/markdown/plugins/rehypeUpdateRootTagName";
 
 /**
  * ie on demand processing
