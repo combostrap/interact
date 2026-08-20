@@ -20,7 +20,6 @@ export function useMDXComponents(): MDXComponents {
         Planet() {
             return 'Pluto'
         },
-        // @ts-ignore
         pre: Code,
         Svg: Svg
     }

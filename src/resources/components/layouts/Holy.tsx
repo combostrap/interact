@@ -17,7 +17,7 @@ import MainSidebarLayout from "../interact/MainSidebarLayout.tsx";
 // noinspection JSUnusedGlobalSymbols - dynamically imported
 export default function Holy(layoutProps: LayoutProps) {
 
-    let coreLgClass = cn(
+    const coreLgClass = cn(
         "lg:grid",
         "lg:grid-cols-[minmax(min-content,1fr)_4fr]",
         "lg:grid-flow-row",
@@ -26,14 +26,14 @@ export default function Holy(layoutProps: LayoutProps) {
         "lg:mx-4",
         "lg:content-start"
     );
-    let asideLgClassName = cn(
+    const asideLgClassName = cn(
         "lg:row-start-1",
         "lg:col-start-1",
         "lg:top-[5rem]",
         "lg:z-[2]",
         "lg:h-fit"
     );
-    let mainLgClass = cn(
+    const mainLgClass = cn(
         "lg:row-start-1",
         "lg:col-start-2"
     );

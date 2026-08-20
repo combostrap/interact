@@ -94,7 +94,6 @@ export function parseRenderRequest(request: Request): ContextProps {
 }
 
 
-
 async function ssrRendering({rscStream, formState, contextProps}: {
     rscStream: ReadableStream<Uint8Array>,
     formState?: ReactFormState,
@@ -107,7 +106,6 @@ async function ssrRendering({rscStream, formState, contextProps}: {
         debugNojs: contextProps.url.searchParams.has('__nojs'),
     })
 }
-
 
 
 /**
@@ -163,7 +161,11 @@ export default async function handler(request: Request): Promise<Response> {
             } catch (e) {
                 // there's no single general obvious way to surface this error,
                 // so explicitly return classic 500 response.
-                return new Response('Internal Server Error: server action failed', {
+                let message
+                if (e instanceof Error) {
+                    message = e.message
+                }
+                return new Response(`Internal Server Error: server action failed. Error: ${message}`, {
                     status: 500,
                 })
             }

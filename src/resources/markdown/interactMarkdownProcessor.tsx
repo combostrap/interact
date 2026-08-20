@@ -112,9 +112,9 @@ async function markdownReactProcessing(vFileCompatible: Compatible, options?: ma
                  *
                  * @param state https://github.com/syntax-tree/mdast-util-to-hast#state
                  * @param node tttps://github.com/syntax-tree/mdast#nodes
-                 * @param _parent https://github.com/syntax-tree/mdast#parent
+                 * Note you can use as third param the parent https://github.com/syntax-tree/mdast#parent
                  */
-                mdxJsxFlowElement(state: any, node: MdxJsxFlowElement, _parent: any): HastElement {
+                mdxJsxFlowElement(state: any, node: MdxJsxFlowElement): HastElement {
                     const properties: Record<string, any> = {};
                     for (const attribute of node.attributes) {
                         let value = attribute.value;

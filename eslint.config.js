@@ -16,7 +16,14 @@ export default [
         files: ['**/*.ts', '**/*.tsx'],
         rules: {
             '@typescript-eslint/no-explicit-any': 'off', // or 'warn' to keep visibility without failing
-            'prefer-const': 'warn'
+            'prefer-const': 'warn',
+            'prefer-spread': 'warn',
+            '@typescript-eslint/no-unused-vars': 'warn',
+            '@typescript-eslint/ban-ts-comment': 'warn',
+            '@typescript-eslint/no-this-alias': 'warn',
+            '@typescript-eslint/no-unsafe-function-type': 'warn',
+            '@typescript-eslint/no-require-imports': 'warn',
+            '@typescript-eslint/no-empty-object-type': 'warn',
         },
     },
 

@@ -73,6 +73,12 @@ export async function renderHtml(
                 <html>
                 <body>
                 <noscript>Internal Server Error: SSR failed</noscript>
+                {(e instanceof Error) && (
+                    <>
+                        <p>Error Stack: </p>
+                        <pre dangerouslySetInnerHTML={{__html: e.stack ?? "No stack found"}}></pre>
+                    </>
+                )}
                 </body>
                 </html>,
                 {
