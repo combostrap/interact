@@ -4,7 +4,7 @@
   "license": "FSL-1.1-ALv2",
   "type": "module",
   "description": "A React publication framework to create documentation where users can log in and interact with it",
-  "bin": "./dist/interact/cli/cli.js",
+  "bin": "./dist/node/cli/cli.js",
   "repository": "https://github.com/combostrap/interact",
   "scripts": {
     "build": "tsc -p src/node/tsconfig.json --listEmittedFiles",
