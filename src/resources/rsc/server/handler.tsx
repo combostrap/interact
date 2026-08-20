@@ -63,7 +63,7 @@ export function getPagesTree(dir: string, startDir: string = dir): PageNode {
             const fullPath = path.join(currentDir, entry.name);
 
             if (entry.isDirectory()) {
-                let childDir: PageNode = {
+                const childDir: PageNode = {
                     ...getBaseFileProps(fullPath, startDir),
                     type: "folder",
                     children: []
@@ -72,7 +72,7 @@ export function getPagesTree(dir: string, startDir: string = dir): PageNode {
                 walk(fullPath, childDir);
                 continue
             }
-            let pageProps = {...getBaseFileProps(fullPath, startDir)};
+            const pageProps = {...getBaseFileProps(fullPath, startDir)};
             // no 404
             if (getInteractConfig().middleware.notFoundPath == pageProps.path) {
                 continue;
@@ -117,7 +117,7 @@ export function getPagesRecursively(dir: string, startDir: string = dir): Record
             const ext = path.extname(entry.name);
             const withoutExt = ext ? fullPath.slice(0, -ext.length) : fullPath;
             const relativePath = path.relative(startDir, withoutExt);
-            let keyPath = "/" + relativePath;
+            const keyPath = "/" + relativePath;
             results[keyPath] = {
                 name: path.basename(relativePath),
                 path: keyPath,
@@ -143,9 +143,9 @@ export async function getRootResponse(contextProps: ContextProps): Promise<React
     /**
      * Markdown Request with an extension
      */
-    let markdownIndex = contextProps.url.pathname.indexOf('.md');
+    const markdownIndex = contextProps.url.pathname.indexOf('.md');
     if (middlewareResponse == null && markdownIndex != -1) {
-        let pathWithoutExtension = contextProps.url.pathname.slice(0, markdownIndex)
+        const pathWithoutExtension = contextProps.url.pathname.slice(0, markdownIndex)
         middlewareResponse = await middlewarePipeline.run({
             ...contextProps,
             url: new URL(pathWithoutExtension, 'http://mardown.local'),
@@ -157,7 +157,7 @@ export async function getRootResponse(contextProps: ContextProps): Promise<React
      */
     if (middlewareResponse == null) {
         contextProps.response.status = 404;
-        let interactConfig = getInteractConfig();
+        const interactConfig = getInteractConfig();
         middlewareResponse = await middlewarePipeline.run({
             ...contextProps,
             url: new URL(interactConfig.middleware.notFoundPath, 'http://not-found.local'),
@@ -177,7 +177,7 @@ export async function getRootResponse(contextProps: ContextProps): Promise<React
     /**
      * A React Page
      */
-    let pageResponse: Page = middlewareResponse
+    const pageResponse: Page = middlewareResponse
 
     /**
      * Check that the default export is not null
@@ -192,7 +192,7 @@ export async function getRootResponse(contextProps: ContextProps): Promise<React
     const pageElements = hoistHeadElements(<pageResponse.default {...contextProps}/>);
 
 
-    let page: FinalPage = {
+    const page: FinalPage = {
         contentElement: pageElements.contentElement,
         headElements: pageElements.headElements,
         frontmatter: pageResponse.frontmatter,
@@ -215,7 +215,7 @@ export async function getRootResponse(contextProps: ContextProps): Promise<React
      * Layout
      */
     let layout = "holy"
-    let frontMatterLayout = pageResponse.frontmatter?.layout;
+    const frontMatterLayout = pageResponse.frontmatter?.layout;
     if (frontMatterLayout) {
         layout = frontMatterLayout
     }
@@ -255,13 +255,13 @@ export function getStaticPaths() {
 
 
 export function getPages() {
-    let interactConfig = getInteractConfig();
-    let pages = getPagesRecursively(interactConfig.paths.pagesDirectory)
+    const interactConfig = getInteractConfig();
+    const pages = getPagesRecursively(interactConfig.paths.pagesDirectory)
 
     /**
      * Delete the 404 pages if set
      */
-    let notFoundPath = interactConfig.middleware.notFoundPath;
+    const notFoundPath = interactConfig.middleware.notFoundPath;
     delete pages[notFoundPath];
 
     return pages

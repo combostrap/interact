@@ -16,8 +16,8 @@ export default function outlineNumberingStylesheet(): Plugin {
             if (id !== resolvedId) {
                 return null;
             }
-            let interactConfig = getInteractConfig()
-            let outlineNumbering = interactConfig.outline.numbering;
+            const interactConfig = getInteractConfig()
+            const outlineNumbering = interactConfig.outline.numbering;
             if (!outlineNumbering.enabled) {
                 return null;
             }

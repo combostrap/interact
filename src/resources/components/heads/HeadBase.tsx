@@ -15,7 +15,7 @@ import type {LayoutProps} from "@combostrap/interact/types";
 // noinspection JSUnusedGlobalSymbols - dynamically with the head provider
 export default function HeadBase({context}: LayoutProps) {
     const interactConfig = getInteractConfig();
-    let baseHeadURL = (interactConfig.site.base != "/" ? interactConfig.site.base : "") + context.url.pathname;
+    const baseHeadURL = (interactConfig.site.base != "/" ? interactConfig.site.base : "") + context.url.pathname;
     return (
         <base href={baseHeadURL}/>
     )

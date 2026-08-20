@@ -1,6 +1,8 @@
 import tseslint from 'typescript-eslint';
 
 export default [
+    // Could also use the argument of eslint
+    // ie `eslint src`
     {
         ignores: [
             "**/*",

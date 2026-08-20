@@ -19,8 +19,8 @@ export const atAliasCharacter = "@"
  * Shadcn alias: https://ui.shadcn.com/docs/installation/vite#update-viteconfigts
  */
 export function atAliasResolution(): Plugin {
-    let interactConfig = getInteractConfig()
-    let moduleName = 'interact:at-alias-resolution';
+    const interactConfig = getInteractConfig()
+    const moduleName = 'interact:at-alias-resolution';
     console.log(`${moduleName}: loaded`);
     const debugLog = debug(moduleName);
     return {
@@ -38,16 +38,16 @@ export function atAliasResolution(): Plugin {
             // strip `@/`
             let relative = source.slice(atAliasCharacter.length + 1)
             // delete extension if any
-            let lastPoint = relative.lastIndexOf(".")
+            const lastPoint = relative.lastIndexOf(".")
             if (lastPoint != -1) {
                 relative = relative.slice(0, lastPoint)
             }
             // Just the import path is not enough
-            let candidates = [];
-            let resolution = interactConfig.aliases.resolution;
-            let interactPath = `${interactConfig.paths.interactResourcesDirectory}/${relative}`;
-            let clientPath = `${interactConfig.paths.atDirectory}/${relative}`;
-            let isUiImport = source.includes("/ui");
+            const candidates = [];
+            const resolution = interactConfig.aliases.resolution;
+            const interactPath = `${interactConfig.paths.interactResourcesDirectory}/${relative}`;
+            const clientPath = `${interactConfig.paths.atDirectory}/${relative}`;
+            const isUiImport = source.includes("/ui");
             if (resolution == 'standard' && isUiImport) {
                 if (isInteractAlias(importer)) {
                     candidates.push(interactPath)
@@ -62,7 +62,7 @@ export function atAliasResolution(): Plugin {
             // try common extensions
             for (const candidate of candidates) {
                 for (const ext of ['', '.ts', '.tsx', '.js', '.jsx']) {
-                    let candidateFull = candidate + ext;
+                    const candidateFull = candidate + ext;
                     if (fs.existsSync(candidateFull)) {
                         debugLog(`%s was resolve to %s (Importer: %s)`, source, candidateFull, importer);
                         return candidateFull
@@ -71,7 +71,7 @@ export function atAliasResolution(): Plugin {
             }
             // If we let Vite handle it will likely error
             // so we do it to be more precise
-            let message = `Error: The ${source} could not be resolved from the importer (${importer}) with the candidate (${candidates.join(', ')}) in ${resolution} resolution`;
+            const message = `Error: The ${source} could not be resolved from the importer (${importer}) with the candidate (${candidates.join(', ')}) in ${resolution} resolution`;
             if (process.env["NODE_ENV"] === 'development') {
                 throw new Error(message)
             }

@@ -177,7 +177,7 @@ function listenNavigation(fetchRsc: () => void) {
     }
 
     function onClick(e: MouseEvent) {
-        let link = (e.target as Element).closest('a')
+        const link = (e.target as Element).closest('a')
         if (!link) return;
 
         // Navigation in the same page

@@ -22,7 +22,7 @@ export async function handler(): Promise<MiddlewareHandler> {
 
     return async function (context: ContextProps): Promise<Page | undefined> {
 
-        let pageModule = getModuleFromPageProvider({path: context.url.pathname});
+        const pageModule = getModuleFromPageProvider({path: context.url.pathname});
         if (pageModule == undefined) {
             return pageModule;
         }

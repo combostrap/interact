@@ -128,7 +128,7 @@ export function useUrlState<T>({
 
     // Read initial value from URL when mounting
     useEffect(() => {
-        let value = readFromUrl()
+        const value = readFromUrl()
         setValue(value)
     }, []);
 

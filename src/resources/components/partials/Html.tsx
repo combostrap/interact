@@ -16,7 +16,7 @@ export default async function Html({page, context, ...props}: HtmlProps) {
     if (props.lang) {
         lang = props.lang;
     } else {
-        let frontmatterLang = page.frontmatter?.lang;
+        const frontmatterLang = page.frontmatter?.lang;
         if (frontmatterLang != null) {
             lang = frontmatterLang;
         }

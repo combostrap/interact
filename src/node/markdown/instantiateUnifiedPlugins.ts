@@ -8,12 +8,12 @@ function determinePluginType(pluginConfigPath: string, pluginConfig: PluginConfi
     if (pluginConfig != null && pluginConfig.type) {
         return pluginConfig.type
     }
-    let lowercasePath = pluginConfigPath.toLowerCase();
-    let remark = "remark";
+    const lowercasePath = pluginConfigPath.toLowerCase();
+    const remark = "remark";
     if (lowercasePath.includes(remark)) {
         return remark;
     }
-    let rehype = "rehype";
+    const rehype = "rehype";
     if (lowercasePath.includes(rehype)) {
         return rehype
     }
@@ -21,8 +21,8 @@ function determinePluginType(pluginConfigPath: string, pluginConfig: PluginConfi
 
 }
 
-let remark = "remark";
-let rehype = "rehype";
+const remark = "remark";
+const rehype = "rehype";
 const PluginConfigSchema = z.object({
     path: z.string().optional(),
     props: z.record(z.string(), z.any()).optional(),

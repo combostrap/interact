@@ -9,10 +9,10 @@ import path from "path";
 import {getInteractConfig} from "../config/interactConfig.js";
 
 function getHtmlCachePaths(sourcePath: string) {
-    let interactConfig = getInteractConfig();
-    let relativeSourcePath = path.relative(interactConfig.paths.pagesDirectory, sourcePath);
-    let relativeTargetPath = relativeSourcePath.slice(0, relativeSourcePath.lastIndexOf(".")) + ".html";
-    let targetPath = path.join(interactConfig.paths.htmlCacheDirectory, relativeTargetPath);
+    const interactConfig = getInteractConfig();
+    const relativeSourcePath = path.relative(interactConfig.paths.pagesDirectory, sourcePath);
+    const relativeTargetPath = relativeSourcePath.slice(0, relativeSourcePath.lastIndexOf(".")) + ".html";
+    const targetPath = path.join(interactConfig.paths.htmlCacheDirectory, relativeTargetPath);
     return {
         relativeSourcePath,
         targetPath,
@@ -20,8 +20,8 @@ function getHtmlCachePaths(sourcePath: string) {
 }
 
 export function deleteHtmlCacheEntry(sourcePath: string) {
-    let htmlCachePaths = getHtmlCachePaths(sourcePath);
-    let cachePath = htmlCachePaths.targetPath;
+    const htmlCachePaths = getHtmlCachePaths(sourcePath);
+    const cachePath = htmlCachePaths.targetPath;
     if (fs.existsSync(cachePath)) {
         fs.unlinkSync(cachePath)
     }
@@ -38,7 +38,7 @@ export function deleteHtmlCacheEntry(sourcePath: string) {
 export function populateHtmlCache(sourcePath: string, generateDataFn: Function) {
 
 
-    let cachePaths = getHtmlCachePaths(sourcePath);
+    const cachePaths = getHtmlCachePaths(sourcePath);
 
     processCache(
         sourcePath,

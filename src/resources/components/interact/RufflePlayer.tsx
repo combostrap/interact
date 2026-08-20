@@ -43,7 +43,7 @@ const RufflePlayer = ({src, config, children, style, ...rest}: RuffleProps) => {
             }
 
             // Initialize Ruffle player
-            let containerRefDomElement = containerRef.current;
+            const containerRefDomElement = containerRef.current;
             if (containerRefDomElement && window.RufflePlayer) {
 
                 // https://github.com/ruffle-rs/ruffle/wiki/Using-Ruffle#configuration-options
@@ -51,7 +51,7 @@ const RufflePlayer = ({src, config, children, style, ...rest}: RuffleProps) => {
                 window.RufflePlayer.config = {};
 
                 const ruffle = window.RufflePlayer.newest();
-                let player = ruffle.createPlayer();
+                const player = ruffle.createPlayer();
 
                 /*
                  * player is a DOM object which can be attached and resized as desired using native JavaScript features. For instance, to create a player with a width of 600px and a height of 400px, all you need to do is: player.style.width = "600px"; player.style.height = "400px";

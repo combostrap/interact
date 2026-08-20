@@ -9,7 +9,7 @@ import {getInteractConfig} from "../config/interactConfig.js";
  * Store a resolved conf for debugging purpose in dist
  */
 export default function confResolved(): Plugin {
-    let interact = getInteractConfig();
+    const interact = getInteractConfig();
     return {
         name: 'resolved',
         configResolved(config) {
@@ -41,7 +41,7 @@ export default function confResolved(): Plugin {
                 return value
             }
             fs.mkdirSync(path.dirname(outPath), {recursive: true});
-            let jsonConfig = JSON.stringify(config, replacer, 2);
+            const jsonConfig = JSON.stringify(config, replacer, 2);
             console.log(`Writing resolved config to ${outPath}`);
             fs.writeFileSync(outPath, jsonConfig)
         }

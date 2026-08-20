@@ -10,13 +10,13 @@ import {toJsString} from "../lib/virtualModuleUtil.js";
 
 export function generateComponentProvider(interactConfig: InteractConfig): string {
 
-    let imports = [];
+    const imports = [];
 
     // component may be registered multiple time
     // for instance, code is registered for the pre element and itself as Code,
     // but it should be exported only once
-    let exports = new Set<string>();
-    let mdxMappingElementNameComponentName: Record<string, string> = {};
+    const exports = new Set<string>();
+    const mdxMappingElementNameComponentName: Record<string, string> = {};
     for (const [key, value] of Object.entries(interactConfig.components)) {
 
         if (value.type != "markdown") {
@@ -35,7 +35,7 @@ export function generateComponentProvider(interactConfig: InteractConfig): strin
          * Import name
          */
             // Cannot come from the path "./pages/404.ts",404 is a number and is not valid as component name but valid as path
-        let importName = key;
+        const importName = key;
 
         if (!exports.has(importName)) {
 
@@ -73,7 +73,7 @@ export function generateComponentProvider(interactConfig: InteractConfig): strin
      * See https://mdxjs.com/guides/injecting-components/
      */
 
-    let mdMappingAsJavascriptStringObject = toJsString(mdxMappingElementNameComponentName);
+    const mdMappingAsJavascriptStringObject = toJsString(mdxMappingElementNameComponentName);
 
     return `
 ${imports.join('\n')}
@@ -92,8 +92,8 @@ export default dontUse
 
 export default function viteComponentProvider(): Plugin {
 
-    let interactConfig = getInteractConfig()
-    let moduleName = componentsProviderModuleName;
+    const interactConfig = getInteractConfig()
+    const moduleName = componentsProviderModuleName;
     /**
      * We don't prefix with \0 as specified here:
      * https://vite.dev/guide/api-plugin#virtual-modules-convention
@@ -119,7 +119,7 @@ export default function viteComponentProvider(): Plugin {
             }
 
             console.log(`${moduleName} - Module loaded with ${Object.keys(interactConfig.components).length} components`);
-            let provider = generateComponentProvider(interactConfig);
+            const provider = generateComponentProvider(interactConfig);
             return provider;
         }
     };

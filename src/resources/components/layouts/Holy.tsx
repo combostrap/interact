@@ -10,7 +10,6 @@ import Toc from "../partials/Toc.js";
 import {cn} from "@/lib/utils";
 import Footer from "@/components/partials/Footer";
 import MainSidebarLayout from "../interact/MainSidebarLayout.tsx";
-import OffCanvas from "../interact/OffCanvas.tsx";
 
 /**
  * Holy Layout Components
@@ -51,12 +50,7 @@ export default function Holy(layoutProps: LayoutProps) {
                     )}>
                     <div className={coreLgClass}>
                         <div className={asideLgClassName}>
-                            <OffCanvas hiddenClass={"lg:hidden"}>
-                                <Aside {...layoutProps} className={cn("px-4")}/>
-                            </OffCanvas>
-
-                            {/* Regular Aside - visible only at md and above */}
-                            <Aside {...layoutProps} className={cn("print:hidden", "hidden md:block")}/>
+                            <Aside {...layoutProps}/>
                         </div>
 
                         <div className={mainLgClass}>

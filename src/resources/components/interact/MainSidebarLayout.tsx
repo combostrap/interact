@@ -7,7 +7,7 @@ export default function MainSidebarLayout({children, sideBar, className}: {
     sideBar: ReactNode,
     children: ReactNode
 }) {
-    let mainClass = cn(
+    const mainClass = cn(
         "lg:grid",
         "lg:grid-cols-[7fr_minmax(auto,2fr)]",
         "lg:grid-flow-row",
@@ -16,7 +16,7 @@ export default function MainSidebarLayout({children, sideBar, className}: {
         "lg:mx-4",
         "lg:content-start"
     );
-    let tocClassName = cn(
+    const tocClassName = cn(
         "lg:row-1",
         "lg:col-2",
         "lg:sticky",
@@ -24,7 +24,7 @@ export default function MainSidebarLayout({children, sideBar, className}: {
         "lg:z-[2]",
         "lg:h-fit"
     );
-    let childrenClass = cn(
+    const childrenClass = cn(
         "lg:col-1",
         "lg:col-start-1"
     );

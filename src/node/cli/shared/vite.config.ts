@@ -60,13 +60,13 @@ export async function resolveViteConfig(
     /**
      * Set the globals config
      */
-    let interactConfigTyped = await setGlobalsConf(confPath)
+    const interactConfigTyped = await setGlobalsConf(confPath)
 
 
     /**
      * In case, we get a config from the user
      */
-    let viteUserConfig = {};
+    const viteUserConfig = {};
     /**
      * All react library that may use rsc directive (use client) needs to be processed by Vite
      * (ie needs to be in noExternal)
@@ -83,7 +83,7 @@ export async function resolveViteConfig(
      * otherwise you get: Invalid hook call due to 2 react instances
      * Adapted from https://github.com/vitejs/vite-plugin-react/issues/894#issuecomment-3368037728
      */
-    let INTERACT_PKG_NAME = "@combostrap/interact";
+    const INTERACT_PKG_NAME = "@combostrap/interact";
     const reactPkgsConfig = await crawlFrameworkPkgs({
         root: interactConfigTyped.paths.nodeDirectory,
         isBuild: command === 'build',
@@ -98,20 +98,20 @@ export async function resolveViteConfig(
             return undefined;
         },
         isFrameworkPkgByJson(pkgJson) {
-            let pkgName = pkgJson['name'];
+            const pkgName = pkgJson['name'];
             if (['@vitejs/plugin-rsc', 'react-dom'].includes(pkgName)) {
                 return
             }
-            let dependencies = pkgJson['dependencies'] || [];
-            let peerDependencies = pkgJson['peerDependencies'] || [];
-            let reactPackage = 'react' in peerDependencies || 'react' in dependencies;
-            let interactPackage = INTERACT_PKG_NAME in peerDependencies || INTERACT_PKG_NAME in dependencies;
+            const dependencies = pkgJson['dependencies'] || [];
+            const peerDependencies = pkgJson['peerDependencies'] || [];
+            const reactPackage = 'react' in peerDependencies || 'react' in dependencies;
+            const interactPackage = INTERACT_PKG_NAME in peerDependencies || INTERACT_PKG_NAME in dependencies;
             return peerDependencies && (reactPackage || interactPackage)
         }
     });
 
 
-    let dedupe = [
+    const dedupe = [
         "react",
         "react-dom",
         "server-only",
@@ -138,7 +138,7 @@ export async function resolveViteConfig(
      * </code>
      * We have set a manual chunk to get react out of the index file
      */
-    let rollupOption: OutputOptions = {
+    const rollupOption: OutputOptions = {
         manualChunks(id) {
             if (id.includes('node_modules/react')) {
                 return 'react.react-server'; // or whatever name fits

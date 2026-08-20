@@ -33,10 +33,10 @@ function StarRatingSafe(props: RatingProps) {
 }
 
 export default function StarRating(props: RatingProps) {
-    let result = RatingSchema.safeParse(props);
+    const result = RatingSchema.safeParse(props);
 
     if (!result.success) {
-        let message = result.error.issues
+        const message = result.error.issues
             .map(issue => {
                 const path = issue.path.join('.');
                 return `• ${path}: ${issue.message}`;
@@ -44,7 +44,7 @@ export default function StarRating(props: RatingProps) {
             .join('\n');
         // It's a RSC component
         // console.error(message)
-        let StarRatingError = StarRatingSafe({
+        const StarRatingError = StarRatingSafe({
             score: 5,
             scoreColor: 'red',
             neutralColor: "#e5e7eb",

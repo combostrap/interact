@@ -5,8 +5,8 @@ import type {LayoutProps} from "@combostrap/interact/types";
 export default function HeadTitle({page, context}: LayoutProps) {
 
     const interactConfig = getInteractConfig();
-    let frontmatter = page?.frontmatter;
-    let title = frontmatter?.title;
+    const frontmatter = page?.frontmatter;
+    const title = frontmatter?.title;
     const base = interactConfig.site.base
     const isBrowserPathRoot = context.url.pathname === base || context.url.pathname === `${base}index`;
     let headPageTitle = title ? title : "";
@@ -14,7 +14,7 @@ export default function HeadTitle({page, context}: LayoutProps) {
         headPageTitle = interactConfig.site.title || 'Default'
     }
 
-    let pageTitle = headPageTitle + (!isBrowserPathRoot ? " | " + interactConfig.site.name : "")
+    const pageTitle = headPageTitle + (!isBrowserPathRoot ? " | " + interactConfig.site.name : "")
     return (
         <title>{pageTitle}</title>
     )

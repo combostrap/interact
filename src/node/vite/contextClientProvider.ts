@@ -10,13 +10,13 @@ export default function viteContextComponentProvider(): Plugin {
      * interact config is not a props so that on dev server
      * restart the new configuration is read
      */
-    let interactConfig = getInteractConfig();
+    const interactConfig = getInteractConfig();
     /**
      * The name used in the import
      * ie import .... from 'interact:client-contexts'
      */
-    let clientTerm = "client";
-    let moduleName = `interact:${clientTerm}-contexts`;
+    const clientTerm = "client";
+    const moduleName = `interact:${clientTerm}-contexts`;
 
     /**
      * We don't prefix with \0 as specified here:
@@ -43,7 +43,7 @@ export default function viteContextComponentProvider(): Plugin {
                 return null;
             }
 
-            let headProvider = generateContextProvider(
+            const headProvider = generateContextProvider(
                 interactConfig,
                 (key:string)=>key.toLowerCase().includes(SERVER_TERM)
             );

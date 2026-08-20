@@ -76,7 +76,7 @@ export const defaultComponentsValue: ComponentsSet = {
 
 
 // Based on https://realfavicongenerator.net
-let defaultFavicons: FaviconSetSchemaType = {
+const defaultFavicons: FaviconSetSchemaType = {
     "favicon.ico": {
         rel: "shortcut icon",
     },
@@ -110,7 +110,7 @@ function updateFavicon({favicons, publicDirectory}: {
     if (!favicons) {
         favicons = {}
     }
-    for (let [faviconName, faviconProperties] of Object.entries(defaultFavicons)) {
+    for (const [faviconName, faviconProperties] of Object.entries(defaultFavicons)) {
         if (faviconName in Object.keys(favicons)) {
             continue
         }
@@ -129,7 +129,7 @@ function updateManifest({manifestFileName, publicDirectory}: {
     if (fileToCheck == null) {
         fileToCheck = "/site.webmanifest"
     }
-    let manifestPath = `${publicDirectory}/${manifestFileName}`;
+    const manifestPath = `${publicDirectory}/${manifestFileName}`;
     if (fs.existsSync(manifestPath)) {
         return fileToCheck
     }
@@ -171,7 +171,7 @@ class InteractConfigHandler {
          * Directory of the code with the `Interact` package.json,
          * this module (interactConfigHandler) will be in src in dev and dist in prod (when distributed)
          */
-        let interactRootDirectory = path.resolve(__dirname, '../../..');
+        const interactRootDirectory = path.resolve(__dirname, '../../..');
 
         let rootDirectory = path.dirname(this.configFile);
         if (finalConfigData.paths.rootDirectory != null) {
@@ -184,10 +184,10 @@ class InteractConfigHandler {
          * Check the use of the boolean to see the configuration change
          */
         let nodeModuleRootDirectory = rootDirectory
-        let packageJson = join(nodeModuleRootDirectory, "package.json");
+        const packageJson = join(nodeModuleRootDirectory, "package.json");
         const isStandaloneProject = !existsSync(packageJson);
         if (isStandaloneProject) {
-            let startDir = fileURLToPath(import.meta.url);
+            const startDir = fileURLToPath(import.meta.url);
             const foundNodeModuleRoot = getPackageJsonDir({
                 startDir: startDir,
                 firstAncestor: false
@@ -201,7 +201,7 @@ class InteractConfigHandler {
             console.log(`Project Type: Node Project (package.json)`)
         }
 
-        let runtimeDirectory = this.#qualifiedDirectoryPath(rootDirectory, ".interact");
+        const runtimeDirectory = this.#qualifiedDirectoryPath(rootDirectory, ".interact");
         finalConfigData.paths = {
             configFile: this.configFile,
             rootDirectory: rootDirectory,
@@ -270,7 +270,7 @@ class InteractConfigHandler {
             const layoutDirectories = [`${finalConfigData.paths.interactResourcesDirectory}/components/${type}s`, projectPath];
 
             for (const [i, layoutDirectory] of layoutDirectories.entries()) {
-                let isProjectDir = i == 1
+                const isProjectDir = i == 1
 
                 if (!existsSync(layoutDirectory)) {
                     if (isProjectDir) {
@@ -307,7 +307,7 @@ class InteractConfigHandler {
          */
         const middlewareDirectories = [`${finalConfigData.paths.interactResourcesDirectory}/middlewares`, finalConfigData.paths.middlewaresDirectory];
         for (const [i, middlewaresDirectory] of middlewareDirectories.entries()) {
-            let isProjectDir = i == 1
+            const isProjectDir = i == 1
             if (!existsSync(middlewaresDirectory)) {
                 if (isProjectDir) {
                     continue
@@ -342,7 +342,7 @@ class InteractConfigHandler {
         /**
          * Default Markdown
          */
-        let markdownConfigImportPath = finalConfigData.markdown.configImportPath;
+        const markdownConfigImportPath = finalConfigData.markdown.configImportPath;
         if (markdownConfigImportPath == null) {
             const extensions = [".js", ".ts"]
             for (const extension of extensions) {
@@ -406,7 +406,7 @@ class InteractConfigHandler {
     #parseAndAddDefaults(param: {}) {
         const result = JsonConfigSchema.safeParse(param);
         if (!result.success) {
-            let errorMessage = result.error.issues
+            const errorMessage = result.error.issues
                 .map(issue => {
                     const path = issue.path.join('.');
                     return `• ${path}: ${issue.message}`;
@@ -417,7 +417,7 @@ class InteractConfigHandler {
             throw new Error("Configuration error")
         }
 
-        let finalConfigData = (result.data as InteractConfig)
+        const finalConfigData = (result.data as InteractConfig)
         this.#addDefaultAndRuntime(finalConfigData)
 
         return finalConfigData;
@@ -443,7 +443,7 @@ class InteractConfigHandler {
             throw error;
         }
         console.log(`Interact config file found at: ${(this.configFile)}`);
-        let data: Object;
+        let data: object;
         try {
             data = JSON.parse(configContent)
         } catch (error) {

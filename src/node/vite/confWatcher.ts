@@ -9,7 +9,7 @@ import {setGlobalsConf} from "./globalConf.js";
  */
 export default function confWatcher(): Plugin {
 
-    let interactConfig = getInteractConfig()
+    const interactConfig = getInteractConfig()
     const configFile = interactConfig.paths.configFile;
     const layoutDirectory = interactConfig.paths.layoutsDirectory;
     const markdownDirectory = interactConfig.paths.mdComponentsDirectory;

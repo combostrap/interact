@@ -38,7 +38,7 @@ async function markdownReactProcessing(vFileCompatible: Compatible, options?: ma
     if (process.env['NODE_ENV'] !== "production") {
         strictYamlParsing = true
     }
-    let components = useMDXComponents()
+    const components = useMDXComponents()
     let frontmatter: Frontmatter = {}
 
     // Delete comments
@@ -115,7 +115,7 @@ async function markdownReactProcessing(vFileCompatible: Compatible, options?: ma
                  * @param _parent https://github.com/syntax-tree/mdast#parent
                  */
                 mdxJsxFlowElement(state: any, node: MdxJsxFlowElement, _parent: any): HastElement {
-                    let properties: Record<string, any> = {};
+                    const properties: Record<string, any> = {};
                     for (const attribute of node.attributes) {
                         let value = attribute.value;
                         if (!('name' in attribute)) {
@@ -135,7 +135,7 @@ async function markdownReactProcessing(vFileCompatible: Compatible, options?: ma
                     }
                 },
                 mdxJsxTextElement(state: any, node: MdxJsxTextElement): HastElement {
-                    let properties: Record<string, any> = {};
+                    const properties: Record<string, any> = {};
                     for (const attribute of node.attributes) {
                         let value = attribute.value;
                         if (!('name' in attribute)) {

@@ -44,13 +44,13 @@ export function toJsString(value: any, indent = 0): any {
 
 
 export function getComponentsAndImportArray(interactConfig: InteractConfig, type: ComponentTypeType, filterFunction?: (key: string) => boolean) {
-    let imports = [];
-    let components: Record<string, string> = {};
+    const imports = [];
+    const components: Record<string, string> = {};
 
     // component may be registered multiple time
     // for instance, code is registered for the pre element and itself as Code,
     // but it should be exported only once
-    let exports = new Set<string>();
+    const exports = new Set<string>();
     for (const [key, value] of Object.entries(interactConfig.components)) {
 
         if (value.type != type) {
@@ -73,12 +73,12 @@ export function getComponentsAndImportArray(interactConfig: InteractConfig, type
          * Import name
          * Cannot come from the path "./pages/404.ts",404 is a number and is not valid as component name but valid as path
          */
-        let importName = key;
+        const importName = key;
 
         /**
          * Map
          */
-        let layoutKey = key.toLowerCase();
+        const layoutKey = key.toLowerCase();
         components[layoutKey] = importName;
 
         if (!exports.has(importName)) {

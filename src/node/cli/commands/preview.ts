@@ -18,7 +18,7 @@ export async function previewCommand({confPath, logLevel}: PreviewActionOptions)
         server.printUrls();
         server.bindCLIShortcuts({print: true});
     } catch (e) {
-        let error = e as Error;
+        const error = e as Error;
         createLogger('error').error(pc.red(`error when starting preview server:\n${error.stack}`), {error: error});
         process.exit(1);
     }

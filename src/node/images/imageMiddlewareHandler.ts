@@ -67,7 +67,7 @@ export function createImageHandler(config: ImageHandlerProps) {
         const url = new URL(req.url, "http://localhost");
 
         function getRequestedWith() {
-            let urlWidth = url.searchParams.get(urlKeyWidthProperty) || url.searchParams.get("w");
+            const urlWidth = url.searchParams.get(urlKeyWidthProperty) || url.searchParams.get("w");
             return castWidthToNumber(urlWidth);
         }
 
@@ -105,8 +105,8 @@ export function createImageHandler(config: ImageHandlerProps) {
             return [requestedFormat, contentType];
         }
 
-        let error = url.searchParams.get(urlKeyErrorProperty);
-        let isBrokenImageRequestFromImageComponent = url.searchParams.has(urlKeyErrorProperty);
+        const error = url.searchParams.get(urlKeyErrorProperty);
+        const isBrokenImageRequestFromImageComponent = url.searchParams.has(urlKeyErrorProperty);
         try {
 
             if (secret) {
@@ -139,7 +139,7 @@ export function createImageHandler(config: ImageHandlerProps) {
             const requestedRatio = castRatioToNumber(stringRatio);
             const requestedFit = castFit(url.searchParams.get(urlKeyFitProperty));
             const requestedCompression = getCompression();
-            let [requestedFormat, httpHeaderContentType] = getRequestFormat(requestedImgPath);
+            const [requestedFormat, httpHeaderContentType] = getRequestFormat(requestedImgPath);
 
             /**
              * Cache
@@ -151,8 +151,8 @@ export function createImageHandler(config: ImageHandlerProps) {
                 try {
 
                     const cached = await fsPromises.readFile(cachedFile);
-                    let etagValue = etag(cached);
-                    let headers = {
+                    const etagValue = etag(cached);
+                    const headers = {
                         'Content-Type': httpHeaderContentType,
                         "Cache-Control": "public, max-age=31536000, immutable",
                         "ETag": etagValue
@@ -183,7 +183,7 @@ export function createImageHandler(config: ImageHandlerProps) {
                 intrinsicHeight,
                 intrinsicWidth
             })
-            let {targetWidth, targetHeight} = dimensionHelper.getTargetDimensions();
+            const {targetWidth, targetHeight} = dimensionHelper.getTargetDimensions();
             const sharpPipeline = sharp(sourceFile)
             const finalImage = await processImageWithSharp({
                     sharpPipeline,
@@ -223,7 +223,7 @@ export function createImageHandler(config: ImageHandlerProps) {
              * Error title
              * Note: File existing error is thrown by sharp
              */
-            let missingInputFile = "Input file is missing";
+            const missingInputFile = "Input file is missing";
             if (message.includes(missingInputFile)) {
                 title = "Image not found";
             }

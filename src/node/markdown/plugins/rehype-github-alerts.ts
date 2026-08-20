@@ -138,7 +138,7 @@ export default function rehypeGithubAlert() {
 
             const displayName = name.charAt(0).toUpperCase() + name.slice(1)
 
-            let alterName = name;
+            const alterName = name;
             let extraClassName = ''
             if (name === 'important') {
                 extraClassName = 'bg-danger-subtle'
@@ -163,7 +163,7 @@ export default function rehypeGithubAlert() {
                 if (!lastElement.properties) {
                     lastElement.properties = {};
                 }
-                let classNameProp = 'className';
+                const classNameProp = 'className';
                 if (!lastElement.properties[classNameProp]) {
                     lastElement.properties[classNameProp] = [];
                 } else if (!Array.isArray(lastElement.properties[classNameProp])) {

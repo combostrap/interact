@@ -59,8 +59,8 @@ export default function pageModulesPlugin(extensions: string[] = ['mdx', 'tsx', 
      */
     const virtualModuleId = 'interact:page-modules';
 
-    let interactConfig = getInteractConfig()
-    let pagesDir = interactConfig.paths.pagesDirectory
+    const interactConfig = getInteractConfig()
+    const pagesDir = interactConfig.paths.pagesDirectory
 
     /**
      * We don't prefix with \0 as specified here:
@@ -86,9 +86,9 @@ export default function pageModulesPlugin(extensions: string[] = ['mdx', 'tsx', 
             if (id !== resolvedVirtualModuleId) {
                 return null;
             }
-            let context = this
+            const context = this
             loadedEnv = context.environment.name;
-            let globPattern = `**/*.{${extensions.join(',')}}`;
+            const globPattern = `**/*.{${extensions.join(',')}}`;
             const files = glob.sync(globPattern, {cwd: pagesDir});
             console.log(`${virtualModuleId} - Loaded in env ${loadedEnv} with ${files.length} modules pages discovered at ${pagesDir}`);
             return generatePageModulesCode(pagesDir, files);
@@ -98,7 +98,7 @@ export default function pageModulesPlugin(extensions: string[] = ['mdx', 'tsx', 
 
             const invalidate = (file: string) => {
 
-                let eventInPages = !file.startsWith(pagesDir + path.sep);
+                const eventInPages = !file.startsWith(pagesDir + path.sep);
                 if (eventInPages) {
                     return
                 }
@@ -122,12 +122,12 @@ export default function pageModulesPlugin(extensions: string[] = ['mdx', 'tsx', 
                 if (!loadedEnv) {
                     return;
                 }
-                let environment = server.environments[loadedEnv];
+                const environment = server.environments[loadedEnv];
                 if (!environment) {
                     throw new Error(`Environment "${loadedEnv}" not found.`);
                 }
 
-                let module = environment.moduleGraph.getModuleById(virtualModuleId);
+                const module = environment.moduleGraph.getModuleById(virtualModuleId);
                 // undefined because it may be not loaded
                 if (module) {
                     environment.moduleGraph.invalidateModule(module)

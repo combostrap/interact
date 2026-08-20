@@ -62,7 +62,7 @@ export function removePublicPart({relativePath, publicDirName = "public", absolu
     publicDirName?: string,
     absolute?: boolean
 }): string {
-    let searchString = `/${publicDirName}/`;
+    const searchString = `/${publicDirName}/`;
     const publicIndex = relativePath.indexOf(searchString)
 
     if (publicIndex == -1) {

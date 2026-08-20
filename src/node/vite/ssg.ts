@@ -40,7 +40,7 @@ export default function ssg(): Plugin[] {
 }
 
 async function renderStatic(config: ResolvedConfig) {
-    let rscEnv = config.environments['rsc'];
+    const rscEnv = config.environments['rsc'];
     if (!rscEnv) {
         throw new Error("The rsc env environment does not exist.");
     }
@@ -65,17 +65,17 @@ async function renderStatic(config: ResolvedConfig) {
     console.log(`Note: Rsc bundle imported`);
     // entry provides a list of static paths
     const staticPathsObject: Record<string, any> = entryRscModule.getStaticPaths()
-    let staticPaths = Object.keys(staticPathsObject)
+    const staticPaths = Object.keys(staticPathsObject)
     console.log(`Note: ${staticPaths.length} static paths found`);
     // render rsc and html
-    let clientEnv = config.environments['client'];
+    const clientEnv = config.environments['client'];
     if (!clientEnv) {
-        let clientEnvDoesNotExist = "The client env environment does not exist.";
+        const clientEnvDoesNotExist = "The client env environment does not exist.";
         console.error(`Note: ${clientEnvDoesNotExist}`);
         throw new Error(clientEnvDoesNotExist);
     }
     const baseDir = clientEnv.build.outDir
-    let interactConfig = getInteractConfig();
+    const interactConfig = getInteractConfig();
     /**
      * Add the 404 if not set
      */
@@ -94,7 +94,7 @@ async function renderStatic(config: ResolvedConfig) {
             staticRequestPath = `${interactConfig.site.base}${staticRequestPath}`;
         }
         config.logger.info('[vite-rsc:ssg] -> ' + staticRequestPath)
-        let fakeRequest = new Request(new URL(staticRequestPath, 'http://ssg.local'));
+        const fakeRequest = new Request(new URL(staticRequestPath, 'http://ssg.local'));
         const {html, rsc, md} = await entryRscModule.handleSsg(fakeRequest)
 
         /**

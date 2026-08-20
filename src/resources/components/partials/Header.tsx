@@ -11,12 +11,12 @@ import type {LayoutProps} from "@combostrap/interact/types";
 export default async function Header(layoutProps: LayoutProps) {
 
     const interactConfig = getInteractConfig();
-    let homeUrl = interactConfig.site.base
+    const homeUrl = interactConfig.site.base
     // Determine if the image is an SVG based on the file extension
     let logoSrc: string | undefined;
     let logoAlt: string | undefined;
     let logoClass: string | undefined;
-    let headerConfig = interactConfig.template.header;
+    const headerConfig = interactConfig.template.header;
     logoSrc = headerConfig?.logoSrc;
     let logo;
     if (logoSrc != null) {
@@ -26,7 +26,7 @@ export default async function Header(layoutProps: LayoutProps) {
         if (typeof logoAlt == 'undefined') {
             logoAlt = interactConfig.site.name;
         }
-        let imageProps = {
+        const imageProps = {
             src: logoSrc,
             alt: logoAlt,
             className: logoClass,

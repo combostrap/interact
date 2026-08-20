@@ -58,7 +58,7 @@ export default async function Svg({
         if (src.startsWith("/")) {
             src = src.slice(1);
         }
-        let interactConfig = getInteractConfig();
+        const interactConfig = getInteractConfig();
         const svgFile = interactConfig.paths.imagesDirectory + "/" + src;
         let svgCode
         try {
@@ -74,7 +74,7 @@ export default async function Svg({
             }
             svgCode = favicon;
         }
-        let defaultSvgoConfig = interactConfig.svg.svgo;
+        const defaultSvgoConfig = interactConfig.svg.svgo;
         const {data: optimisedSvg} = optimize(svgCode, {
             ...((svgoOptions as any)?.svgoConfig ?? defaultSvgoConfig),
         });
@@ -91,7 +91,7 @@ export default async function Svg({
         }
 
         // Transform the svg root attributes string in react attributes
-        let reactRawAttrs = rawAttrToReact(rawSvgRootAttrs);
+        const reactRawAttrs = rawAttrToReact(rawSvgRootAttrs);
 
         return (
             <svg

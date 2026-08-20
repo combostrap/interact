@@ -22,8 +22,8 @@ export default function vitePluginPagefind(options: {
      * interact config is not a props so that on dev server
      * restart the new configuration is read
      */
-    let interactConfig = getInteractConfig();
-    let absolutePagesDir = interactConfig.paths.pagesDirectory
+    const interactConfig = getInteractConfig();
+    const absolutePagesDir = interactConfig.paths.pagesDirectory
 
     const {
         debounceMs = 5000,
@@ -35,13 +35,13 @@ export default function vitePluginPagefind(options: {
     let rebuildTimer: NodeJS.Timeout | null = null;
 
 
-    let devPagefindSite = interactConfig.paths.htmlCacheDirectory;
+    const devPagefindSite = interactConfig.paths.htmlCacheDirectory;
 
     /**
      * Do we crawl on start to create the index?
      * False, not implemented yet
      */
-    let crawlOnStart = false
+    const crawlOnStart = false
 
     async function reBuildIndexOnStart() {
 
@@ -49,11 +49,11 @@ export default function vitePluginPagefind(options: {
             const pages: Record<string, PageNode> = getPagesRecursively(absolutePagesDir);
             let failures = 0;
 
-            let pagePaths = Object.keys(pages);
+            const pagePaths = Object.keys(pages);
             for (const pagePath of pagePaths) {
                 console.log('[pagefind] -> ' + pagePath)
-                let url = new URL(pagePath, 'http://pagefind.local');
-                let request = new Request(url);
+                const url = new URL(pagePath, 'http://pagefind.local');
+                const request = new Request(url);
                 /**
                  * The transformIndexHtml API will intercept the HTML
                  * and put it in the pagefind site
@@ -153,16 +153,16 @@ export default function vitePluginPagefind(options: {
         buildApp: {
             order: 'post',
             async handler(builder) {
-                let clientEnv = builder.environments['client'];
+                const clientEnv = builder.environments['client'];
                 if (!clientEnv) {
-                    let clientEnvDoesNotExist = "The client env environment does not exist.";
+                    const clientEnvDoesNotExist = "The client env environment does not exist.";
                     console.error(`Note: ${clientEnvDoesNotExist}`);
                     throw new Error(clientEnvDoesNotExist);
                 }
                 const prodClientBuildOutDir = clientEnv.config.build.outDir
                 try {
                     console.log(`PageFind: Index generation started`);
-                    let pageCounts = await runPageFind({site: prodClientBuildOutDir})
+                    const pageCounts = await runPageFind({site: prodClientBuildOutDir})
                     console.log(`PageFind: ${pageCounts} page added to the index`);
                 } catch (e) {
                     console.error(`An error occurred on index generation: ${e}`, e)
@@ -199,7 +199,7 @@ function getPagesRecursively(dir: string, startDir: string = dir): Record<string
             const ext = path.extname(entry.name);
             const withoutExt = ext ? fullPath.slice(0, -ext.length) : fullPath;
             const relativePath = path.relative(startDir, withoutExt);
-            let keyPath = "/" + relativePath;
+            const keyPath = "/" + relativePath;
             results[keyPath] = {
                 name: path.basename(relativePath),
                 path: keyPath,

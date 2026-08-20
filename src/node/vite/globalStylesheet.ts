@@ -9,7 +9,7 @@ export default function globalStylesheet(): Plugin {
     const moduleId = "interact:global.css"
     //const resolvedId = "\0" + moduleId
     const resolvedId = moduleId;
-    let interactConfig = getInteractConfig()
+    const interactConfig = getInteractConfig()
     let confCssFilePath = interactConfig.paths.cssFile
     if (!existsSync(confCssFilePath)) {
         confCssFilePath = path.resolve(interactConfig.paths.interactResourcesDirectory, "styles", "global.css");

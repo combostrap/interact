@@ -13,7 +13,7 @@ import Footer from "@/components/partials/Footer";
 // noinspection JSUnusedGlobalSymbols - imported dynamically
 export default function Hamburger(layoutProps: LayoutProps) {
 
-    let interactConfig = getInteractConfig();
+    const interactConfig = getInteractConfig();
     return (
         <Html {...layoutProps}>
             <Head {...layoutProps}/>

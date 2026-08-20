@@ -77,7 +77,7 @@ async function BrokenImage({src, error, altMessage}: { src: string, error: Image
     if (isSsg) {
         throw new Error(`Ssg: The processing of the image ${src} returned an error`, {cause: error});
     }
-    let htmlImageAttributes = await getHtmlImageAttributes({
+    const htmlImageAttributes = await getHtmlImageAttributes({
         src: brokenImage,
         height: 300,
         width: 400,

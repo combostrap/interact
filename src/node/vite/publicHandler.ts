@@ -3,7 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import sirv from "sirv";
 
-let pluginName = "public-handler";
+const pluginName = "public-handler";
 
 /**
  * Recursively copies all files from `src` directory to `dest` directory.

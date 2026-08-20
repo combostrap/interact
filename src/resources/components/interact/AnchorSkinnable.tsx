@@ -34,7 +34,7 @@ export default function AnchorSkinnable({
     let iconProps: React.HTMLAttributes<HTMLSpanElement>;
     let anchorProps: React.AnchorHTMLAttributes<HTMLAnchorElement> = props
     if (variant === 'button') {
-        let buttonHeight = "";
+        const buttonHeight = "";
         anchorProps = {
             className: cn(`flex items-stretch rounded-lg min-h-8 no-underline gap-2 pr-2 pl-0 border-y-1 border-r-1 border-solid border-primary `, anchorProps.className, buttonHeight),
         }

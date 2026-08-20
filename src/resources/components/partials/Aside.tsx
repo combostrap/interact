@@ -1,9 +1,10 @@
 import type {Frontmatter, LayoutProps, Page} from "@combostrap/interact/types";
 import React from "react";
-import Tree from "@/components/interact/Tree.tsx";
 import {getInteractConfig} from "../../../node/config/interactConfig.ts";
 import {getPagesTree} from "../../rsc/server/handler.tsx";
+import AsideResponsive from "@/components/interact/AsideResponsive.tsx";
 import {SearchBox} from "@/components/interact/SearchBox.tsx";
+import Tree from "@/components/interact/Tree.tsx";
 
 const pages = import.meta.glob<Page<Frontmatter>>(
     "./pages/**/*.ts",
@@ -31,14 +32,14 @@ export type AsideProps = React.HTMLAttributes<HTMLElement> & LayoutProps
 
 // @ts-ignore -- exported
 export default function Aside({page, context, ...props}: AsideProps) {
-    let interactConfig = getInteractConfig();
-    let data = getPagesTree(interactConfig.paths.pagesDirectory).children ?? []
+    const interactConfig = getInteractConfig();
+    const data = getPagesTree(interactConfig.paths.pagesDirectory).children ?? []
 
     return (
-        <aside {...props}>
+        <AsideResponsive {...props}>
             <SearchBox/>
-            <Tree data={data} {...props} />
-        </aside>
+            <Tree data={data}/>
+        </AsideResponsive>
     )
 
 

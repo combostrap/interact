@@ -8,7 +8,7 @@ export default function MetaLastModified({context}: LayoutProps) {
     if (context.meta.lastModifiedPage == null) {
         return;
     }
-    let lastModified = new Date(context.meta.lastModifiedPage);
+    const lastModified = new Date(context.meta.lastModifiedPage);
     return (
         <meta httpEquiv="last-modified" content={lastModified.toUTCString()}/>
     )

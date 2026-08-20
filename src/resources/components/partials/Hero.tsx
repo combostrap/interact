@@ -25,7 +25,7 @@ export default function Hero({page, context, ...htmlProps}: HeroProps) {
     if (!title) {
         title = context.url.pathname.slice(1);
     }
-    let lead = page?.frontmatter?.lead;
+    const lead = page?.frontmatter?.lead;
     return (
         <header {...htmlProps}>
             {title &&

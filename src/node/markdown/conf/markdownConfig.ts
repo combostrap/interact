@@ -57,9 +57,9 @@ export function getMarkdownConfig(): MarkdownConfig {
 
 export async function createMarkdownConfig() {
 
-    let interactConfig = getInteractConfig()
+    const interactConfig = getInteractConfig()
 
-    let initDefaultFormat = interactConfig.markdown.defaultMarkdownFormat
+    const initDefaultFormat = interactConfig.markdown.defaultMarkdownFormat
 
     /**
      * Markdown Configuration file
@@ -71,7 +71,7 @@ export async function createMarkdownConfig() {
         extension = "js"
     }
     let markdownConfigImportPath = path.resolve(__dirname, `markdownPluginsUserDefault.${extension}`);
-    let configImportPath = interactConfig.markdown.configImportPath;
+    const configImportPath = interactConfig.markdown.configImportPath;
     if (configImportPath != null) {
         // user configuration file was found
         markdownConfigImportPath = configImportPath;
@@ -89,12 +89,12 @@ export async function createMarkdownConfig() {
             throw new Error(message);
         }
     }
-    let markdownConfig = 'markdownConfig';
+    const markdownConfig = 'markdownConfig';
     if (!(markdownConfig in markdownConfModule)) {
         throw new Error(`The markdown configuration module (${markdownConfigImportPath}) has no ${markdownConfig} export`)
     }
-    let initMarkdownUserConfig = markdownConfModule.markdownConfig
-    let initMandatoryUnifiedPlugins = getMandatoryUnifiedPlugins(interactConfig)
+    const initMarkdownUserConfig = markdownConfModule.markdownConfig
+    const initMandatoryUnifiedPlugins = getMandatoryUnifiedPlugins(interactConfig)
 
     return {
         /**

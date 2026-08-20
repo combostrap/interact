@@ -4,8 +4,8 @@ import path from "node:path";
 
 export default function middlewareProvider(): Plugin {
 
-    let moduleName = 'interact:middlewares';
-    let interactConfig = getInteractConfig()
+    const moduleName = 'interact:middlewares';
+    const interactConfig = getInteractConfig()
 
     //const resolvedId = '\0' + virtualId;
     const resolvedId = moduleName;
@@ -18,8 +18,8 @@ export default function middlewareProvider(): Plugin {
         load(id: string) {
             if (id !== resolvedId) return;
 
-            let imports: string[] = [];
-            let middlewares: string[] = []
+            const imports: string[] = [];
+            const middlewares: string[] = []
             for (const [i, middleware] of interactConfig.middleware.pipeline.entries()) {
                 let importPath = middleware.importPath;
                 if (importPath.startsWith("./")) {

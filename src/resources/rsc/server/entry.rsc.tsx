@@ -42,10 +42,10 @@ export function parseRenderRequest(request: Request): ContextProps {
     const isAction = request.method === 'POST'
     const accept = request.headers.get('accept') // or req.headers['accept'] in Express
     const wantsMarkdown = accept?.includes('text/markdown')
-    let isMarkdownRequest = wantsMarkdown || request.url.endsWith('.md');
+    const isMarkdownRequest = wantsMarkdown || request.url.endsWith('.md');
 
     // base set
-    let base = getInteractConfig().site.base
+    const base = getInteractConfig().site.base
     if (base != "/") {
         let pathname = url.pathname.slice(base.length)
         if (pathname == null) {
@@ -173,7 +173,7 @@ export default async function handler(request: Request): Promise<Response> {
     /**
      * Get the response (a page or a response)
      */
-    let rootResponse = await getRootResponse(contextProps)
+    const rootResponse = await getRootResponse(contextProps)
     if (rootResponse instanceof Response) {
         return rootResponse
     }
@@ -198,7 +198,7 @@ export default async function handler(request: Request): Promise<Response> {
         /**
          * HTML Cache
          */
-        let sourcePath = contextProps.meta.localSourcePagePath;
+        const sourcePath = contextProps.meta.localSourcePagePath;
         if (sourcePath != null) {
             // A ReadableStream (and by extension a Response body) can only be read once.
             // We create a copy
@@ -233,7 +233,7 @@ export default async function handler(request: Request): Promise<Response> {
      * Getting the root page may return a status and the transformation as stream also
      * We combine them
      */
-    let combinedStatus = contextProps.response.status != null && contextProps.response.status != 200 ? contextProps.response.status : ssrResult.status;
+    const combinedStatus = contextProps.response.status != null && contextProps.response.status != 200 ? contextProps.response.status : ssrResult.status;
 
     /**
      * react-dom/server is not supported in React Server Components environment
@@ -255,7 +255,7 @@ export default async function handler(request: Request): Promise<Response> {
     /**
      * HTML Cache
      */
-    let sourcePath = contextProps.meta.localSourcePagePath;
+    const sourcePath = contextProps.meta.localSourcePagePath;
     if (sourcePath != null) {
         // A ReadableStream (and by extension a Response body) can only be read once.
         // We create a copy
@@ -295,7 +295,7 @@ export async function handleSsg(request: Request): Promise<{
      * HTML request
      */
     const contextProps = parseRenderRequest(request)
-    let rootResponse = await getRootResponse(contextProps)
+    const rootResponse = await getRootResponse(contextProps)
     if (rootResponse instanceof Response) {
         throw new Error("A page request should not return a Web Fetch API Response")
     }
@@ -311,7 +311,7 @@ export async function handleSsg(request: Request): Promise<{
      */
     contextProps.meta.isMarkdownRequest = true
     contextProps.url = new URL(contextProps.url.pathname + ".md", "http://ssg-markdown.local")
-    let markdownRootResponse = await getRootResponse(contextProps)
+    const markdownRootResponse = await getRootResponse(contextProps)
     if (markdownRootResponse instanceof Response) {
         throw new Error("A markdown request should not return a Web Fetch API Response")
     }

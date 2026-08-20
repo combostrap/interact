@@ -8,10 +8,10 @@ export function generateHeadProvider(interactConfig: InteractConfig): {
     heads: Record<string, string>
 } {
 
-    let {components: headComponents, imports, exports} = getComponentsAndImportArray(interactConfig, "head")
+    const {components: headComponents, imports, exports} = getComponentsAndImportArray(interactConfig, "head")
 
-    let headComponentAsJavascriptStringObject = toJsString(headComponents);
-    let virtualModuleContent = `
+    const headComponentAsJavascriptStringObject = toJsString(headComponents);
+    const virtualModuleContent = `
 ${imports.join('\n')}
 
 const headComponents = ${headComponentAsJavascriptStringObject};
@@ -37,12 +37,12 @@ export default function viteHeadProvider(): Plugin {
      * interact config is not a props so that on dev server
      * restart the new configuration is read
      */
-    let interactConfig = getInteractConfig();
+    const interactConfig = getInteractConfig();
     /**
      * The name used in the import
      * ie import .... from 'interact:heads'
      */
-    let moduleName = 'interact:heads';
+    const moduleName = 'interact:heads';
 
     /**
      * We don't prefix with \0 as specified here:
@@ -69,7 +69,7 @@ export default function viteHeadProvider(): Plugin {
                 return null;
             }
 
-            let headProvider = generateHeadProvider(interactConfig);
+            const headProvider = generateHeadProvider(interactConfig);
             console.log(`${moduleName} module loaded with ${Object.keys(headProvider.heads).length} heads`);
 
             return headProvider.content;

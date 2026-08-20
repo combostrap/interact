@@ -27,7 +27,7 @@ export async function build({confPath, outDir, logLevel}: BuildActionOptions): P
         await builder.buildApp();
         console.log('Interact Build Command: Build completed successfully!')
     } catch (e) {
-        let error = e as Error;
+        const error = e as Error;
         createLogger('error').error(pc.red(`error when building:\n${error.stack}`), {error: error});
         process.exit(1);
     }

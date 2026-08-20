@@ -43,7 +43,7 @@ export default function createMiddlewarePipeline(): middlewarePipelineType {
                         }
                 }
             }
-            let response = await resolveResponse(result);
+            const response = await resolveResponse(result);
             if (response != null) {
                 if (!(response instanceof Response)) {
                     if (!("default" in response)) {

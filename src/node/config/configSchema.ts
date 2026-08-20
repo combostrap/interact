@@ -21,7 +21,7 @@ const faviconImage = z.object({
     height: z.coerce.number<number>().describe("The intrinsic height of the image").optional(),
 }).describe("An image")
 type faviconImageType = z.output<typeof faviconImage>
-let relSchema = z.enum(['shortcut icon', 'icon', 'apple-touch-icon', 'preload']).describe("The link rel (ie the type)");
+const relSchema = z.enum(['shortcut icon', 'icon', 'apple-touch-icon', 'preload']).describe("The link rel (ie the type)");
 type RelType = z.output<typeof relSchema>
 type FaviconType = {
     rel: RelType,
@@ -72,7 +72,7 @@ const SiteSchema = z.object({
 const imageTypeSchema = z.enum(['fluid']).describe("The type of image to apply a specific style").default('fluid');
 export type ImageType = z.output<typeof imageTypeSchema>
 
-let defaultImagePropertyValues = z.object({
+const defaultImagePropertyValues = z.object({
     type: imageTypeSchema,
     responsiveBreakpoints: z.array(z.number().int().positive()).describe("The responsive breakpoints corresponding to a screen size. For each screen, a passing image is provided").default([375, 576, 768, 992, 1200, 1400]),
     dpiCorrection: z.boolean().describe("Enable DPI correction by screen size for responsive images").default(false),
@@ -119,7 +119,7 @@ const AliasesSchema = z.object({
 })
 
 
-let container = z.object({
+const container = z.object({
     // https://getbootstrap.com/docs/5.3/layout/containers/
     containerClass: z.string().describe("The classes applied to contained the layout").default('container mx-auto px-4'),
     // with the unit please
@@ -127,8 +127,8 @@ let container = z.object({
 });
 
 
-let counterStyleSchema = z.enum(['decimal', 'decimal-leading-zero', 'arabic-indic', 'upper-armenian', 'lower-armenian', 'bengali', 'cambodian/khmer', 'cjk-decimal', 'devanagari', 'georgian', 'gujarati', 'gurmukhi', 'hebrew', 'kannada', 'lao', 'malayalam', 'mongolian', 'myanmar', 'oriya', 'persian', 'lower-roman', 'upper-roman', 'tamil', 'telugu', 'thai', 'tibetan', 'lower-alpha', 'upper-alpha', 'lower-greek', 'hiragana', 'hiragana-iroha', 'katakana', 'katakana-iroha']);
-let outlineNumberingSchema = z.object({
+const counterStyleSchema = z.enum(['decimal', 'decimal-leading-zero', 'arabic-indic', 'upper-armenian', 'lower-armenian', 'bengali', 'cambodian/khmer', 'cjk-decimal', 'devanagari', 'georgian', 'gujarati', 'gurmukhi', 'hebrew', 'kannada', 'lao', 'malayalam', 'mongolian', 'myanmar', 'oriya', 'persian', 'lower-roman', 'upper-roman', 'tamil', 'telugu', 'thai', 'tibetan', 'lower-alpha', 'upper-alpha', 'lower-greek', 'hiragana', 'hiragana-iroha', 'katakana', 'katakana-iroha']);
+const outlineNumberingSchema = z.object({
     enabled: z.boolean().describe("Is outline numbering enabled").default(true),
     suffix: z.string().describe("The suffix of the numbering").default(" - "),
     counterSeparator: z.string().describe("The separator for each counter").default("."),
@@ -140,21 +140,21 @@ let outlineNumberingSchema = z.object({
 });
 
 
-let header = z.object({
+const header = z.object({
     brandName: z.string().nullable().optional(),
     logoWidth: z.number().optional(),
     logoHeight: z.number().optional(),
     logoSrc: z.coerce.string().default("favicon.svg"),
     logoAlt: z.string().optional(),
 });
-let toc = z.object({
+const toc = z.object({
     maxDepth: z.coerce.number<number>().describe("The maximum level printed").default(3),
 });
 
 /**
  * Configuration for layout and partials
  */
-let templateType = z.object({
+const templateType = z.object({
     container: container.default(container.parse({})),
     header: header.default(header.parse({})),
     toc: toc.default(toc.parse({})),
@@ -162,7 +162,7 @@ let templateType = z.object({
 export type templateConfig = z.output<typeof templateType>;
 
 
-let componentType = z.enum(["layout", "markdown", "head", "context"]);
+const componentType = z.enum(["layout", "markdown", "head", "context"]);
 export type ComponentTypeType = z.infer<typeof componentType>
 /**
  * Components
@@ -181,7 +181,7 @@ const ComponentSchema = z.object({
     type: componentType,
     props: z.record(z.string(), z.unknown()).optional(),
 });
-let ComponentsConfigSetSchema = z.record(
+const ComponentsConfigSetSchema = z.record(
     z.coerce.string<string>().describe("The path from the public directory"),
     ComponentSchema
 )
@@ -202,10 +202,10 @@ const MiddlewaresSchema = z.object({
 const OutlineSchema = z.object({
     numbering: outlineNumberingSchema.default(outlineNumberingSchema.parse({})),
 })
-let markdownFormat = z.enum(["md", "mdc", "mdx"]);
+const markdownFormat = z.enum(["md", "mdc", "mdx"]);
 export type markdownFormat = z.output<typeof markdownFormat>;
 
-let MarkdownConfigSchema = z.object({
+const MarkdownConfigSchema = z.object({
     configImportPath: z.string().describe("The import path of the config file. For a local path, the value should start with a point otherwise it's considered a package name").optional(),
     // mdr has a phantom paragraph and lazy problem that mdx has not
     defaultMarkdownFormat: markdownFormat.describe("What is the format of md files").default("mdc"),

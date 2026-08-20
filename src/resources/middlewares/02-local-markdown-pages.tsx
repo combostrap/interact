@@ -29,7 +29,7 @@ export async function fsGetTextAsync(path: string) {
  */
 // noinspection JSUnusedGlobalSymbols - loaded dynamically via alias
 export async function handler(): Promise<MiddlewareHandler> {
-    let interactConfig = getInteractConfig()
+    const interactConfig = getInteractConfig()
     const pagesDir = interactConfig.paths.pagesDirectory;
 
     return async function (context: ContextProps): Promise<Page | undefined> {
@@ -41,8 +41,8 @@ export async function handler(): Promise<MiddlewareHandler> {
         if (filePath.endsWith("/")) {
             filePath += "index";
         }
-        let page = path.join(pagesDir, `${filePath}.md`)
-        let content = await fsGetTextAsync(page);
+        const page = path.join(pagesDir, `${filePath}.md`)
+        const content = await fsGetTextAsync(page);
         if (content == null) {
             return;
         }
@@ -56,7 +56,7 @@ export async function handler(): Promise<MiddlewareHandler> {
         context.meta.lastModifiedPage = stat.mtime.toISOString()
         context.meta.localSourcePagePath = page
 
-        let pageModule = await markdownToPageSync(file);
+        const pageModule = await markdownToPageSync(file);
         addProseIfNotDefined(pageModule, context);
         return pageModule
 

@@ -2,7 +2,7 @@ import type {LayoutProps} from "@combostrap/interact/types";
 
 // noinspection JSUnusedGlobalSymbols - dynamically with the head provider
 export default function MetaDescription({page}: LayoutProps) {
-    let description = page?.frontmatter?.description;
+    const description = page?.frontmatter?.description;
     if (!description) {
         return;
     }

@@ -87,7 +87,7 @@ async function generateImage({masterFilePath, dryRun, outputDirectory, interactC
     } else {
         console.log(`The following files have been created:`);
     }
-    let absoluteMasterFilePath = path.resolve(masterFilePath)
+    const absoluteMasterFilePath = path.resolve(masterFilePath)
     for (const [filename, content] of Object.entries(files)) {
 
         const targetFilePath: string = path.join(outputDirectory, filename);

@@ -18,7 +18,7 @@ import {imageEndPointEnvName, imageViteOutDirEnvName} from "./imageMiddlewareHan
 import fs from "fs";
 import debug from 'debug'
 
-let moduleName = 'interact:image';
+const moduleName = 'interact:image';
 const debugLog = debug(moduleName);
 
 export type HtmlImageAttributes = {
@@ -56,7 +56,7 @@ const withDpiCorrection = interactConfig.images.defaultValues?.dpiCorrection || 
 function getSizes(screenWidth: number, imageWidth: number) {
     let sizes;
     if (withDpiCorrection) {
-        let dpiBase = 96;
+        const dpiBase = 96;
         sizes = `(max-width: ${screenWidth}px) and (min-resolution:` + (3 * dpiBase) + "dpi) " + ImageDimensionHelper.round(imageWidth / 3) + "px";
         sizes += `, (max-width: ${screenWidth}px) and (min-resolution:` + (2 * dpiBase) + "dpi) " + ImageDimensionHelper.round(imageWidth / 2) + "px";
         sizes += `, (max-width: ${screenWidth}px) and (min-resolution:${dpiBase}dpi) ${imageWidth}px`;
@@ -80,11 +80,11 @@ async function toImageServiceUri(src: string, serviceProperties: Partial<Record<
     const isBuild = import.meta.env.MODE === 'production'
     if (!isBuild) {
         // The endpoint of the local service endpoint ("/_images")
-        let serviceEndpoint = process.env[imageEndPointEnvName]
+        const serviceEndpoint = process.env[imageEndPointEnvName]
         if (!serviceEndpoint) {
             throw new Error(`Service endpoint env (${imageEndPointEnvName}) is not defined`)
         }
-        let uriBase = `${serviceEndpoint}/${src}`
+        const uriBase = `${serviceEndpoint}/${src}`
         if (Object.keys(serviceProperties).length == 0) {
             return uriBase
         }
@@ -118,9 +118,9 @@ async function toImageServiceUri(src: string, serviceProperties: Partial<Record<
 
     const pathWithoutExtension = src.slice(0, src.indexOf(".")); // 'path/file'
     const extension = src.slice(src.indexOf(".") + 1);  // 'txt'
-    let buildUri = `/img/${pathWithoutExtension}-${hash}.${extension}`;
+    const buildUri = `/img/${pathWithoutExtension}-${hash}.${extension}`;
 
-    let viteOutDir = process.env[imageViteOutDirEnvName];
+    const viteOutDir = process.env[imageViteOutDirEnvName];
     if (!viteOutDir) {
         throw new Error(`The env ${imageViteOutDirEnvName} is not defined`);
     }
@@ -134,7 +134,7 @@ async function toImageServiceUri(src: string, serviceProperties: Partial<Record<
     /**
      * base
      */
-    let base = interactConfig.site.base;
+    const base = interactConfig.site.base;
     if (base != "/") {
         return `${base}${buildUri}`;
     }
@@ -149,7 +149,7 @@ async function toImageServiceUri(src: string, serviceProperties: Partial<Record<
  */
 export async function getHtmlImageAttributes(props: ImageRequestProps): Promise<HtmlImageAttributes> {
 
-    let serviceProperties: Partial<Record<ImageServiceKeyUrl, string>> = {}
+    const serviceProperties: Partial<Record<ImageServiceKeyUrl, string>> = {}
     if (props.width != null) {
         serviceProperties.width = String(props.width)
     }
@@ -165,7 +165,7 @@ export async function getHtmlImageAttributes(props: ImageRequestProps): Promise<
          * Error request
          */
         serviceProperties.error = String(props.error);
-        let uri = await toImageServiceUri(props.src, serviceProperties);
+        const uri = await toImageServiceUri(props.src, serviceProperties);
         return {
             src: uri,
             width: Number(props.width) || 100,
@@ -197,14 +197,14 @@ export async function getHtmlImageAttributes(props: ImageRequestProps): Promise<
         })
     }
 
-    let originalRequestDimensionHelper = new ImageDimensionHelper({
+    const originalRequestDimensionHelper = new ImageDimensionHelper({
         requestedWidth: castWidthToNumber(props.width),
         requestedHeight: castHeightToNumber(props.height),
         requestedRatio: castRatioToNumber(props.ratio),
         intrinsicWidth,
         intrinsicHeight
     });
-    let {targetWidth, targetHeight} = originalRequestDimensionHelper.getTargetDimensions()
+    const {targetWidth, targetHeight} = originalRequestDimensionHelper.getTargetDimensions()
 
     const isSsg = import.meta.env.MODE === 'production'
     if (isSsg) {
@@ -223,11 +223,11 @@ export async function getHtmlImageAttributes(props: ImageRequestProps): Promise<
     }
 
 
-    let uri = await toImageServiceUri(props.src, serviceProperties, sharpPipeline);
+    const uri = await toImageServiceUri(props.src, serviceProperties, sharpPipeline);
 
     const imageMargin = 20;
-    let srcSet: string[] = [];
-    let sizes: string[] = [];
+    const srcSet: string[] = [];
+    const sizes: string[] = [];
 
     const isHeightRequest = originalRequestDimensionHelper.isHeightRequest()
     const isAspectRatioRequest = originalRequestDimensionHelper.isRatioRequested()
@@ -252,7 +252,7 @@ export async function getHtmlImageAttributes(props: ImageRequestProps): Promise<
         /**
          * Breakpoint Width
          */
-        let breakpointWidthWithoutMargin = breakpoint - imageMargin;
+        const breakpointWidthWithoutMargin = breakpoint - imageMargin;
         if (
             !isHeightRequest // breakpoint url needs only the height attribute in this case
             || isAspectRatioRequest
@@ -261,7 +261,7 @@ export async function getHtmlImageAttributes(props: ImageRequestProps): Promise<
             if (isSsg) {
                 // in ssg, the dimensions are mandatory
                 // for the image generation, sharp will throw an error if width or height is missing
-                let breakpointHeightDimensionHelper = new ImageDimensionHelper({
+                const breakpointHeightDimensionHelper = new ImageDimensionHelper({
                     requestedWidth: castWidthToNumber(serviceProperties.width),
                     requestedHeight: null,
                     requestedRatio: originalRequestDimensionHelper.getTargetRatio(),
@@ -285,7 +285,7 @@ export async function getHtmlImageAttributes(props: ImageRequestProps): Promise<
             if (isSsg) {
                 // in ssg, the dimensions are mandatory
                 // for the image generation, sharp will throw an error if width or height is missing
-                let breakpointHeightDimensionHelper = new ImageDimensionHelper({
+                const breakpointHeightDimensionHelper = new ImageDimensionHelper({
                     requestedWidth: null,
                     requestedHeight: breakpointHeight,
                     requestedRatio: originalRequestDimensionHelper.getTargetRatio(),

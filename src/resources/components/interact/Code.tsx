@@ -62,7 +62,7 @@ const DARK_THEMES: PrismTheme[] = [
     "vsDark",
 ];
 
-let cdnBase = "https://cdn.jsdelivr.net/npm/prismjs@1.30.0";
+const cdnBase = "https://cdn.jsdelivr.net/npm/prismjs@1.30.0";
 
 const THEME_CDN: Record<PrismTheme, string> = {
     default: "prism.min.css",
@@ -232,14 +232,14 @@ export default function Code({
     }, [currentTheme]);
 
 
-    let currentHref = typeof window !== "undefined" ? window.location.href : undefined;
+    const currentHref = typeof window !== "undefined" ? window.location.href : undefined;
     // Load Prism + plugins
     useEffect(() => {
 
         const loadPrism = async () => {
             await loadPrismCore();
         }
-        let prismLoaded = window.Prism && window.Prism.plugins && window.Prism.plugins['autoloader'];
+        const prismLoaded = window.Prism && window.Prism.plugins && window.Prism.plugins['autoloader'];
         if (!prismLoaded) {
             loadPrism()
                 // autoloader is needed to load the language dependencies
@@ -427,7 +427,7 @@ export default function Code({
         letterSpacing: "0.02em",
     };
 
-    let roundedValue = "xl"
+    const roundedValue = "xl"
     return (
         <>
             {/* Google Font for JetBrains Mono */}

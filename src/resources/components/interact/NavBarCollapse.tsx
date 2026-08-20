@@ -6,7 +6,7 @@ import {cn} from "@/lib/utils";
 export default function NavBarCollapse({children, className, ...props}: React.HTMLAttributes<HTMLDivElement>) {
     const [isOpen, setIsOpen] = useState(false);
 
-    let hamburgerLine: React.CSSProperties = {
+    const hamburgerLine: React.CSSProperties = {
         display: "block",
         width: "22px",
         height: "2px",
@@ -15,7 +15,7 @@ export default function NavBarCollapse({children, className, ...props}: React.HT
         transition: "transform 0.2s, opacity 0.2s"
     }
 
-    let toggleButton: React.CSSProperties = {
+    const toggleButton: React.CSSProperties = {
         gap: "5px",
         padding: "4px",
         background: "transparent",

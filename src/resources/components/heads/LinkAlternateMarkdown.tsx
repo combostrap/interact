@@ -6,7 +6,7 @@ import type {LayoutProps} from "@combostrap/interact/types";
  */
 // noinspection JSUnusedGlobalSymbols - dynamically with the head provider
 export default function LinkAlternateMarkdown({context}: LayoutProps) {
-    let markdownAlternateHref = context.url.pathname.endsWith("/") ? context.url.pathname + "index.md" : context.url.pathname + ".md"
+    const markdownAlternateHref = context.url.pathname.endsWith("/") ? context.url.pathname + "index.md" : context.url.pathname + ".md"
     return (
         <link rel="alternate" type="text/markdown" href={markdownAlternateHref}/>
     )

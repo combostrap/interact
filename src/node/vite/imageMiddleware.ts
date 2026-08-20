@@ -16,13 +16,13 @@ export default function viteImageService({
                                              command
                                          }: ImageMiddleware): Plugin {
 
-    let interactConfig = getInteractConfig()
-    let baseDir = interactConfig.paths.imagesDirectory;
-    let cacheDir = command === 'start' ? undefined : path.resolve(interactConfig.paths.runtimeDirectory, "img");
+    const interactConfig = getInteractConfig()
+    const baseDir = interactConfig.paths.imagesDirectory;
+    const cacheDir = command === 'start' ? undefined : path.resolve(interactConfig.paths.runtimeDirectory, "img");
     // if local there is no need to sign the URL
-    let secret = process.env[imageSecretEnvName];
+    const secret = process.env[imageSecretEnvName];
     // the directory of the resources (ie broken image)
-    let resourcesDir = interactConfig.paths.interactResourcesDirectory;
+    const resourcesDir = interactConfig.paths.interactResourcesDirectory;
 
 
     /**
@@ -30,7 +30,7 @@ export default function viteImageService({
      */
     process.env[imageViteOutDirEnvName] = interactConfig.paths.buildDirectory;
 
-    let endPoint = "/_images";
+    const endPoint = "/_images";
     process.env[imageEndPointEnvName] = endPoint
 
 
@@ -52,7 +52,7 @@ export default function viteImageService({
                     return next();
                 }
                 try {
-                    let handler = createImageHandler({
+                    const handler = createImageHandler({
                         baseDir, cacheDir, endPoint, resourcesDir, secret
                     })
                     await toNodeHandler(handler)(req as any, res as any)

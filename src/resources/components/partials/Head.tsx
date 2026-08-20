@@ -7,8 +7,8 @@ export type HeadProps = React.HTMLAttributes<HTMLHeadElement> & LayoutProps;
 // noinspection JSUnusedGlobalSymbols - imported via package.json export
 export default function Head(headProps: HeadProps) {
 
-    let {page, context, ...props} = headProps;
-    let layoutProps: LayoutProps = {
+    const {page, context, ...props} = headProps;
+    const layoutProps: LayoutProps = {
         page: page,
         context: context
     }

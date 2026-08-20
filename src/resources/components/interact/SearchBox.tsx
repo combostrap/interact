@@ -147,7 +147,7 @@ export function SearchBox() {
                                             key={r.id}
                                             value={r.id}
                                             onSelect={() => {
-                                                window.location.href = target
+                                                history.pushState(null, '', target)
                                                 setOpen(false)
                                             }}
                                             className="flex flex-col items-start gap-1"

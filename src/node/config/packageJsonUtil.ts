@@ -43,8 +43,8 @@ export function getPackageJson() {
         return packageJson;
     }
     const __filename = fileURLToPath(import.meta.url);
-    let startDir = path.dirname(__filename);
-    let packageJsonPath = path.resolve(getPackageJsonDir({startDir, firstAncestor: true}) + "/package.json")
+    const startDir = path.dirname(__filename);
+    const packageJsonPath = path.resolve(getPackageJsonDir({startDir, firstAncestor: true}) + "/package.json")
     packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
     return packageJson;
 }

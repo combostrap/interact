@@ -8,11 +8,11 @@ export function generateLayoutProvider(interactConfig: InteractConfig): {
     layouts: Record<string, string>
 } {
 
-    let {components: layoutComponents, imports, exports} = getComponentsAndImportArray(interactConfig, "layout")
+    const {components: layoutComponents, imports, exports} = getComponentsAndImportArray(interactConfig, "layout")
 
 
-    let layoutComponentAsJavascriptStringObject = toJsString(layoutComponents);
-    let virtualModuleContent = `
+    const layoutComponentAsJavascriptStringObject = toJsString(layoutComponents);
+    const virtualModuleContent = `
 ${imports.join('\n')}
 
 const layoutComponents = ${layoutComponentAsJavascriptStringObject};
@@ -38,12 +38,12 @@ export default function viteLayoutProvider(): Plugin {
      * interact config is not a props so that on dev server
      * restart the new configuration is read
      */
-    let interactConfig = getInteractConfig();
+    const interactConfig = getInteractConfig();
     /**
      * The name used in the import
      * ie import .... from 'interact:layouts'
      */
-    let moduleName = 'interact:layouts';
+    const moduleName = 'interact:layouts';
 
     /**
      * We don't prefix with \0 as specified here:
@@ -70,7 +70,7 @@ export default function viteLayoutProvider(): Plugin {
                 return null;
             }
 
-            let layoutProvider = generateLayoutProvider(interactConfig);
+            const layoutProvider = generateLayoutProvider(interactConfig);
             console.log(`${moduleName} module loaded with ${Object.keys(layoutProvider.layouts).length} layouts`);
 
             return layoutProvider.content;

@@ -11,7 +11,7 @@ export interface StartActionOptions {
 }
 
 export async function start({confPath, outDir, logLevel, port}: StartActionOptions): Promise<void> {
-    let viteConfig = await resolveViteConfig({
+    const viteConfig = await resolveViteConfig({
         confPath,
         port,
         outDir,

@@ -7,14 +7,14 @@ export function generateContextProvider(interactConfig: InteractConfig, filterFu
     components: Record<string, string>
 } {
 
-    let {
+    const {
         components: contextComponents,
         imports,
         exports
     } = getComponentsAndImportArray(interactConfig, "context", filterFunction)
 
-    let headComponentAsJavascriptStringObject = toJsString(contextComponents);
-    let virtualModuleContent = `
+    const headComponentAsJavascriptStringObject = toJsString(contextComponents);
+    const virtualModuleContent = `
 ${imports.join('\n')}
 
 const contextComponents = ${headComponentAsJavascriptStringObject};

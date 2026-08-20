@@ -75,7 +75,7 @@ export const PageButtonContext = ({query: localQuery, children}: OpenContextProp
         }
         // Window location href change for each page
         // so use effect run each time
-        let actualPageLocation = new URL(currentHref);
+        const actualPageLocation = new URL(currentHref);
         actualPageLocation.search = ''
         actualPageLocation.hash = ''
         if (actualPageLocation.pathname.endsWith("/")) {
@@ -124,7 +124,7 @@ export const OpenInChatGPTAnchor = ({
     if (finalQuery == null) {
         return <></>
     }
-    let createUrl = (prompt: string) =>
+    const createUrl = (prompt: string) =>
         `https://chatgpt.com/?${new URLSearchParams({
             hints: "search",
             prompt,
@@ -150,11 +150,11 @@ export const OpenInSciraAnchor = ({query: localQuery, hideSvg = false, children,
     if (finalQuery == null) {
         return <></>
     }
-    let createUrl = (q: string) =>
+    const createUrl = (q: string) =>
         `https://scira.ai/?${new URLSearchParams({
             q,
         })}`;
-    let sciraIcon = (
+    const sciraIcon = (
         <svg
             fill="none"
             stroke="#000000"
@@ -221,11 +221,11 @@ export const OpenInVoAnchor = ({query: localQuery, hideSvg = false, children, ..
     if (finalQuery == null) {
         return <></>
     }
-    let createUrl = (q: string) =>
+    const createUrl = (q: string) =>
         `https://v0.app?${new URLSearchParams({
             q,
         })}`;
-    let voIcon = (
+    const voIcon = (
         <svg
             fill="#000000"
             viewBox="0 0 147 70"
@@ -259,7 +259,7 @@ export const OpenInT3Anchor = ({query: localQuery, hideSvg = false, children, ..
     if (finalQuery == null) {
         return <></>
     }
-    let createUrl = (q: string) =>
+    const createUrl = (q: string) =>
         `https://t3.chat/new?${new URLSearchParams({
             q,
         })}`;
@@ -288,12 +288,12 @@ export const OpenInCursorAnchor = ({
     if (finalQuery == null) {
         return <></>
     }
-    let createUrl = (text: string) => {
+    const createUrl = (text: string) => {
         const url = new URL("https://cursor.com/link/prompt");
         url.searchParams.set("text", text);
         return url.toString();
     };
-    let cursorIcon = (
+    const cursorIcon = (
         <svg
             version="1.1"
             viewBox="0 0 466.73 532.09"
@@ -327,7 +327,7 @@ export const OpenAsMarkdownAnchor = ({children, href: hrefLocal, hideSvg = false
     // Client component runs also on the server in SSR mode
     // where window is not known
     useEffect(() => {
-        let url = new URL(window.location.href)
+        const url = new URL(window.location.href)
         if (url.pathname.endsWith("/")) {
             url.pathname = url.pathname + "index.md";
         } else {
@@ -358,7 +358,7 @@ export const OpenInClaudeAnchor = ({query: localQuery, hideSvg, children, ...pro
     if (finalQuery == null) {
         return <>No Query Found</>
     }
-    let createUrl = (q: string) =>
+    const createUrl = (q: string) =>
         `https://claude.ai/new?${new URLSearchParams({
             q,
         })}`
@@ -422,12 +422,12 @@ export function PageMenuButton({children, variant = "default", query, render, ..
         render = <CopyAsMarkdownButton/>
     }
 
-    let styledButton = React.cloneElement(render, {
+    const styledButton = React.cloneElement(render, {
         className: cn("group/button inline-flex shrink-0 px-2 items-center justify-center rounded-lg no-underline h-8 text-black border rounded-r-none border-r-0", render.props.className),
         hideSvg: true
     } as any)
 
-    let leftRender = (<Button type="button" variant={"outline"} className={"rounded-l-none px-2"}>
+    const leftRender = (<Button type="button" variant={"outline"} className={"rounded-l-none px-2"}>
         <ChevronDown className="size-4"/>
     </Button>)
 
@@ -456,7 +456,7 @@ export function CopyAsMarkdownButton({
     const [markdownUrl, setMarkdownUrl] = useState("");
 
     useEffect(() => {
-        let pageUrl = new URL(window.location.href)
+        const pageUrl = new URL(window.location.href)
         pageUrl.pathname = pageUrl.pathname + ".md";
         const finalUrl = pageUrl.toString();
         if (finalUrl != markdownUrl) {
@@ -511,7 +511,7 @@ function PageMenuDropDown({children, render}: {
      * Children are expected to be an anchor or a button with a svg and a span
      * We style them
      */
-    let styledChildren = React.Children.map(children, (child) => {
+    const styledChildren = React.Children.map(children, (child) => {
         // Only process valid React elements
         if (!React.isValidElement(child)) return child;
 
