@@ -9,4 +9,4 @@ SCRIPT_DIR="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")")" && pwd)"
 PROJECT_DIR=$(realpath "$SCRIPT_DIR/../..")
 # TSX_TSCONFIG_PATH="$PROJECT_DIR/tsconfig.json"
 #node --import tsx "$PROJECT_DIR/src/node/cli/cli.ts" "$@"
-npx tsx "$PROJECT_DIR/src/node/cli/cli.ts" "$@"
+npx tsx "$PROJECT_DIR/packages/interact/src/node/cli/cli.ts" "$@"

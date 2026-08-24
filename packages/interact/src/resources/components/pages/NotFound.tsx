@@ -1,0 +1,15 @@
+// noinspection JSUnusedGlobalSymbols - imported dynamically
+
+import {getInteractConfig} from "../../../node/config/interactConfig.ts";
+
+export const frontmatter = {
+    "layout": "hamburger",
+    "title": "Not Found"
+}
+
+export default function NotFound({url}: { url: URL }) {
+
+
+    return <p>Error: The page {url.pathname} was not found {getInteractConfig().site.base}</p>
+
+}

@@ -11,7 +11,7 @@ https://vite.dev/guide/features#client-types
 
 ## cli module resolution
 
-We don't have the [module resolution](../../src/node/tsconfig.json) set to `bundler` because
+We don't have the [module resolution](../../packages/interact/src/node/tsconfig.json) set to `bundler` because
 we don't bundle the cli as vite does. We just emit js file with TypeScript.
 
 ```json

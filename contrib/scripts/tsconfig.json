@@ -1,5 +1,5 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "@combostrap/interact/tsconfig.json",
   "compilerOptions": {
     "moduleResolution": "NodeNext",
     "module": "NodeNext",

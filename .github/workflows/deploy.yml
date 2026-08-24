@@ -26,7 +26,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  APP_DIR: ./apps/site
+  APP_DIR: apps/site
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -62,23 +62,25 @@ jobs:
         # GitHub Actions adds node_modules/.bin to the PATH automatically
         run: ls -la node_modules/.bin
 
-      - name: Typescript check
-        run: yarn check
+      - name: Prepare/Checks
+        run: |
+          yarn workspace @combostrap/interact check
 
       - name: Build the interact cli
-        run: yarn build
+        run: |
+          yarn workspace @combostrap/interact build
 
       - name: Build the registry
         run: |
-          yarn registry
+          yarn workspace @combostrap/interact registry
 
       - name: Build the Favicon
         run: |
-          yarn interact favicon --confPath=apps/site
+          yarn workspace @combostrap/interact interact favicon --confPath=../../${{ env.APP_DIR }}
 
       - name: Build the website
         run: | 
-          yarn interact build --confPath=${{ env.APP_DIR }}
+          yarn workspace @combostrap/interact interact build --confPath=../../${{ env.APP_DIR }}
 
       # actions/deploy-pages expect a zip
       - name: Upload Pages artifact

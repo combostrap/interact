@@ -1,8 +1,8 @@
-# Functional Source License, Version 1.1, ALv2 Future License
+# Functional Source License, Version 1.1, AGPL Future License
 
 ## Abbreviation
 
-FSL-1.1-ALv2
+FSL-1.1-AGPLv3
 
 ## Notice
 
@@ -35,6 +35,7 @@ Permitted Purposes specifically include using the Software:
 2. for non-commercial education;
 3. for non-commercial research; and
 4. in connection with professional services that you provide to a licensee using the Software in accordance with these Terms and Conditions.
+
 ### Patents
 
 To the extent your use for a Permitted Purpose would necessarily infringe our patents, the license grant above includes a license under our patents. If you make a claim against any party that the Software infringes or contributes to the infringement of any patent, then your patent license to the Software ends immediately.
@@ -57,12 +58,12 @@ Except for displaying the License Details and identifying us as the origin of th
 
 ## Grant of Future License
 
-We hereby irrevocably grant you an additional license to use the Software under the Apache License, Version 2.0 that is effective on the second anniversary of the date we make the Software available. On or after that date, you may use the Software under the Apache License, Version 2.0, in which case the following will apply:
+We hereby irrevocably grant you an additional license to use the Software under the AGPL licence version 3 that is effective on the second anniversary of the date we make the Software available. On or after that date, you may use the Software under the AGPL licence version, in which case the following will apply:
 
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
+Licensed under the AGPL licence version 3 (the "License"); you may not use this file except in compliance with the License.
 
 You may obtain a copy of the License at
 
-http://www.apache.org/licenses/LICENSE-2.0
+https://opensource.org/license/agpl-3-0
 
 Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
