@@ -32,6 +32,7 @@ function loadPagefind() {
 
     if (!pagefindPromise) {
         let baseurl = import.meta.env.BASE_URL;
+        // .interact/search
         let relativeBasePath = `.interact/search/pagefind.js`;
         let pagefindUrl
         if (baseurl != "/") {

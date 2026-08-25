@@ -35,16 +35,18 @@ export default function Hero({page, context, ...htmlProps}: HeroProps) {
                 <p className={"lead mb-4"} style={{fontSize: "1.5rem"}}>{lead}</p>
             )
             }
-            <PageMenuButton>
-                <CopyAsMarkdownButton>Copy As Markdown</CopyAsMarkdownButton>
-                <OpenAsMarkdownAnchor>Open as Markdown</OpenAsMarkdownAnchor>
-                <OpenInClaudeAnchor>Open in Claude</OpenInClaudeAnchor>
-                <OpenInChatGPTAnchor>Open in ChatGpt</OpenInChatGPTAnchor>
-                <OpenInCursorAnchor>Open in Cursor</OpenInCursorAnchor>
-                <OpenInSciraAnchor>Open in Scira</OpenInSciraAnchor>
-                <OpenInT3Anchor>Open in T3</OpenInT3Anchor>
-                <OpenInVoAnchor>Open in Vo</OpenInVoAnchor>
-            </PageMenuButton>
+            <div data-noindex>
+                <PageMenuButton>
+                    <CopyAsMarkdownButton>Copy As Markdown</CopyAsMarkdownButton>
+                    <OpenAsMarkdownAnchor>Open as Markdown</OpenAsMarkdownAnchor>
+                    <OpenInClaudeAnchor>Open in Claude</OpenInClaudeAnchor>
+                    <OpenInChatGPTAnchor>Open in ChatGpt</OpenInChatGPTAnchor>
+                    <OpenInCursorAnchor>Open in Cursor</OpenInCursorAnchor>
+                    <OpenInSciraAnchor>Open in Scira</OpenInSciraAnchor>
+                    <OpenInT3Anchor>Open in T3</OpenInT3Anchor>
+                    <OpenInVoAnchor>Open in Vo</OpenInVoAnchor>
+                </PageMenuButton>
+            </div>
 
         </header>
     )

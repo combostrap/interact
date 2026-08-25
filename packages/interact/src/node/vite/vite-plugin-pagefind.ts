@@ -45,7 +45,11 @@ export default function vitePluginPagefind(options: {
      */
     const pageFindConfig: PagefindServiceConfig = {
         rootSelector: 'main',
-        writePlayground: true
+        writePlayground: true,
+        excludeSelectors: [
+            /* matches any element with the attribute, any tag */
+            "[data-noindex]"
+        ]
     }
 
     const devPagefindSite = interactConfig.paths.htmlCacheDirectory;

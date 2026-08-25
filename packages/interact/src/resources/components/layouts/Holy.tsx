@@ -60,7 +60,7 @@ export default function Holy(layoutProps: LayoutProps) {
                                         {...layoutProps}
                                     />
                                 }>
-                                <Hero {...layoutProps} />
+                                <Hero className={"mb-3"} {...layoutProps} />
                                 <div className={cn(layoutProps.context.meta.isProsePage && "prose")}>
                                     {layoutProps.page.contentElement}
                                 </div>
