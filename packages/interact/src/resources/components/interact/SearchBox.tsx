@@ -5,15 +5,8 @@ import {Search} from "lucide-react"
 import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList,} from "@/components/ui/command.tsx"
 import {Button} from "@/components/ui/button.tsx"
 import {Dialog, DialogContent, DialogTrigger} from "@/components/ui/dialog.tsx";
+import type {PagefindInstance} from "../../../node/search/pagefind-search";
 
-type PagefindResult = {
-    id: string
-    data: () => Promise<{
-        url: string
-        excerpt: string
-        meta: { title?: string }
-    }>
-}
 
 type ResultItem = {
     id: string
@@ -27,7 +20,7 @@ let pagefindPromise: Promise<any> | null = null
 // ie .interact/search
 declare const __SEARCH_RELATIVE_BASE_URL__: string;
 
-function loadPagefind() {
+function loadPagefind(): Promise<PagefindInstance> {
 
     if (!pagefindPromise) {
 
@@ -71,12 +64,12 @@ export function SearchBox() {
             if (cancelled) return
 
             const items = await Promise.all(
-                search.results.slice(0, 8).map(async (r: PagefindResult) => {
+                search.results.slice(0, 8).map(async (r) => {
                     const data = await r.data()
                     return {
                         id: r.id,
                         url: data.url,
-                        title: data.meta?.title ?? data.url,
+                        title: data.meta?.["title"] ?? data.url,
                         excerpt: data.excerpt,
                     }
                 })
