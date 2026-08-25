@@ -15,8 +15,18 @@ import {deleteHtmlCacheEntry} from "../lib/htmlCache.js";
  * * For the production, the build site is used
  */
 export default function vitePluginPagefind(options: {
-    debounceMs?: number
+    // how many Ms between 2 indexing
+    // default to 5000 (ie 5 second)
+    debounceMs?: number,
+    // where page find is installed and located in the site
+    // default to '.interact/search' following the same idea as `/.well-known/`
+    siteRelativeBase?: string,
 }): Plugin {
+
+    const {
+        debounceMs = 5000,
+        siteRelativeBase = '.interact/search'
+    } = options;
 
     /**
      * interact config is not a props so that on dev server
@@ -25,17 +35,24 @@ export default function vitePluginPagefind(options: {
     const interactConfig = getInteractConfig();
     const absolutePagesDir = interactConfig.paths.pagesDirectory
 
-    const {
-        debounceMs = 5000,
-    } = options;
-
     /**
      * When a page changes, we rebuilt the index at interval
      */
     let rebuildTimer: NodeJS.Timeout | null = null;
 
+    /**
+     * The page find creation index
+     */
+    const pageFindConfig: PagefindServiceConfig = {
+        rootSelector: 'main',
+        writePlayground: true
+    }
 
     const devPagefindSite = interactConfig.paths.htmlCacheDirectory;
+
+
+    const pageFindSiteBase = `/${siteRelativeBase}/`;
+    const pagefindRootSitePath = path.resolve(devPagefindSite, siteRelativeBase);
 
     /**
      * Do we crawl on start to create the index?
@@ -71,14 +88,22 @@ export default function vitePluginPagefind(options: {
         }
 
 
-        await runPageFind({site: devPagefindSite})
+        await runPageFind({
+            site: devPagefindSite,
+            siteBase: pageFindSiteBase,
+            config: pageFindConfig
+        })
     }
 
     function scheduleRebuild() {
         if (rebuildTimer) clearTimeout(rebuildTimer);
         rebuildTimer = setTimeout(() => {
             rebuildTimer = null;
-            runPageFind({site: devPagefindSite}).catch((err) => {
+            runPageFind({
+                site: devPagefindSite,
+                siteBase: pageFindSiteBase,
+                config: pageFindConfig
+            }).catch((err) => {
                 console.error('[pagefind] schedule run failed:', err);
             });
         }, debounceMs);
@@ -118,11 +143,12 @@ export default function vitePluginPagefind(options: {
                 const normalized = path.resolve(changedPath);
                 if (
                     normalized.startsWith(devPagefindSite)
+                    && !normalized.startsWith(pagefindRootSitePath)
                     && normalized.endsWith(".html")
                     && (event === 'add' || event === 'change' || event === 'unlink')
                 ) {
-                    const relativeHtmlCachePath = path.relative(devPagefindSite,normalized);
-                    console.log(`[pagefind] scheduled re-indexing - file ${event}ed to the HTML cache (${relativeHtmlCachePath})`);
+                    const relativeHtmlCachePath = path.relative(devPagefindSite, normalized);
+                    console.log(`[pagefind] scheduled re-indexing - file ${event} detected in the HTML cache (${relativeHtmlCachePath})`);
                     scheduleRebuild();
                 }
 
@@ -140,8 +166,8 @@ export default function vitePluginPagefind(options: {
             /**
              * Serve pagefind resources (library and index)
              */
-            const serve = sirv(`${devPagefindSite}/pagefind`, {dev: true, etag: true,})
-            server.middlewares.use("/pagefind", (req, res, next) => {
+            const serve = sirv(pagefindRootSitePath, {dev: true, etag: true,})
+            server.middlewares.use(pageFindSiteBase, (req, res, next) => {
                 serve(req, res, next)
             })
 
@@ -162,7 +188,11 @@ export default function vitePluginPagefind(options: {
                 const prodClientBuildOutDir = clientEnv.config.build.outDir
                 try {
                     console.log(`PageFind: Index generation started`);
-                    const pageCounts = await runPageFind({site: prodClientBuildOutDir})
+                    const pageCounts = await runPageFind({
+                        site: prodClientBuildOutDir,
+                        siteBase: pageFindSiteBase,
+                        config: pageFindConfig
+                    })
                     console.log(`PageFind: ${pageCounts} page added to the index`);
                 } catch (e) {
                     console.error(`An error occurred on index generation: ${e}`, e)
@@ -221,9 +251,10 @@ function getPagesRecursively(dir: string, startDir: string = dir): Record<string
  * * we don't need to spawn a process with npx that will also inherit debug
  * * pagefind is a dev dependencies after all, not in the bundle
  */
-async function runPageFind({config, site}: {
+async function runPageFind({config, site, siteBase}: {
     config?: PagefindServiceConfig,
-    site: string
+    site: string,
+    siteBase: string,
 }) {
 
     // https://pagefind.app/docs/node-api/#pagefindcreateindex
@@ -244,7 +275,7 @@ async function runPageFind({config, site}: {
 
     // Write the generated bundle files to disk
     await index.writeFiles({
-        outputPath: `${site}/pagefind`
+        outputPath: `${site}${siteBase}`
     });
 
     // Log/Return the page count

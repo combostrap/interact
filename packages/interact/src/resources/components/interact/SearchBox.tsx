@@ -29,8 +29,16 @@ type ResultItem = {
 let pagefindPromise: Promise<any> | null = null
 
 function loadPagefind() {
+
     if (!pagefindPromise) {
-        const pagefindUrl = `${import.meta.env.BASE_URL}pagefind/pagefind.js`
+        let baseurl = import.meta.env.BASE_URL;
+        let relativeBasePath = `.interact/search/pagefind.js`;
+        let pagefindUrl
+        if (baseurl != "/") {
+            pagefindUrl = `${baseurl}/${relativeBasePath}`
+        } else {
+            pagefindUrl = `${baseurl}${relativeBasePath}`
+        }
         pagefindPromise = import(/* @vite-ignore */ pagefindUrl)
     }
     return pagefindPromise
@@ -139,7 +147,7 @@ export function SearchBox() {
                             <CommandGroup heading="Results">
                                 {results.map((r) => {
                                     let target = r.url;
-                                    if(r.url.endsWith("html")) {
+                                    if (r.url.endsWith("html")) {
                                         target = target.replace(".html", "");
                                     }
                                     return (

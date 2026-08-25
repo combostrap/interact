@@ -97,7 +97,7 @@ The shebang of [cli.ts](../../packages/interact/src/node/cli/cli.ts) is a good e
 ## Markdown/Mx
 
 `recma-mdx-is-mdx-component`: So that we can detect that the content comes from Markdown and set
-the [prose class](../../apps/site/pages/reference/styling.md#prose-content) to true
+the [prose class](../../sites/interact/pages/reference/styling.md#prose-content) to true
 https://github.com/remcohaszing/recma-mdx-is-mdx-component
 
 ## cmdk

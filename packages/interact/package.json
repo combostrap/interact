@@ -3,7 +3,7 @@
   "version": "0.1.1-next",
   "license": "FSL-1.1-AGPLv3",
   "type": "module",
-  "description": "A React-based publication framework to create content application where users can log in and interact with it",
+  "description": "A React-based publication framework that focus on interaction",
   "bin": "./dist/node/cli/cli.js",
   "repository": "https://github.com/combostrap/interact",
   "scripts": {
@@ -14,11 +14,11 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "watch": "tsc --watch",
-    "start": "ninteract start --confPath=$PROJECT_CWD/apps/site",
-    "favicon": "ninteract favicon --confPath=$PROJECT_CWD/apps/site",
-    "ssg": "ninteract build --confPath=$PROJECT_CWD/apps/site",
-    "preview": "ninteract preview --confPath=$PROJECT_CWD/apps/site",
-    "registry": "shadcn build --output $PROJECT_CWD/apps/site/public/r",
+    "start": "ninteract start --confPath=$PROJECT_CWD/sites/interact",
+    "favicon": "ninteract favicon --confPath=$PROJECT_CWD/sites/interact",
+    "ssg": "ninteract build --confPath=$PROJECT_CWD/sites/interact",
+    "preview": "ninteract preview --confPath=$PROJECT_CWD/sites/interact",
+    "registry": "shadcn build --output $PROJECT_CWD/sites/interact/public/r",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage"
@@ -58,8 +58,8 @@
     "@svgr/plugin-svgo": "8.1.0",
     "@tailwindcss/typography": "0.5.19",
     "@tailwindcss/vite": "4.2.2",
-    "@vitejs/plugin-react": "6.0.2",
-    "@vitejs/plugin-rsc": "0.5.26",
+    "@vitejs/plugin-react": "6.1.0",
+    "@vitejs/plugin-rsc": "0.5.34",
     "bootstrap-icons": "1.13.1",
     "cac": "^7.0.0",
     "class-variance-authority": "0.7.1",
@@ -73,8 +73,8 @@
     "mrmime": "2.0.1",
     "pagefind": "1.5.2",
     "picocolors": "*",
-    "react": "19.2.6",
-    "react-dom": "19.2.6",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
     "recma-mdx-is-mdx-component": "^2.0.0",
     "rehype-autolink-headings": "7.1.0",
     "rehype-parse": "^9.0.1",
@@ -95,8 +95,8 @@
     "ts-node": "10.9.2",
     "tsx": "4.21.0",
     "tw-animate-css": "1.4.0",
-    "vite": "8.0.13",
-    "vite-plugin-inspect": "11.4.1",
+    "vite": "8.2.1",
+    "vite-plugin-inspect": "12.0.2",
     "vite-plugin-svgr": "4.5.0",
     "vitefu": "1.1.3",
     "zod": "4.3.6"
@@ -115,7 +115,7 @@
     "release-it": "20.2.0",
     "typescript": "5.9.3",
     "typescript-eslint": "8.67.0",
-    "vitest": "4.1.0"
+    "vitest": "4.1.11"
   },
   "publishConfig": {
     "access": "public"

@@ -21,4 +21,4 @@ tasks:
   deploy:
     cmds:
       - |
-        yarn check && git tag -f early-access && git push -f origin early-access
+        yarn workspace @combostrap/interact check && git tag -f early-access && git push -f origin early-access

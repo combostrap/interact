@@ -7,7 +7,7 @@ export default function MainSidebarLayout({children, sideBar, className}: {
     sideBar: ReactNode,
     children: ReactNode
 }) {
-    const mainClass = cn(
+    const gridClass = cn(
         "lg:grid",
         "lg:grid-cols-[7fr_minmax(auto,2fr)]",
         "lg:grid-flow-row",
@@ -29,14 +29,14 @@ export default function MainSidebarLayout({children, sideBar, className}: {
         "lg:col-start-1"
     );
     return (
-        <main className={cn(mainClass, className)}>
+        <div className={cn(gridClass, className)}>
             <div className={tocClassName}>
                 {sideBar}
             </div>
-            <div className={childrenClass}>
+            <main className={childrenClass}>
                 {children}
-            </div>
-        </main>
+            </main>
+        </div>
     )
 
 }
