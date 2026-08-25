@@ -168,6 +168,8 @@ export async function resolveViteConfig(
     // they therefore should be below a node_modules to resolve them
     const buildServerPath = path.resolve(interactConfigTyped.paths.nodeDirectory, "dist");
 
+    const searchRelativeBaseUrl = ".interact/search"
+
     /**
      * The vite config
      */
@@ -183,6 +185,9 @@ export async function resolveViteConfig(
         root: interactConfigTyped.paths.nodeDirectory,
         // https://vite.dev/guide/build#public-base-path
         base: interactConfigTyped.site.base,
+        define: {
+            __SEARCH_RELATIVE_BASE_URL__: JSON.stringify(searchRelativeBaseUrl)
+        },
         server: {
             port: port,
             // for debugging: local network with host or remote with ngrok
@@ -387,7 +392,7 @@ export async function resolveViteConfig(
             // resources handling
             publicHandler({sourceDir: interactConfigTyped.paths.publicDirectory}),
             // site indexing
-            vitePluginPagefind({})
+            vitePluginPagefind({siteRelativeBase: searchRelativeBaseUrl})
         ],
     }
 }

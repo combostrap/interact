@@ -4,11 +4,7 @@ import * as React from "react"
 import {Search} from "lucide-react"
 import {Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList,} from "@/components/ui/command.tsx"
 import {Button} from "@/components/ui/button.tsx"
-import {
-    Dialog,
-    DialogContent,
-    DialogTrigger
-} from "@/components/ui/dialog.tsx";
+import {Dialog, DialogContent, DialogTrigger} from "@/components/ui/dialog.tsx";
 
 type PagefindResult = {
     id: string
@@ -28,12 +24,16 @@ type ResultItem = {
 
 let pagefindPromise: Promise<any> | null = null
 
+// ie .interact/search
+declare const __SEARCH_RELATIVE_BASE_URL__: string;
+
 function loadPagefind() {
 
     if (!pagefindPromise) {
+
+
         let baseurl = import.meta.env.BASE_URL;
-        // .interact/search
-        let relativeBasePath = `.interact/search/pagefind.js`;
+        let relativeBasePath = `${__SEARCH_RELATIVE_BASE_URL__}/pagefind.js`;
         let pagefindUrl
         if (baseurl != "/") {
             pagefindUrl = `${baseurl}/${relativeBasePath}`
