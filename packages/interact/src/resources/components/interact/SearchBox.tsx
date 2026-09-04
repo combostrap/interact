@@ -15,16 +15,14 @@ type ResultItem = {
     excerpt: string
 }
 
-let pagefindPromise: Promise<any> | null = null
+let pagefind: PagefindInstance | null = null
 
 // ie .interact/search
 declare const __SEARCH_RELATIVE_BASE_URL__: string;
 
-function loadPagefind(): Promise<PagefindInstance> {
+async function loadPagefind(): Promise<PagefindInstance> {
 
-    if (!pagefindPromise) {
-
-
+    if (pagefind == null) {
         let baseurl = import.meta.env.BASE_URL;
         let relativeBasePath = `${__SEARCH_RELATIVE_BASE_URL__}/pagefind.js`;
         let pagefindUrl
@@ -33,9 +31,13 @@ function loadPagefind(): Promise<PagefindInstance> {
         } else {
             pagefindUrl = `${baseurl}${relativeBasePath}`
         }
-        pagefindPromise = import(/* @vite-ignore */ pagefindUrl)
+        pagefind = await import(/* @vite-ignore */ pagefindUrl) as PagefindInstance;
+        await pagefind.options({
+            highlightParam: "highlight",
+            baseUrl: baseurl,
+        });
     }
-    return pagefindPromise
+    return pagefind
 }
 
 export function SearchBox() {
@@ -43,6 +45,7 @@ export function SearchBox() {
     const [query, setQuery] = React.useState("")
     const [results, setResults] = React.useState<ResultItem[]>([])
     const [loading, setLoading] = React.useState(false)
+    const [activeValue, setActiveValue] = React.useState<string>('')
     const inputRef = React.useRef<HTMLInputElement>(null)
 
     React.useEffect(() => {
@@ -66,9 +69,13 @@ export function SearchBox() {
             const items = await Promise.all(
                 search.results.slice(0, 8).map(async (r) => {
                     const data = await r.data()
+                    let url = data.url;
+                    if (url.endsWith("html")) {
+                        url = url.replace(".html", "");
+                    }
                     return {
                         id: r.id,
-                        url: data.url,
+                        url: url,
                         title: data.meta?.["title"] ?? data.url,
                         excerpt: data.excerpt,
                     }
@@ -99,6 +106,9 @@ export function SearchBox() {
         return () => document.removeEventListener("keydown", handler)
     }, [])
 
+
+    const kbdClass = "inline-flex h-5 min-w-5 items-center justify-center rounded bg-muted px-1 font-mono text-xs"
+
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger
@@ -116,17 +126,22 @@ export function SearchBox() {
                     </Button>
                 }
             />
-
             <DialogContent
-                className="fixed left-1/2 top-20 -translate-x-1/2 translate-y-0 max-h-[calc(100vh-2rem)] overflow-y-auto"
+                className="fixed top-20 translate-y-0 p-0 gap-0 max-h-[calc(100vh-2rem)] md:max-w-1/2"
                 initialFocus={inputRef}
+                showCloseButton={false}
             >
-                <Command shouldFilter={false} className={'mt-3'}>
+                <Command
+                    shouldFilter={false}
+                    value={activeValue}
+                    onValueChange={setActiveValue}
+                >
                     <CommandInput
                         ref={inputRef}
                         placeholder="Search..."
                         value={query}
                         onValueChange={setQuery}
+                        className={"bg-none"}
                     />
                     <CommandList>
                         {loading && (
@@ -134,22 +149,22 @@ export function SearchBox() {
                                 Searching...
                             </div>
                         )}
-                        {!loading && query && results.length === 0 && (
-                            <CommandEmpty>No results found.</CommandEmpty>
+                        {!loading && query && (
+                            <CommandEmpty>
+                                {results.length === 0
+                                    ? "No results found."
+                                    : `${results.length} results found.`}
+                            </CommandEmpty>
                         )}
                         {results.length > 0 && (
                             <CommandGroup heading="Results">
                                 {results.map((r) => {
-                                    let target = r.url;
-                                    if (r.url.endsWith("html")) {
-                                        target = target.replace(".html", "");
-                                    }
                                     return (
                                         <CommandItem
                                             key={r.id}
-                                            value={r.id}
+                                            value={r.url}
                                             onSelect={() => {
-                                                history.pushState(null, '', target)
+                                                history.pushState(null, '', r.url)
                                                 setOpen(false)
                                             }}
                                             className="flex flex-col items-start gap-1"
@@ -166,6 +181,37 @@ export function SearchBox() {
                         )}
                     </CommandList>
                 </Command>
+                {/* fake status bar */}
+                {activeValue && (
+                    <div className="truncate border-t bg-muted/50 px-3 py-1 text-xs text-muted-foreground">
+                        {activeValue}
+                    </div>
+                )}
+                <div
+                    className="flex items-center justify-between border-t border-border px-3 py-1.5 text-xs text-muted-foreground pt-3">
+                    <div className="flex items-center gap-3">
+                        <span className="flex items-center gap-1">
+                            <kbd className={kbdClass}>↑</kbd>
+                            <kbd className={kbdClass}>↓</kbd>
+                            <span className="ml-0.5">Navigate</span>
+                        </span>
+                        <span className="flex items-center gap-1">
+                            <kbd className={kbdClass}>↵</kbd>
+                            <span className="ml-0.5">Select</span>
+                        </span>
+                        <span className="flex items-center gap-1">
+                            <kbd className={kbdClass}>esc</kbd>
+                            <span className="ml-0.5">Close</span>
+                        </span>
+                    </div>
+
+                    <span className="flex items-center gap-1">
+                        <kbd
+                            className="inline-flex h-5 min-w-5 items-center justify-center rounded bg-muted px-1 font-mono text-xs">⌘</kbd>
+                        <kbd
+                            className="inline-flex h-5 min-w-5 items-center justify-center rounded bg-muted px-1 font-mono text-xs">K</kbd>
+                    </span>
+                </div>
             </DialogContent>
         </Dialog>
     )

@@ -1,20 +1,22 @@
 ---
-title: Search
+title: Search Engine / Search Bot
 ---
 
-## Content indexed
+The search engine is responsible for:
 
-The search bot will index the content of the `main` HTML element.
-If not found, it will default to the `html` element.
+* content indexation
+* content query
 
-To exclude text from indexation, you can add the `data-noindex` attribute.
+## Options/Guideline
 
-## Playground
+### Which content is indexed
 
-You can check the results in the playground located at: `https://example.com/.interact/search/playground/`
-where you can play with:
+The search bot will index:
 
-* Term Frequency
-* Term Similarity
-* Page Length
-* Term Saturation
+* the content of the `main` HTML element.
+* and if not found, it will default to the `html` element.
+
+## How to exclude content
+
+To exclude text from indexation, you need to set the `data-noindex` attribute
+on your HTML element.
