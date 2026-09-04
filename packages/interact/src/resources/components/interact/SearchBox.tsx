@@ -69,10 +69,13 @@ export function SearchBox() {
             const items = await Promise.all(
                 search.results.slice(0, 8).map(async (r) => {
                     const data = await r.data()
-                    let url = data.url;
-                    if (url.endsWith("html")) {
-                        url = url.replace(".html", "");
+                    function removeHtmlExtension(input:string) {
+                        const [pathAndQuery = '', hash] = input.split('#');
+                        const [path = '', query] = pathAndQuery.split('?');
+                        const newPath = path.replace(/\.html$/i, '');
+                        return newPath + (query ? '?' + query : '') + (hash ? '#' + hash : '');
                     }
+                    let url = removeHtmlExtension(data.url);
                     return {
                         id: r.id,
                         url: url,

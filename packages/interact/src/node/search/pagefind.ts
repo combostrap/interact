@@ -28,7 +28,7 @@ globalThis.fetch = async (input, init) => {
 };
 
 // Point directly at the generated bundle on disk
-let bundlePath = path.resolve("./sites/interact/.interact/html-cache/.interact/search");
+const bundlePath = path.resolve("./sites/interact/.interact/html-cache/.interact/search");
 const pagefind: PagefindInstance = await import(`file://${bundlePath}/pagefind.js`);
 
 // noinspection UnnecessaryLocalVariableJS
