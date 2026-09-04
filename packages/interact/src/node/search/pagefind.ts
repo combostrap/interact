@@ -31,6 +31,7 @@ globalThis.fetch = async (input, init) => {
 const bundlePath = path.resolve("./sites/interact/.interact/html-cache/.interact/search");
 const pagefind: PagefindInstance = await import(`file://${bundlePath}/pagefind.js`);
 
+
 // noinspection UnnecessaryLocalVariableJS
 /**
  * basePath from where the metadata are loaded

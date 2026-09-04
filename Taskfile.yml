@@ -21,4 +21,8 @@ tasks:
   deploy:
     cmds:
       - |
+        if [ ! -z "$(git status --porcelain)" ]; then
+          echo "Could not deploy, change has been made (repo is dirty)"
+          exit 1          
+        fi
         yarn workspace @combostrap/interact check && git tag -f early-access && git push -f origin early-access
