@@ -1,5 +1,4 @@
 import type {Page} from "../pages/interactPage";
-import type {ReactNode} from "react";
 import type {ContextProps} from "../componentsProvider/contextProps";
 
 

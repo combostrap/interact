@@ -8,6 +8,7 @@ A `context` is server or client component that wraps the Interact server or clie
 The following React component may be defined as `context` component:
 
 * [Context Provider](https://react.dev/learn/passing-data-deeply-with-context) (ie tracker, url state manager, ...)
+* Search Provider
 * [Error Boundaries](https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary)
 
 ## Example
@@ -94,7 +95,6 @@ InteractContext:
 ```
 
 ## Registration / Default Directory
-
 
 
 To register a context component automatically, you can save it in the [contexts directory](../reference/directory-layout.md)
