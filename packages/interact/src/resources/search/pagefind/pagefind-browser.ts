@@ -3,9 +3,9 @@
 
 import type {PagefindInstance} from "./pagefind-search";
 import type {
-    SearchOptions, SearchProvider, SearchResponse,
-    SearchResult
-} from "interact:search-provider";
+    SearchOptions, SearchEngine, SearchResponse,
+    SearchHit
+} from "@combostrap/interact/types";
 
 
 let pagefindBrowser: PagefindInstance | null = null
@@ -14,7 +14,7 @@ let pagefindBrowser: PagefindInstance | null = null
 declare const __SEARCH_RELATIVE_BASE_URL__: string;
 
 // noinspection JSUnusedGlobalSymbols
-export default class PageFind implements SearchProvider {
+export default class PageFind implements SearchEngine {
 
     private pagefindUrl: string;
     private baseurl: string;
@@ -63,7 +63,7 @@ export default class PageFind implements SearchProvider {
         const trimmedQuery = query.trim();
 
         if (!trimmedQuery) {
-            return {ok: true, data: []};
+            return {ok: true, data: {hits: []}};
         }
         const pagefind = await this.loadPagefind()
         const search = await pagefind.search(query)
@@ -86,10 +86,15 @@ export default class PageFind implements SearchProvider {
                     title: data.meta?.["title"] ?? data.url,
                     excerpt: data.excerpt,
                     score: r.score,
-                } as SearchResult;
+                } as SearchHit;
             })
         );
-        return {ok: true, data: items}
+        return {
+            ok: true,
+            data: {
+                hits: items
+            }
+        }
     };
 
 }

@@ -1,7 +1,25 @@
-import type {SearchOptions, SearchProvider, SearchResponse, SearchResult} from "interact:search-provider";
+import type {SearchOptions, SearchEngine, SearchResponse} from "@combostrap/interact/types";
+import type {SearchResult} from "@/search/search-api";
 
-// noinspection JSUnusedGlobalSymbols - used dynamically in a virtual module
-export default class ComboSearch implements SearchProvider {
+export type ComboSearchParams = { apiBase: string, collection: string };
+
+
+// noinspection JSUnusedGlobalSymbols - loaded/used dynamically in a virtual module
+export default class ComboSearch implements SearchEngine {
+
+    private readonly url: string;
+
+    /**
+     *
+     * @param options - apiPrefix is the prefix of the URL (the request is forwarded server-side)
+     */
+    constructor(options?: ComboSearchParams) {
+        if (options == null) {
+            throw new Error("options must be provided");
+        }
+        const {apiBase, collection} = options || {};
+        this.url = `${apiBase}/collections/${collection}/search`;
+    }
 
     async onOpen() {
         return
@@ -21,12 +39,12 @@ export default class ComboSearch implements SearchProvider {
         const trimmedQuery = query.trim();
 
         if (!trimmedQuery) {
-            return {ok: true, data: []};
+            return {ok: true, data: {hits: []}};
         }
 
-        const url = new URL('http://localhost/search');
+        const url = new URL(this.url);
         url.searchParams.set('q', query);
-        url.searchParams.set('limit', String(limit));
+        url.searchParams.set('k', String(limit));
 
         const response = await fetch(url.toString(), {
             method: 'GET',
@@ -40,10 +58,10 @@ export default class ComboSearch implements SearchProvider {
                 status: response.status,
             }
         }
-        const items: SearchResult[] = await response.json()
+        const item: SearchResult = await response.json()
         return {
             ok: true,
-            data: items
+            data: item,
         }
     }
 

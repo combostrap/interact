@@ -9,7 +9,7 @@ import {useSearchOpenState, useSearchProvider} from "@/components/contexts/Searc
 
 import type {ButtonHTMLAttributes} from "react";
 import {cn} from "@/lib/utils.ts";
-import type {SearchResponse, SearchResult} from "interact:search-provider";
+import type {SearchResponse, SearchHit} from "@combostrap/interact/types";
 
 export interface SearchBoxProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     placeholder?: string;
@@ -25,7 +25,7 @@ export default function SearchBox({className, children, placeholder = "Searching
     const [query, setQuery] = React.useState("")
     const [error, setError] = React.useState("")
     const [status, setStatus] = React.useState(0)
-    const [results, setResults] = React.useState<SearchResult[]>([])
+    const [results, setResults] = React.useState<SearchHit[]>([])
     const [loading, setLoading] = React.useState(false)
     const [activeValue, setActiveValue] = React.useState<string>('')
     const inputRef = React.useRef<HTMLInputElement>(null)
@@ -69,7 +69,7 @@ export default function SearchBox({className, children, placeholder = "Searching
             }
 
             if (response.ok) {
-                setResults(response.data)
+                setResults(response.data.hits)
                 setError("")
                 setStatus(0)
             } else {

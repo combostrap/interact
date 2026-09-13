@@ -2,7 +2,7 @@
 title: Vite
 ---
 
-`Interact` is built on top of the [Vite bundler](https://vite.dev/config/)
+`Interact` uses [Vite](https://vite.dev/config/) as bundler.
 
 If you want to add or change its configuration, you can add
 a [vite.config.(ts|js)](https://vite.dev/config/) file

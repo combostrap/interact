@@ -33,7 +33,7 @@ import {publicHandler} from "../../vite/publicHandler.js";
 import viteContextServerComponentsProvider from "../../vite/contextServerProvider.js";
 import {debuglog} from "node:util";
 import vitePluginPagefind from "../../vite/vite-plugin-pagefind.js";
-import viteSearchProvider from "../../vite/vite-search-provider.js";
+import viteSearchEngine from "../../vite/vite-search-engine.js";
 
 
 export type InteractCommand = 'start' | 'build' | 'preview';
@@ -394,7 +394,7 @@ export async function resolveViteConfig(
             // site indexing
             vitePluginPagefind({siteRelativeBase: searchRelativeBaseUrl}),
             // search provider
-            viteSearchProvider()
+            viteSearchEngine()
         ],
     }
 }
