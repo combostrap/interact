@@ -2,7 +2,7 @@
   <configuration default="false" name="Site Start" type="NodeJSConfigurationType" application-parameters="start --confPath=sites/interact" path-to-js-file="packages/interact/src/node/cli/cli.ts" typescript-loader="bundled" working-dir="$PROJECT_DIR$/">
     <envs>
       <env name="COMBO_SEARCH_API" value="https://search.localhost" />
-      <env name="COMBO_SEARCH_COLLECTION" value="aHR0cHM6Ly9pbnRlcmFjdC5jb21ib3N0cmFwLmNvbQ" />
+      <env name="COMBO_SEARCH_COLLECTION" value="aHR0cHM6Ly9pbnRlcmFjdC5jb21ib3N0cmFwLmNvbS8" />
     </envs>
     <method v="2" />
   </configuration>

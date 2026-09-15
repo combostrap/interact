@@ -61,7 +61,16 @@ export default class ComboSearch implements SearchEngine {
         const item: SearchResult = await response.json()
         return {
             ok: true,
-            data: item,
+            data: {
+                relevanceThreshold: item.relevanceThreshold,
+                hits: item.hits.map(hit => ({
+                    id: hit.id,
+                    excerpt: hit.excerpt,
+                    score: hit.score,
+                    title: hit.title,
+                    url: new URL(hit.url, "http://dummy").pathname,
+                }))
+            },
         }
     }
 

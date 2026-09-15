@@ -30,7 +30,7 @@ export interface SearchHit {
      */
     excerpt: string;
     /**
-     * Relative URL so that:
+     * Relative URL (ie only path, no host) so that:
      * * the search can be tested on localhost (May have an anchor to a section)
      * * and we don't have any origin error (ie history.pushState would errored with `a history state object with https://xxx`
      * cannot be created in a document with origin http://localhost)
