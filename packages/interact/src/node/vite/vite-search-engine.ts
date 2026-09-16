@@ -2,6 +2,7 @@ import type {Plugin} from 'vite';
 import {getInteractConfig} from "../config/interactConfig.js";
 import path from "path";
 import type {ComboSearchParams} from "../../resources/search/combosearch/combosearch.js";
+import {isValidHttpUrl} from "../lib/URLUtil.js";
 
 function generateSearchProviderModule({importPath, props = {}}: {
     importPath: string,
@@ -34,6 +35,7 @@ export default searchEngineInstance;
 `;
 }
 
+
 export default function viteSearchEngine(): Plugin {
 
     const moduleName = 'interact:search-engine';
@@ -58,17 +60,14 @@ export default function viteSearchEngine(): Plugin {
 
             let importPath: string;
             let props = {};
-            const comboSearchApi = process.env["COMBO_SEARCH_API"];
-
-            if (comboSearchApi != undefined) {
-                const comboSearchCollection = process.env["COMBO_SEARCH_COLLECTION"];
-                if(comboSearchCollection==undefined){
-                    throw new Error("COMBO_SEARCH_COLLECTION env is mandatory")
+            const comboSearchEndpoint = process.env["COMBO_SEARCH_ENDPOINT"];
+            if (comboSearchEndpoint != null) {
+                if (!isValidHttpUrl(comboSearchEndpoint)){
+                    throw new Error(`The URL value (${comboSearchEndpoint}) from the env COMBO_SEARCH_ENDPOINT is not a valid URL`)
                 }
                 importPath = path.resolve(interactConfig.paths.interactResourcesDirectory, 'search/combosearch/combosearch.ts')
                 props = {
-                    apiBase: comboSearchApi,
-                    collection: comboSearchCollection
+                    apiEndpoint: comboSearchEndpoint
                 } as ComboSearchParams;
             } else {
                 importPath = path.resolve(interactConfig.paths.interactResourcesDirectory, 'search/pagefind/pagefind-browser.ts')

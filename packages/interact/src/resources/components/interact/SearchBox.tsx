@@ -15,6 +15,8 @@ export interface SearchBoxProps extends ButtonHTMLAttributes<HTMLButtonElement> 
     placeholder?: string;
 }
 
+const SERVER_ERROR = 500;
+
 export default function SearchBox({className, children, placeholder = "Searching...", ...props}: SearchBoxProps) {
     /**
      * Global open state so that we can see if there is already a search box open
@@ -40,6 +42,7 @@ export default function SearchBox({className, children, placeholder = "Searching
 
         const controller = new AbortController();
         setLoading(true)
+        setError("")
 
         /**
          * Debounced run
@@ -49,6 +52,7 @@ export default function SearchBox({className, children, placeholder = "Searching
                 return;
             }
             let response: SearchResponse;
+
             try {
                 response = await searchProvider.search(query, {
                     limit: 8,
@@ -61,10 +65,15 @@ export default function SearchBox({className, children, placeholder = "Searching
                 } else {
                     message = String(e);
                 }
+                let status= SERVER_ERROR;
+                if(e instanceof TypeError) {
+                    // internal error code, not fetch
+                    status = 510;
+                }
                 response = {
                     ok: false,
                     error: message,
-                    status: 500
+                    status: status
                 }
             }
 
@@ -73,7 +82,7 @@ export default function SearchBox({className, children, placeholder = "Searching
                 setError("")
                 setStatus(0)
             } else {
-                setError(`${response.error} (${response.status}`)
+                setError(`${response.error} (${response.status})`)
                 setStatus(response.status)
                 setResults([])
             }
@@ -169,9 +178,10 @@ export default function SearchBox({className, children, placeholder = "Searching
                     </div>
                     {error ? (
                             <div className="py-6 text-center text-sm text-destructive">
-                                <p>Something went wrong while searching.</p>
+                                <p>Something went wrong with the Search Engine.</p>
                                 {status < 500 && <><p>Try again.</p><p>${error}</p></>}
-                                {status >= 500 && <p>Server error</p>}
+                                {status == SERVER_ERROR && <p>Server error</p>}
+                                {status > SERVER_ERROR && <p>Message: ${error}</p>}
                             </div>
                         )
                         : (
@@ -193,10 +203,10 @@ export default function SearchBox({className, children, placeholder = "Searching
                                         {results.map((r) => {
                                             return (
                                                 <CommandItem
-                                                    key={r.id}
-                                                    value={r.url}
+                                                    key={r.url.toString()}
+                                                    value={r.url.pathname}
                                                     onSelect={() => {
-                                                        history.pushState(null, '', r.url)
+                                                        history.pushState(null, '', r.url.pathname)
                                                         onOpenChange()
                                                     }}
                                                     className="flex flex-col items-start gap-1"

@@ -15,10 +15,14 @@ export type SearchResult = {
 }
 
 export interface SearchHit {
+
     /**
-     * An id
+     * URL. We use only the path so that:
+     * * the search can be tested on localhost (May have an anchor to a section)
+     * * and we don't have any origin error (ie history.pushState would errored with `a history state object with https://xxx`
+     * cannot be created in a document with origin http://localhost)
      */
-    id: string;
+    url: URL;
     /**
      * Page title
      */
@@ -29,13 +33,6 @@ export interface SearchHit {
      * found words)
      */
     excerpt: string;
-    /**
-     * Relative URL (ie only path, no host) so that:
-     * * the search can be tested on localhost (May have an anchor to a section)
-     * * and we don't have any origin error (ie history.pushState would errored with `a history state object with https://xxx`
-     * cannot be created in a document with origin http://localhost)
-     */
-    url: string;
     /**
      * Relevance score
      */

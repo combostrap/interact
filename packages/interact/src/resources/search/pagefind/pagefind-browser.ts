@@ -81,8 +81,7 @@ export default class PageFind implements SearchEngine {
 
                 const url = removeHtmlExtension(data.url);
                 return {
-                    id: r.id,
-                    url: url,
+                    url: new URL(url, "http://dummy.com"),
                     title: data.meta?.["title"] ?? data.url,
                     excerpt: data.excerpt,
                     score: r.score,

@@ -1,13 +1,23 @@
-import type {SearchOptions, SearchEngine, SearchResponse} from "@combostrap/interact/types";
-import type {SearchResult} from "@/search/search-api";
+import type {SearchEngine, SearchOptions, SearchResponse} from "@combostrap/interact/types";
 
-export type ComboSearchParams = { apiBase: string, collection: string };
+export type ComboSearchParams = { apiEndpoint: string, };
 
+export interface ComboSearchHit {
 
+    uri: URL;
+    title: string;
+    excerpt: string;
+    score: number;
+}
+
+type ComboSearchResult = {
+    relevanceThreshold?: number,
+    hits: ComboSearchHit[],
+}
 // noinspection JSUnusedGlobalSymbols - loaded/used dynamically in a virtual module
 export default class ComboSearch implements SearchEngine {
 
-    private readonly url: string;
+    private readonly url: URL;
 
     /**
      *
@@ -17,8 +27,12 @@ export default class ComboSearch implements SearchEngine {
         if (options == null) {
             throw new Error("options must be provided");
         }
-        const {apiBase, collection} = options || {};
-        this.url = `${apiBase}/collections/${collection}/search`;
+        const {apiEndpoint} = options || {};
+        try {
+            this.url = new URL(apiEndpoint);
+        } catch (e) {
+            throw new Error(`The api endpoint value : ${apiEndpoint} is not a valid URL`);
+        }
     }
 
     async onOpen() {
@@ -46,7 +60,7 @@ export default class ComboSearch implements SearchEngine {
         url.searchParams.set('q', query);
         url.searchParams.set('k', String(limit));
 
-        const response = await fetch(url.toString(), {
+        const response = await fetch(url, {
             method: 'GET',
             signal: abortSignal,
         });
@@ -58,17 +72,16 @@ export default class ComboSearch implements SearchEngine {
                 status: response.status,
             }
         }
-        const item: SearchResult = await response.json()
+        const item: ComboSearchResult = await response.json()
         return {
             ok: true,
             data: {
                 relevanceThreshold: item.relevanceThreshold,
                 hits: item.hits.map(hit => ({
-                    id: hit.id,
+                    url: new URL(hit.uri),
                     excerpt: hit.excerpt,
                     score: hit.score,
                     title: hit.title,
-                    url: new URL(hit.url, "http://dummy").pathname,
                 }))
             },
         }
