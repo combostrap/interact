@@ -16,7 +16,7 @@
     "watch": "tsc --watch",
     "start": "ninteract start --confPath=$PROJECT_CWD/sites/interact",
     "favicon": "ninteract favicon --confPath=$PROJECT_CWD/sites/interact",
-    "ssg": "ninteract build --confPath=$PROJECT_CWD/sites/interact",
+    "ssg": "ssg",
     "preview": "ninteract preview --confPath=$PROJECT_CWD/sites/interact",
     "registry": "shadcn build --output $PROJECT_CWD/sites/interact/public/r",
     "test": "vitest run",

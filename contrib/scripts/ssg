@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Render the site as static web site (SSG/server side generation)
+set -Eeuo pipefail
+
+export COMBO_SEARCH_ENDPOINT=https://search.combostrap.com/collections/aHR0cHM6Ly9pbnRlcmFjdC5jb21ib3N0cmFwLmNvbS8/search
+ninteract build --confPath="$PROJECT_DIR/sites/interact"
+

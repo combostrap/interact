@@ -19,17 +19,20 @@ function generateSearchProviderModule({importPath, props = {}}: {
     return `
 ${importStatement}
 
-function isClass(value) {
-    return (
-        typeof value === "function" &&
-        /^class\\s/.test(Function.prototype.toString.call(value))
-    );
-}
 
 let properties = ${jsonProperties};
-const searchEngineInstance = isClass(${importName})
-    ? new ${importName}(properties)
-    : ${importName}(properties);
+let searchEngineInstance;
+try {
+    // constructable class
+    searchEngineInstance = new ${importName}(properties)
+} catch {
+    // callable
+    try {
+        searchEngineInstance = ${importName}(properties)
+    } catch (e) {
+        throw new Error("The default import of the search engine (${importPath}) is neither a constructor nor a callable", e)
+    }
+}
 
 export default searchEngineInstance;
 `;
@@ -69,8 +72,10 @@ export default function viteSearchEngine(): Plugin {
                 props = {
                     apiEndpoint: comboSearchEndpoint
                 } as ComboSearchParams;
+                console.log(`${moduleName}: ComboSearch Engine configured`);
             } else {
                 importPath = path.resolve(interactConfig.paths.interactResourcesDirectory, 'search/pagefind/pagefind-browser.ts')
+                console.log(`${moduleName}: Basic static browser engine configured`);
             }
             const provider = generateSearchProviderModule({importPath, props});
             return provider;

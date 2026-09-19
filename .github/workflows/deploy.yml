@@ -79,7 +79,8 @@ jobs:
           yarn workspace @combostrap/interact interact favicon --confPath=../../${{ env.APP_DIR }}
 
       - name: Build the website
-        run: | 
+        run: |
+          export COMBO_SEARCH_ENDPOINT=https://search.combostrap.com/collections/aHR0cHM6Ly9pbnRlcmFjdC5jb21ib3N0cmFwLmNvbS8/search
           yarn workspace @combostrap/interact interact build --confPath=../../${{ env.APP_DIR }}
 
       # actions/deploy-pages expect a zip

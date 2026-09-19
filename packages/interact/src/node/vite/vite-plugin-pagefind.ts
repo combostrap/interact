@@ -183,6 +183,10 @@ export default function vitePluginPagefind(options: {
         buildApp: {
             order: 'post',
             async handler(builder) {
+                const comboSearchEndpoint = process.env["COMBO_SEARCH_ENDPOINT"];
+                if (comboSearchEndpoint != null) {
+                    return;
+                }
                 const clientEnv = builder.environments['client'];
                 if (!clientEnv) {
                     const clientEnvDoesNotExist = "The client env environment does not exist.";
