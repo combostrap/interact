@@ -1,6 +1,6 @@
 {
   "name": "@combostrap/interact",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "license": "FSL-1.1-AGPLv3",
   "type": "module",
   "description": "A React-based publication framework that focus on interaction",
