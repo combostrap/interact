@@ -14,18 +14,15 @@ done
 
 if [[ "$skip_check" == false ]]; then
     echo "Running check..."
-    task release-check
+    yarn check
 else
     echo "Skipping check (--no-check passed)"
 fi
 
-
-# The repo should have a file called .npmrc and have this conf:
-# //registry.npmjs.org/:_authToken=${NPM_TOKEN}
-export NPM_TOKEN
-NPM_TOKEN=$(pass npm/release-token)
+# You also need the NPM_TOKEN
 
 export GITHUB_TOKEN
 GITHUB_TOKEN=$(pass github/gh-token)
 
+# run with --dry-run
 yarn release-it "$@"

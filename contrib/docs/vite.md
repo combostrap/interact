@@ -5,8 +5,22 @@ we can restart the dev server and each plugin get the new global value
 
 ## Update
 
-* Check that the Vite Rsc integration test are green at: https://github.com/vitejs/vite-ecosystem-ci/
-* Get the version of https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-rsc/package.json
+### Check the CI
+
+Check the `vite-ecosystem-ci` actions at: https://github.com/vitejs/vite-ecosystem-ci/  - The following
+components should be green:
+
+* `vite-plugin-react`
+* `vite-plugin-rsc`
+* `vitest`
+
+Check the `ci-rsc` action at: https://github.com/vitejs/vite-plugin-react/actions/
+
+### Grab the versions
+
+* Get the `vite-plugin-rsc` version
+  of https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-rsc/package.json
+
 ```json
 {
   "react": "^19.2.6",
@@ -14,17 +28,17 @@ we can restart the dev server and each plugin get the new global value
   "react-server-dom-webpack": "^19.2.6"
 }
 ```
-* Get the version of https://github.com/vitejs/vite-plugin-react/blob/5e6212750105d8e3628f6639bf47ef7bb97c80d6/packages/plugin-react/package.json
-```json
-{
-  "@vitejs/plugin-react": "workspace:*"
-}
-```
+
+* Get the `vite-plugin-react` version
+  of https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/package.json
+
+
 * Grab the peer dependencies at https://github.com/vitejs/vite-plugin-react/blob/main/package.json
 
 ```json
 {
-  "vite": "*",
-  "vite-plugin-inspect": "^11.3.3"
+  "vite": "^8.2.1",
+  "vite-plugin-inspect": "^12.0.2",
+  "vitest": "^4.1.11"
 }
 ```

@@ -3,6 +3,16 @@
 Sharp is also in: `@realfavicongenerator/image-adapter-node`.
 We pinned it with resolutions.
 
+## Type Module
+
+```json
+{
+  "type": "module"
+}
+```
+
+Is mandatory to generate js file as bundle and not mjs
+
 ## Component Export
 
 The exports are meant to be used/bundled by vite, so they live in `src`
@@ -75,7 +85,7 @@ Why not using tsx or node? Because:
 ## Typescript - tsx
 
 `tsx` is used to run `ts` file.
-The shebang of [cli.ts](../../src/interact/cli/cli.ts) is a good example.
+The shebang of [cli.ts](../../packages/interact/src/node/cli/cli.ts) is a good example.
 
 ## Styling, tailwind and Shadcn
 
@@ -87,5 +97,15 @@ The shebang of [cli.ts](../../src/interact/cli/cli.ts) is a good example.
 ## Markdown/Mx
 
 `recma-mdx-is-mdx-component`: So that we can detect that the content comes from Markdown and set
-the [prose class](../../apps/site/pages/reference/styling.md#prose-content) to true
+the [prose class](../../sites/interact/pages/reference/styling.md#prose-content) to true
 https://github.com/remcohaszing/recma-mdx-is-mdx-component
+
+## cmdk
+
+Used by shadcn for the command https://ui.shadcn.com/docs/components/base/command
+https://github.com/dip/cmdk
+
+## svgdom
+
+Fixed to 0.1.24 because of
+https://github.com/svgdotjs/svgdom/issues/141

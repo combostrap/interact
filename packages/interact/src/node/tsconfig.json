@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "moduleResolution": "NodeNext",
+    "module": "NodeNext",
+    "noEmit": false,
+    // import across the boundary does not work with typescript
+    // ssg.ts would like to use the type of the generated resources/entry.rsc.tsx
+    // but it can't, otherwise, you get error on resources file
+    // "jsx": "react-jsx"
+  },
+  "include": [
+    "**/*",
+    "../types/**/*"
+  ]
+}
