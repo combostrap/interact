@@ -50,7 +50,18 @@ gfl # check log
 gfs # squash
 gfm # merge
 ```
+* Test Install
+```bash
+npm install . -g
+interact --version
+npm remove -g @combostap/interact
+```
 * Release
 ```bash
-release --no-check --changelog
+# The version in the package should be the next version
+yarn build
+# check the page created
+npm pack --dry-run
+# You are being prompt
+release --no-check --no-increment
 ```

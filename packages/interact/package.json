@@ -1,6 +1,6 @@
 {
   "name": "@combostrap/interact",
-  "version": "0.1.1-next",
+  "version": "0.1.1",
   "license": "FSL-1.1-AGPLv3",
   "type": "module",
   "description": "A React-based publication framework that focus on interaction",
@@ -24,8 +24,9 @@
     "test:coverage": "vitest run --coverage"
   },
   "files": [
-    "dist/interact/**/*",
-    "./src/**/*",
+    "dist/node/**/*",
+    "./src/resources/**/*",
+    "./src/types/**/*",
     "tsconfig.json"
   ],
   "exports": {
