@@ -48,18 +48,22 @@ and compile.
 
 We need:
 
-* all compiled js files in dist because the cli needs them.
-* the src lib file so that vite will load them
-* the type
-* tsconfig as we use tsx to call the cli
+* dist/node: all compiled js files for the cli
+* src/resources: vite load them
+* src/node: because src/resources may use them. ie entry.rsc.tsx use
+  * node/config/interactConfig.ts
+  * node/lib/htmlCache.ts
+* package.json (mandatory for publishing and has the version)
+* build-info.json (for built time)
 
 ```json
 {
   "files": [
-    "dist/interact/**/*",
-    "src/lib/**/*",
+    "dist/node/**/*",
+    "src/node/**/*",
+    "src/resources/**/*",
     "src/types/**/*",
-    "tsconfig.json"
+    "package.json"
   ]
 }
 ```

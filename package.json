@@ -25,6 +25,8 @@
     "typescript-eslint": "8.67.0"
   },
   "devDependencies": {
+    "@types/node": "25.3.0",
     "syncpack": "15.3.3"
-  }
+  },
+  "allowScripts": {}
 }

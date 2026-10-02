@@ -8,6 +8,8 @@ import {favicon} from './commands/favicon.js'
 import {schema} from './commands/schema.js'
 import type {LogLevel} from './shared/vite.config.js'
 import packageFile from '../../../package.json' with {type: "json"};
+import buildInfo from '../../../build-info.json' with { type: 'json' };
+
 
 const cli = cac('interact')
 
@@ -100,7 +102,9 @@ cli
     })
 
 
-cli.version(packageFile.version)
+// version flags so that the v can be used for verbose
+let versionFlags = '-V, --version';
+cli.version(`${packageFile.version} (build time ${buildInfo.builtAt})`, versionFlags)
 
 export async function run(argv: string[] = process.argv): Promise<void> {
     try {

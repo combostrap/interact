@@ -4,19 +4,19 @@
 # and run yarn release-it
 
 set -Eeuo pipefail
-skip_check=false
+skip_check=true
 
 for arg in "$@"; do
-    if [[ "$arg" == "--no-check" ]]; then
-        skip_check=true
+    if [[ "$arg" == "--check" ]]; then
+        skip_check=false
     fi
 done
 
 if [[ "$skip_check" == false ]]; then
     echo "Running check..."
-    yarn check
+    yarn workspace @combostrap/interact check
 else
-    echo "Skipping check (--no-check passed)"
+    echo "Skipping check (no --check passed)"
 fi
 
 # We also need the NPM_TOKEN
@@ -29,4 +29,5 @@ export GITHUB_TOKEN
 GITHUB_TOKEN=$(pass github/gh-token)
 
 # Without args, it will ask question
+echo "command: yarn workspace @combostrap/interact release-it $*"
 yarn workspace @combostrap/interact release-it "$@"

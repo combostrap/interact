@@ -4,10 +4,15 @@
   "license": "FSL-1.1-AGPLv3",
   "type": "module",
   "description": "A React-based publication framework that focus on interaction",
-  "bin": "./dist/node/cli/cli.js",
-  "repository": "https://github.com/combostrap/interact",
+  "bin": {
+    "interact": "dist/node/cli/cli.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/combostrap/interact.git"
+  },
   "scripts": {
-    "build": "tsc -p ./src/node/tsconfig.json --listEmittedFiles",
+    "build": "build-info.js && tsc -p ./src/node/tsconfig.json --listEmittedFiles",
     "check": "yarn ts:cli && yarn ts:resources && yarn lint && yarn test",
     "ts:cli": "tsc -p ./src/node/tsconfig.json",
     "ts:resources": "tsc -p ./src/resources/tsconfig.json",
@@ -25,9 +30,11 @@
   },
   "files": [
     "dist/node/**/*",
-    "./src/resources/**/*",
-    "./src/types/**/*",
-    "tsconfig.json"
+    "src/node/**/*",
+    "src/resources/**/*",
+    "src/types/**/*",
+    "tsconfig.json",
+    "build-info.json"
   ],
   "exports": {
     "./types": "./src/types/index.d.ts",
@@ -119,6 +126,7 @@
     "vitest": "4.1.11"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
   }
 }

@@ -52,16 +52,34 @@ gfm # merge
 ```
 * Test Install
 ```bash
-npm install . -g
-interact --version
-npm remove -g @combostap/interact
+# check the pack created
+npm pack --dry-run
+# Install
+yarn build && npm install . -g
+# Check the build time to see if it's the one we just build
+interact --version 
+# A site build should be successful
+# Asking for the version is not enough as the script is loaded dynamically and don't touch the whole graph
+interact build --confPath ../../sites/interact/
+# Optionally remove it and repeat
+# Should show `removed 1 package in 200ms`
+npm uninstall -g @combostrap/interact
 ```
 * Release
 ```bash
-# The version in the package should be the next version
-yarn build
-# check the page created
-npm pack --dry-run
 # You are being prompt
-release --no-check --no-increment
+# (For npm, see npm login doc, you need 2FA or staging)
+# --npm.ignoreVersion: get the last version from git and not package.json
+release-it --check --npm.ignoreVersion
+# in case of errors use as basis the below command
+# NODE_DEBUG=release-it:* release-it -VV \
+#  --npm.skipChecks \
+#  --no-github \
+#  --no-plugins \
+#  --no-git.requireCleanWorkingDir \
+#  --no-git.requireCommits
+```
+* Test release
+```bash
+npm install -g @combostrap/interact@latest
 ```
