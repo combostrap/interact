@@ -37,13 +37,6 @@ npx check-peer-dependencies no
 ```bash
 yarn dlx @yarnpkg/doctor
 ```
-* build and start the website
-```bash
-yarn build
-yarn bin interact # should be ..interact/dist/node/cli/cli.js
-yarn interact --help # should work
-yarn interact start --confPath=../../sites/interact # should work
-```
 * Merge the next branch
 ```bash
 gfl # check log
@@ -52,8 +45,11 @@ gfm # merge
 ```
 * Test Install
 ```bash
-# check the pack created
+# Check the pack created
 npm pack --dry-run
+# run yarn install to fix the lockfile 
+# And avoid the lockfile would have been modified by this install
+yarn install
 # Install
 yarn build && npm install . -g
 # Check the build time to see if it's the one we just build
@@ -81,5 +77,8 @@ release-it --check --npm.ignoreVersion
 ```
 * Test release
 ```bash
-npm install -g @combostrap/interact@latest
+# verify the latest version
+npm show @combostrap/interact@latest version --registry https://registry.npmjs.org
+# install (not latest, cache problem)
+npm install -g @combostrap/interact@0.1.3
 ```
