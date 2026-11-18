@@ -24,7 +24,9 @@
     "registry": "shadcn build --output $PROJECT_CWD/sites/interact/public/r",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "shadcn:update": "node $PROJECT_CWD/contrib/scripts/shadcn-ctl.mjs update",
+    "shadcn:check": "node $PROJECT_CWD/contrib/scripts/shadcn-ctl.mjs check"
   },
   "files": [
     "dist/node/**/*",

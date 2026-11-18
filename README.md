@@ -2,4 +2,3 @@
 
 Interact is a React based publication framework that focus on interaction.
 
-

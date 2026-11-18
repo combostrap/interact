@@ -17,6 +17,7 @@ dist
 # cache
 .interact
 .aider*
+.aitm
 
 # Publication Package
 *.tgz
