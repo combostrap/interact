@@ -27,16 +27,15 @@ The exports are meant to be used/bundled by vite, so they live in `src`
 
 Components Export are not the compiled (dist) one, they are compiled by Vite so that the
 import of CSS file works.
-The only code that needs to be build is the code called by the cli to start vite
-(ie all middleware and plugins) located in `src/interact`
+The only code that needs to be build is the code called by the cli to start vite (ie all middleware and plugins) located
+in `src/interact`
 
 ## Vite
 
 As direct dependency, it is mandatory for development otherwise you get error such
 unable to find `./cjs/react-server-dom-webpack-client.browser.development.js`
 
-After upgrading test a ssg
-(tested vite 8.0.1 and it was breaking)
+After upgrading test a ssg (tested vite 8.0.1 and it was breaking)
 
 ## DevDependencies
 
@@ -91,12 +90,16 @@ Why not using tsx or node? Because:
 `tsx` is used to run `ts` file.
 The shebang of [cli.ts](../../packages/interact/src/node/cli/cli.ts) is a good example.
 
-## Styling, tailwind and Shadcn
+## Shadcn (Styling, tailwind) 
 
 * tw-animate-css
-* shadcn
 * class-variance-authority
 * tailwind-merge
+
+### @shadcn/react and cn
+
+`@shadcn/react`  is a library of behavior
+See https://ui.shadcn.com/docs/changelog/2026-06-chat-components#shadcnreact
 
 ## Markdown/Mx
 
@@ -113,3 +116,4 @@ https://github.com/dip/cmdk
 
 Fixed to 0.1.24 because of
 https://github.com/svgdotjs/svgdom/issues/141
+

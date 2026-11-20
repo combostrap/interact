@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+# A wrapper over the shadcn client
+# to install shadcn component in our environment
+
+cd "$PROJECT_DIR/packages/interact"
+TARGET=$(realpath "src/resources/components/ui")
+if [ ! -d "$TARGET" ]; then
+ echo "Dir $TARGET does not exist"
+ exit 1
+fi
+
+yarn dlx shadcn@latest add "$@"
+echo "Moved files to $TARGET"
+mv \@/components/ui/* "$TARGET"
+rm -rf \@
