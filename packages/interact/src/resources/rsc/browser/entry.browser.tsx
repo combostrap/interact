@@ -21,7 +21,6 @@ import {createRoot, hydrateRoot} from 'react-dom/client'
 import {rscStream} from 'rsc-html-stream/client' // https://github.com/devongovett/rsc-html-stream
 import type {RscPayload} from '../shared/types'
 import {HEADER_ACTION_ID, URL_RSC_POSTFIX} from "../shared/shared-const.tsx";
-import InteractApp from "@/rsc/server/InteractApp.tsx";
 // Does not work on InteractApp
 // because it returns an inline string and not a file ...
 import "interact:outline-numbering.css"
@@ -118,13 +117,13 @@ async function main() {
     // hydration
     const browserRoot = (
         <React.StrictMode>
-            <InteractApp>
-                {root}
-            </InteractApp>
+            {root}
         </React.StrictMode>
     )
     if ('__NO_HYDRATE' in globalThis) {
-        createRoot(document).render(browserRoot)
+        createRoot(document).render(
+            browserRoot
+        )
     } else {
         hydrateRoot(document, browserRoot, {
             formState: initialPayload.formState,

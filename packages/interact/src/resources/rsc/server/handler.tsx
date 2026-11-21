@@ -126,26 +126,6 @@ export function getPagesRecursively(dir: string, startDir: string = dir): Record
 
 
 /**
- * The root component should return the entire document including the root <html> tag.
- * See https://react.dev/reference/react-dom/server/renderToReadableStream#usage
- */
-function RootResponse({isRsc, children}: { isRsc: boolean, children: ReactNode }): ReactNode {
-
-    if (isRsc) {
-        return children
-    }
-    /**
-     * SSR rendering
-     * We add the context
-     */
-    return (
-        <InteractApp>
-            {children}
-        </InteractApp>
-    )
-}
-
-/**
  * @param contextProps - the context
  */
 export async function getResponse(contextProps: ContextProps): Promise<ReactNode | Response> {
@@ -238,9 +218,9 @@ export async function getResponse(contextProps: ContextProps): Promise<ReactNode
      */
     if (layout === "none") {
         return (
-            <RootResponse isRsc={contextProps.meta.isRscRequest}>
+            <InteractApp>
                 page.contentElement
-            </RootResponse>
+            </InteractApp>
         )
     }
 
@@ -250,9 +230,9 @@ export async function getResponse(contextProps: ContextProps): Promise<ReactNode
         console.error(`Frontmatter layout ${layout} not found, holy layout was used instead`)
     }
     return (
-        <RootResponse isRsc={contextProps.meta.isRscRequest}>
+        <InteractApp>
             <Layout page={page} context={contextProps}/>
-        </RootResponse>
+        </InteractApp>
     )
 
 }

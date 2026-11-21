@@ -15,6 +15,11 @@ type AppProps = {
     children: ReactNode;
 };
 
+/**
+ * The top of interact app
+ * Present in an SSR and RSC response because the browser entry
+ * repaint the whole page
+ */
 export default function InteractApp({children}: AppProps) {
     let root = children;
     for (const ContextComponent of Object.values(getContextComponents())) {
