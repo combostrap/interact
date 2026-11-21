@@ -90,11 +90,16 @@ Why not using tsx or node? Because:
 `tsx` is used to run `ts` file.
 The shebang of [cli.ts](../../packages/interact/src/node/cli/cli.ts) is a good example.
 
-## Shadcn (Styling, tailwind) 
+## Shadcn (Styling, tailwind)
 
 * tw-animate-css
 * class-variance-authority
 * tailwind-merge
+
+### Shadcn Package
+
+Mandatory for the tailwind import `@import "shadcn/tailwind.css";`
+It contains Tailwind-specific additions that shadcn components rely on
 
 ### @shadcn/react and cn
 

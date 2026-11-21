@@ -10,6 +10,7 @@ import Toc from "../partials/Toc.tsx";
 import {cn} from "@/lib/utils.ts";
 import Footer from "@/components/partials/Footer.tsx";
 import MainSidebarLayout from "../interact/MainSidebarLayout.tsx";
+import {ChatAside} from "@/components/interact/ChatAside.tsx";
 
 /**
  * Holy Layout Components
@@ -37,18 +38,20 @@ export default function Holy(layoutProps: LayoutProps) {
         "lg:row-start-1",
         "lg:col-start-2"
     );
+
     return (
         <Html {...layoutProps}>
             <Head {...layoutProps}/>
             <Body {...layoutProps} className={"layout-holy"}>
-                <Header />
+                <Header/>
                 <div className={
-                    cn(
-                        getInteractConfig().template.container.containerClass,
-                        "position-relative",
-                        "mt-3",
-                    )}>
+                         cn(
+                             getInteractConfig().template.container.containerClass,
+                             "position-relative",
+                             "mt-3",
+                         )}>
                     <div className={coreLgClass}>
+
                         <div className={asideLgClassName}>
                             <Aside {...layoutProps}/>
                         </div>
@@ -68,13 +71,14 @@ export default function Holy(layoutProps: LayoutProps) {
                         </div>
 
                         <footer id="main-footer" className={
-                            cn(
-                                "print:hidden"
-                            )}>
+                                                     cn(
+                                                         "print:hidden"
+                                                     )}>
                         </footer>
                     </div>
                     <Footer/>
                 </div>
+                <ChatAside/>
             </Body>
         </Html>
     )
