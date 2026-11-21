@@ -2,9 +2,8 @@ import type {Plugin} from 'vite';
 import {getInteractConfig} from "../config/interactConfig.js";
 import {generateContextProvider} from "./contextProviderUtil.js";
 
-export const SERVER_TERM = "server";
 
-export default function viteContextServerComponentsProvider(): Plugin {
+export default function viteContextComponentProvider(): Plugin {
 
     /**
      * interact config is not a props so that on dev server
@@ -13,10 +12,9 @@ export default function viteContextServerComponentsProvider(): Plugin {
     const interactConfig = getInteractConfig();
     /**
      * The name used in the import
-     * ie import .... from 'interact:server-contexts'
+     * ie import .... from 'interact:contexts'
      */
-
-    const moduleName = `interact:${SERVER_TERM}-contexts`;
+    const moduleName = `interact:contexts`;
 
     /**
      * We don't prefix with \0 as specified here:
@@ -43,11 +41,7 @@ export default function viteContextServerComponentsProvider(): Plugin {
                 return null;
             }
 
-
-            const headProvider = generateContextProvider(
-                interactConfig,
-                (key: string) => !key.toLowerCase().includes(SERVER_TERM)
-            );
+            const headProvider = generateContextProvider(interactConfig);
             console.log(`${moduleName} module loaded with ${Object.keys(headProvider.components).length} contexts`);
 
             return headProvider.content;

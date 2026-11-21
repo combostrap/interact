@@ -2,7 +2,7 @@ import type {InteractConfig} from "../config/interactConfig.js";
 import {getComponentsAndImportArray, toJsString} from "../lib/virtualModuleUtil.js";
 
 
-export function generateContextProvider(interactConfig: InteractConfig, filterFunction: (key:string)=>boolean): {
+export function generateContextProvider(interactConfig: InteractConfig): {
     content: string;
     components: Record<string, string>
 } {
@@ -11,7 +11,7 @@ export function generateContextProvider(interactConfig: InteractConfig, filterFu
         components: contextComponents,
         imports,
         exports
-    } = getComponentsAndImportArray(interactConfig, "context", filterFunction)
+    } = getComponentsAndImportArray(interactConfig, "context")
 
     const headComponentAsJavascriptStringObject = toJsString(contextComponents);
     const virtualModuleContent = `

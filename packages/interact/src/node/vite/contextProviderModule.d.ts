@@ -1,6 +1,6 @@
 // noinspection JSUnusedGlobalSymbols - it's exported
 
-declare module 'interact:client-contexts' {
+declare module 'interact:contexts' {
 
     import type {ReactNode, ComponentType} from "react";
 

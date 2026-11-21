@@ -27,10 +27,9 @@ import confResolved from "../../vite/confResolved.js";
 import {crawlFrameworkPkgs} from "vitefu";
 import {atAliasResolution} from "../../vite/atAliasResolution.js";
 import type {OutputOptions} from "rollup";
-import viteContextClientComponentsProvider from "../../vite/contextClientProvider.js";
+import viteContextComponentsProvider from "../../vite/contextProvider.js";
 import viteCheckEnvExpansion from "../../vite/viteCheckEnvExpansion.js";
 import {publicHandler} from "../../vite/publicHandler.js";
-import viteContextServerComponentsProvider from "../../vite/contextServerProvider.js";
 import {debuglog} from "node:util";
 import vitePluginPagefind from "../../vite/vite-plugin-pagefind.js";
 import viteSearchEngine from "../../vite/vite-search-engine.js";
@@ -370,8 +369,7 @@ export async function resolveViteConfig(
             // Component provider (provide the MdxComponent for mdx)
             mdxComponentProvider(),
             // Context provider (provide the App wrapper (ie React ContextProvider))
-            viteContextClientComponentsProvider(),
-            viteContextServerComponentsProvider(),
+            viteContextComponentsProvider(),
             // Head provider (provide the HTML head dynamically)
             headProvider(),
             // Layout provider (provide the layouts dynamically)

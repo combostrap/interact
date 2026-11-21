@@ -3,9 +3,7 @@
 /// <reference types="@vitejs/plugin-rsc/types" />
 // Ambient virtual declare module file
 /// <reference types="../node/vite/vite-search-provider-module.d.ts" />
-/// <reference types="../node/vite/contextClientProviderModule.d.ts" />
-/// <reference types="../node/vite/contextClientProviderModule.d.ts" />
-/// <reference types="../node/vite/contextServerProviderModule.d.ts" />
+/// <reference types="../node/vite/contextProviderModule.d.ts" />
 /// <reference types="../node/vite/headProviderModule.d.ts" />
 /// <reference types="../node/vite/mdxComponentProviderModule.d.ts" />
 /// <reference types="../node/vite/layoutProviderModule.d.ts" />
@@ -14,7 +12,7 @@
 /// <reference types="../node/vite/middlewareProviderModule.d.ts" />
 
 // Type is in the resource directory
-// because we import a jsx and it needs therefore the jsx prop in tsconfig
+// because we import a jsx, and it needs therefore the jsx prop in tsconfig
 
 import type {SearchOptions, SearchHit, SearchEngine, SearchResponse} from "../resources/search/search-api.d.ts";
 import type {InteractMarkdownConfig} from "../node/markdown/conf/markdownConfig.ts";
