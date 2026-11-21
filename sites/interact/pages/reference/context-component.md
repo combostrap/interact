@@ -38,7 +38,6 @@ export default function PostHogContext({children}: { children: ReactNode }) {
 
 They:
 
-* are considered a [client component unless their name include server](#server-vs-client-context)
 * accepts no props (but you can [inject env](env.md#env-value-injection-with-importmetaenv))
 * should export the component as `default`
 
@@ -57,13 +56,6 @@ interact config -f components
 interact config -f components | yq 'to_entries | map(select(.value.type == "context")) | from_entries'
 ```
 
-Example output:
-
-```yaml
-InteractContext:
-  importPath: "@combostrap/interact/components/contexts/InteractContext"
-  type: context
-```
 
 ## Registration / Default Directory
 
@@ -87,19 +79,10 @@ You can also register it manually by:
 }
 ```
 
-## Interact Context
+## Built-In Context
 
-The `InteractContext` provides:
+The `InteractBuiltInContext` provides:
 
 * an [error boundary](https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary)
 * the [search engine](search.md)
-* the sidebar off canvas state
-
-## Server vs Client Context
-
-A context component can only be found:
-
-* in the browser
-* or in the server
-
-They are considered a [client component](rsc.md#client-component) unless their name include `server`
+* the state management for the sidebar and the chat

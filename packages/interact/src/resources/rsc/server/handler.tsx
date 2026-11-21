@@ -13,7 +13,7 @@ import type {ReactNode} from "react";
 import type {FinalPage, Page} from "../../../node/pages/interactPage";
 import {hoistHeadElements} from "@/rsc/server/headElementHoisting";
 import * as NotFound from "@/components/pages/NotFound";
-import InteractApp from "./InteractApp";
+import InteractApp from "./InteractApp.tsx";
 import type {PageNode} from "@/rsc/server/types.ts";
 
 
@@ -128,9 +128,27 @@ export function getPagesRecursively(dir: string, startDir: string = dir): Record
 /**
  * The root component should return the entire document including the root <html> tag.
  * See https://react.dev/reference/react-dom/server/renderToReadableStream#usage
+ */
+function RootResponse({isRsc, children}: { isRsc: boolean, children: ReactNode }): ReactNode {
+
+    if (isRsc) {
+        return children
+    }
+    /**
+     * SSR rendering
+     * We add the context
+     */
+    return (
+        <InteractApp>
+            {children}
+        </InteractApp>
+    )
+}
+
+/**
  * @param contextProps - the context
  */
-export async function getRootResponse(contextProps: ContextProps): Promise<ReactNode | Response> {
+export async function getResponse(contextProps: ContextProps): Promise<ReactNode | Response> {
 
     let middlewareResponse = await middlewarePipeline.run(contextProps);
 
@@ -220,9 +238,9 @@ export async function getRootResponse(contextProps: ContextProps): Promise<React
      */
     if (layout === "none") {
         return (
-            <InteractApp>
-                {page.contentElement}
-            </InteractApp>
+            <RootResponse isRsc={contextProps.meta.isRscRequest}>
+                page.contentElement
+            </RootResponse>
         )
     }
 
@@ -232,9 +250,9 @@ export async function getRootResponse(contextProps: ContextProps): Promise<React
         console.error(`Frontmatter layout ${layout} not found, holy layout was used instead`)
     }
     return (
-        <InteractApp>
+        <RootResponse isRsc={contextProps.meta.isRscRequest}>
             <Layout page={page} context={contextProps}/>
-        </InteractApp>
+        </RootResponse>
     )
 
 }

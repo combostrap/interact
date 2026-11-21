@@ -1,6 +1,7 @@
 "use client"
 import {type ReactNode, useEffect, useState} from "react";
 import {cn} from "@/lib/utils.ts";
+import * as React from "react";
 
 type OffCanvasSide = "left" | "right"
 
@@ -100,7 +101,7 @@ export default function OffCanvas({
     }, []);
 
     const {position, closed} = sideClasses[side]
-
+    const kbdClass = "inline-flex h-5 min-w-5 items-center justify-center rounded bg-muted px-1 font-mono text-xs"
     return (
         <>
 
@@ -115,11 +116,19 @@ export default function OffCanvas({
             {/* OffCanvas sidebar - visible only when open */}
             <div className={cn(
                 hiddenClass,
-                "fixed top-0 h-full bg-white dark:bg-gray-900 z-50 transform transition-transform duration-300 overflow-y-auto",
+                "fixed top-0 h-full bg-background dark:bg-gray-900 z-50 transform transition-transform duration-300 overflow-y-auto border-l",
                 position,
                 isOffCanvasOpen ? "translate-x-0" : closed
             )}>
-                <div className="flex justify-end p-4">
+                <div
+                    className="flex items-center justify-between border-border px-3 py-1.5 text-xs text-muted-foreground pt-3">
+                    <div className="flex items-center gap-3">
+                        <span className="flex items-center gap-1">
+                            <kbd className={kbdClass}>esc</kbd>
+                            <span className="ml-0.5">Close</span>
+                        </span>
+                    </div>
+
                     <button
                         onClick={() => setIsOffCanvasOpen(false)}
                         className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"

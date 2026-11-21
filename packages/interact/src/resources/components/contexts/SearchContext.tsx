@@ -5,7 +5,7 @@ import type {SearchEngine} from "@combostrap/interact/types";
 import searchEngine from "interact:search-engine";
 
 
-const SearchProviderContext = createContext<SearchEngine | null>(null);
+const SearchProviderContext = createContext<SearchEngine | undefined>(undefined);
 type OpenState = [boolean, React.Dispatch<React.SetStateAction<boolean>>];
 const SearchOpenContext = React.createContext<OpenState>([false, () => {
 }])
@@ -30,14 +30,8 @@ export function useSearchOpenState(): OpenState {
 
 export function useSearchProvider() {
     const ctx = useContext(SearchProviderContext);
-    if (!ctx) {
-        /**
-         * In server rendering
-         */
-        if (typeof window === 'undefined') {
-            return null
-        }
-        throw new Error("No search provider in context");
+    if (ctx === undefined) {
+        throw new Error("useSearchProvider should be used inside a search provider context");
     }
     return ctx;
 }

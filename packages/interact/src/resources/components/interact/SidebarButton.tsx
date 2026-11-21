@@ -8,7 +8,7 @@ import {Button} from "@/components/ui/button.tsx";
 
 export function SidebarButton(className: { className: string }) {
 
-    const {toggle, isOffCanvas} = useSidebar();
+    const {isOffCanvas, toggle} = useSidebar();
 
     return isOffCanvas ? (
         <Button

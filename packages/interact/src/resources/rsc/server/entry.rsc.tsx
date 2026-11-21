@@ -16,7 +16,7 @@ import {
 
 import type {RscPayload} from '../shared/types'
 import type {ReactFormState} from 'react-dom/client'
-import {getRootResponse, getStaticPaths} from "./handler.tsx";
+import {getResponse, getStaticPaths} from "./handler.tsx";
 import {getInteractConfig} from "../../../node/config/interactConfig.ts";
 import type {ContextProps} from "../../../node/componentsProvider/contextProps";
 import {HEADER_ACTION_ID, URL_RSC_POSTFIX} from "../shared/shared-const.tsx";
@@ -108,6 +108,7 @@ async function ssrRendering({rscStream, formState, contextProps}: {
 }
 
 
+// noinspection JSUnusedGlobalSymbols
 /**
  * Handle the HTTP request
  * * on the dev server, the request from the dev server,
@@ -116,6 +117,8 @@ async function ssrRendering({rscStream, formState, contextProps}: {
  * @param request - Web Api Request
  */
 export default async function handler(request: Request): Promise<Response> {
+
+    console.log(`Requested: ${request.url}`)
 
     /**
      * Differentiate between:
@@ -175,7 +178,7 @@ export default async function handler(request: Request): Promise<Response> {
     /**
      * Get the response (a page or a response)
      */
-    const rootResponse = await getRootResponse(contextProps)
+    const rootResponse = await getResponse(contextProps)
     if (rootResponse instanceof Response) {
         return rootResponse
     }
@@ -297,7 +300,7 @@ export async function handleSsg(request: Request): Promise<{
      * HTML request
      */
     const contextProps = parseRenderRequest(request)
-    const rootResponse = await getRootResponse(contextProps)
+    const rootResponse = await getResponse(contextProps)
     if (rootResponse instanceof Response) {
         throw new Error("A page request should not return a Web Fetch API Response")
     }
@@ -313,7 +316,7 @@ export async function handleSsg(request: Request): Promise<{
      */
     contextProps.meta.isMarkdownRequest = true
     contextProps.url = new URL(contextProps.url.pathname + ".md", "http://ssg-markdown.local")
-    const markdownRootResponse = await getRootResponse(contextProps)
+    const markdownRootResponse = await getResponse(contextProps)
     if (markdownRootResponse instanceof Response) {
         throw new Error("A markdown request should not return a Web Fetch API Response")
     }

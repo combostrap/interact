@@ -7,8 +7,7 @@ import ClientConfigContext from "./ClientConfigContext.js";
 import SidebarContext from "@/components/contexts/SidebarContext.tsx";
 
 
-// noinspection JSUnusedGlobalSymbols - vite virtual provider reads it
-export default function InteractContext({children}: { children: ReactNode }) {
+export default function InteractBuiltInContext({children}: { children: ReactNode }) {
 
     return (
         <ClientConfigContext>

@@ -48,9 +48,7 @@ export default function SearchBox({className, children, placeholder = "Searching
          * Debounced run
          */
         const run = async () => {
-            if (searchProvider == null) {
-                return;
-            }
+
             let response: SearchResponse;
 
             try {

@@ -20,22 +20,16 @@ interface SidebarContextValue {
     setIsOpen: (value: boolean) => void;
 }
 
-const SidebarProviderContext = createContext<SidebarContextValue | undefined>(undefined);
+const SidebarProviderContext = createContext<SidebarContextValue|undefined>(undefined);
 
 interface SidebarProviderProps {
     children: ReactNode;
     defaultOpen?: boolean;
 }
 
-export function useSidebar(): SidebarContextValue | null {
+export function useSidebar(): SidebarContextValue {
     const context = useContext(SidebarProviderContext);
-    if (!context) {
-        /**
-         * In server rendering
-         */
-        if (typeof window === 'undefined') {
-            return null
-        }
+    if (context === undefined) {
         throw new Error("useSidebar must be used within a SidebarContext");
     }
     return context;

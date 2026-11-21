@@ -20,11 +20,11 @@ import React from 'react'
 import {createRoot, hydrateRoot} from 'react-dom/client'
 import {rscStream} from 'rsc-html-stream/client' // https://github.com/devongovett/rsc-html-stream
 import type {RscPayload} from '../shared/types'
-import {getContextComponents} from "interact:client-contexts";
 import {HEADER_ACTION_ID, URL_RSC_POSTFIX} from "../shared/shared-const.tsx";
-// This stylesheet needs to be on the client side, it does not work on the server side InteractApp
+import InteractApp from "@/rsc/server/InteractApp.tsx";
+// Does not work on InteractApp
+// because it returns an inline string and not a file ...
 import "interact:outline-numbering.css"
-import InteractContext from "../../components/contexts/InteractContext.js";
 
 /**
  * The name of the index page
@@ -114,31 +114,13 @@ async function main() {
      * Context wrapping
      */
     let root = (<BrowserRoot/>)
-    const contextComponents = getContextComponents();
-    // Sort in descending order so that the components that are first in ascending order becomes the root of the tree
-    const contextKeysDescendingOrder = Object.keys(contextComponents).sort((a, b) => b.localeCompare(a));
-    for (const contextComponentKey of contextKeysDescendingOrder) {
-        if (contextComponentKey == 'InteractContext') {
-            // added manually below
-            continue
-        }
-        const ContextComponent = contextComponents[contextComponentKey];
-        if (ContextComponent == undefined) {
-            continue
-        }
-        root = (
-            <ContextComponent>
-                {root}
-            </ContextComponent>
-        )
-    }
 
     // hydration
     const browserRoot = (
         <React.StrictMode>
-            <InteractContext>
+            <InteractApp>
                 {root}
-            </InteractContext>
+            </InteractApp>
         </React.StrictMode>
     )
     if ('__NO_HYDRATE' in globalThis) {

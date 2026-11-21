@@ -15,8 +15,7 @@ import {useSidebar} from "@/components/contexts/SidebarContext.tsx";
  */
 export default function SideBar({children}: { children: React.ReactNode }) {
 
-
-    const {isOpen, setIsOpen, isOffCanvas} = useSidebar();
+    const {isOffCanvas, setIsOpen, isOpen} = useSidebar();
 
     let hiddenClass = "lg:hidden";
     return isOffCanvas ? (

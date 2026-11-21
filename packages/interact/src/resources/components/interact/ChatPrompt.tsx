@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { ArrowUpIcon, SquareIcon } from "lucide-react"
+import { ArrowRightIcon, SquareIcon } from "lucide-react"
 
 import {
     InputGroup,
@@ -69,7 +69,7 @@ export function ChatPrompt({
                             className="ml-auto"
                             disabled={!input.trim()}
                         >
-                            <ArrowUpIcon />
+                            <ArrowRightIcon />
                         </InputGroupButton>
                     )}
                 </InputGroupAddon>
