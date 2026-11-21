@@ -26,7 +26,8 @@ export default function MainSidebarLayout({children, sideBar, className}: {
     );
     const childrenClass = cn(
         "lg:col-1",
-        "lg:col-start-1"
+        "lg:col-start-1",
+        "relative"
     );
     return (
         <div className={cn(gridClass, className)}>

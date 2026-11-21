@@ -93,6 +93,7 @@ The `InteractContext` provides:
 
 * an [error boundary](https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary)
 * the [search engine](search.md)
+* the sidebar off canvas state
 
 ## Server vs Client Context
 

@@ -67,7 +67,9 @@ export default function Holy(layoutProps: LayoutProps) {
                                 <div className={cn(layoutProps.context.meta.isProsePage && "prose")}>
                                     {layoutProps.page.contentElement}
                                 </div>
+                                <ChatAside/>
                             </MainSidebarLayout>
+
                         </div>
 
                         <footer id="main-footer" className={
@@ -75,10 +77,11 @@ export default function Holy(layoutProps: LayoutProps) {
                                                          "print:hidden"
                                                      )}>
                         </footer>
+
                     </div>
                     <Footer/>
+
                 </div>
-                <ChatAside/>
             </Body>
         </Html>
     )

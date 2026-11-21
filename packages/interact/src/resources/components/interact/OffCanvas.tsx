@@ -53,7 +53,10 @@ const sideClasses: Record<OffCanvasSide, { position: string; closed: string }> =
     },
 }
 
-
+/**
+ * Known in Shadcn has a Sheet
+ * https://ui.shadcn.com/docs/components/base/sheet
+ */
 export default function OffCanvas({
                                       hiddenClass = "",
                                       children,
@@ -100,22 +103,6 @@ export default function OffCanvas({
 
     return (
         <>
-            {/* OffCanvas toggle button - visible only below md */}
-            <div className={"print:hidden"}>
-                <button
-                    onClick={() => setIsOffCanvasOpen(true)}
-                    className={cn(
-                        hiddenClass,
-                        "px-2",
-                        "hover:bg-gray-100 dark:hover:bg-gray-700"
-                    )}
-                    aria-label="Open navigation menu"
-                >
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16"/>
-                    </svg>
-                </button>
-            </div>
 
             {/* OffCanvas overlay and close when clicked */}
             {isOffCanvasOpen && backDrop && (

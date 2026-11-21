@@ -11,10 +11,10 @@ The search engine is responsible for the site content:
 
 ### Which content is indexed
 
-As a general rile, we recommend that the search bots index:
+As a general rule, we recommend that the search bots indexes:
 
 * the content of the `main` HTML element.
-* and if not found, to default to the `html` element.
+* and if not found, default to the `html` element.
 
 Check the documentation of your search engine to see how to configure it.
 

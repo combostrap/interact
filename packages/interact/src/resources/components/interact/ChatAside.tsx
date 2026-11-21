@@ -3,21 +3,22 @@
 import {useState} from "react";
 import {Chat} from "@/components/interact/Chat.tsx";
 import OffCanvas from "@/components/interact/OffCanvas.tsx";
+import {Button} from "@/components/ui/button.tsx";
 
 export function ChatAside() {
 
-    const [open, setOpen] = useState(true);
+    const [open, setOpen] = useState(false);
 
     return (
         <>
             {/* Launcher */}
             {!open && (
-                <button
+                <Button
                     onClick={() => setOpen(true)}
-                    className="fixed bottom-4 right-4 z-40 rounded-full bg-blue-600 px-4 py-3 text-white shadow-lg"
+                    className="fixed bottom-4 right-4 z-40"
                 >
                     Chat
-                </button>
+                </Button>
             )}
 
             <OffCanvas
